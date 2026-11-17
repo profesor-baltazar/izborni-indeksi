@@ -18,7 +18,6 @@
   }
   const fmt = (x, d = 2) => (Number.isFinite(x) ? x.toLocaleString(LOC, { minimumFractionDigits: d, maximumFractionDigits: d }) : '–');
   const fmtInt = (x) => (Number.isFinite(x) ? Math.round(x).toLocaleString(LOC) : '–');
-  const pct = (a, t) => (t > 0 ? (a / t) * 100 : 0);
   function toast(msg, ms = 2600) {
     const t = $('#toast'); t.textContent = msg; t.classList.add('show');
     clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('show'), ms);
@@ -62,8 +61,7 @@
       Efektivni broj stranaka (ENEP, ENPP): Laakso, M. i Taagepera, R. (1979). “Effective” number of parties: a measure with application to West Europe. <i>Comparative Political Studies</i> 12(1): 3–27.`,
     alloc: `<b>Metode.</b> D'Hondt (djelioci 1, 2, 3…), Sainte-Laguë (djelioci 1, 3, 5…) i Hare–Niemeyer (prosta kvota i najveći ostatak).
       <b>Cenzus po listi</b> (čl. 94 Zakona o izboru odbornika i poslanika, od izmjena iz 2011): <i>Manjinski 0,7%</i> – ako nijedna lista iste manjine ne pređe opšti cenzus, liste te manjine sa najmanje 0,7% glasova učestvuju u raspodjeli kao jedna zbirna lista, sa najviše tri mandata, koji se zatim dijele među njima istom metodom;
-      <i>Hrvatski 0,35%</i> – ako nijedna lista hrvatskog naroda ne ispuni te uslove, najuspješnija sa najmanje 0,35% glasova dobija jedan mandat;
-      <i>Drugi</i> – sopstveni cenzus za tu listu. Na izborima 2006. i 2009. važio je drugi sistem (opšti cenzus i posebna izborna jedinica sa pet mandata za albansku manjinu), koji aplikacija ne modeluje.`,
+      <i>Hrvatski 0,35%</i> – ako nijedna lista hrvatskog naroda ne ispuni te uslove, najuspješnija sa najmanje 0,35% glasova dobija jedan mandat; <b>Posebna izborna jedinica</b> postoji samo za izbore 2006. i 2009. (čl. 94a tada važećeg zakona, ukinut izmjenama iz 2011): pet mandata bira se na posebno određenim biračkim mjestima; cenzus je 3% od broja birača koji su glasali u opštoj, odnosno u posebnoj jedinici; lista koja u jednoj jedinici ne učestvuje ili ne osvoji mandat, tim glasovima dodaje glasove iz druge.`,
     nat: `<b>Autor formule.</b> Ponderisani indeks nacionalizacije stranaka (PNSw) i standardizovani indeks nacionalizacije (sPNS) razvio je <b>Daniel Bochsler</b> (Univerzitet u Cirihu):
       Bochsler, D. (2010). Measuring party nationalisation: A new Gini-based indicator that corrects for the number of units. <i>Electoral Studies</i> 29(1): 155–168.
       Indeks se oslanja na Gini-zasnovan indeks nacionalizacije: Jones, M. P. i Mainwaring, S. (2003). The nationalization of parties and party systems. <i>Party Politics</i> 9(2): 139–166.
@@ -79,10 +77,17 @@
     const tv = I.sum(V), ts = I.sum(M);
     return { V, M, tv, ts, lsq: I.lsq(V, M), enep: I.enp(V), enpp: I.enp(M) };
   }
+  const hasSpecial = (e) => !!(e.special && parseNum(e.special.seats) > 0);
   function calcAlloc(e) {
     const V = e.lists.map((l) => parseNum(l.votes));
-    const r = I.allocate({ votes: V, seats: parseNum(e.seats), method: e.method, threshold: parseNum(e.threshold),
-      types: e.lists.map((l) => l.type || 'opsti'), groups: e.lists.map((l) => l.grp || ''), thresholds: e.lists.map((l) => parseNum(l.thr)) });
+    let r;
+    if (hasSpecial(e)) {
+      r = I.allocateSpecial({ votes: V, seats: parseNum(e.seats), method: e.method, threshold: parseNum(e.threshold), 
+        special: { seats: parseNum(e.special.seats), votes: e.lists.map((l) => parseNum(e.special.votes?.[l.id])) } });
+    } else {
+      r = I.allocate({ votes: V, seats: parseNum(e.seats), method: e.method, threshold: parseNum(e.threshold),
+        types: e.lists.map((l) => l.type || 'opsti') });
+    }
     return { V, tv: I.sum(V), ...r, lsq: I.lsq(V, r.seats) };
   }
   function unitValid(u, e) {
@@ -127,22 +132,18 @@
   }
 
   // Izbor cenzusa po listi
-  const THR_LABEL = { opsti: 'Opšti', manjina: 'Manjinski 0,7%', hrvati: 'Hrvatski 0,35%', drugi: 'Drugi…' };
+  const THR_LABEL = { opsti: 'Opšti', manjina: 'Manjinski (0,7%)', hrvati: 'Hrvatski (0,35%)' };
   function thrLabel(l, e) {
     const t = l.type || 'opsti';
     if (t === 'opsti') return `Opšti (${fmt(parseNum(e.threshold), 1)}%)`;
-    if (t === 'manjina') return 'Manjinski 0,7%' + (l.grp ? ' – ' + l.grp : '');
-    if (t === 'hrvati') return 'Hrvatski 0,35%';
-    return `Drugi (${fmt(parseNum(l.thr), 2)}%)`;
+    if (t === 'manjina') return 'Manjinski (0,7%)';
+    return 'Hrvatski (0,35%)';
   }
   function thrCell(l, e) {
-    const t = l.type || 'opsti';
+    const t = THR_LABEL[l.type] ? l.type : 'opsti';
     const opts = Object.entries(THR_LABEL).map(([k, v]) => `<option value="${k}" ${k === t ? 'selected' : ''}>${k === 'opsti' ? `Opšti (${fmt(parseNum(e.threshold), 1)}%)` : v}</option>`).join('');
-    return `<td class="l thr-cell"><select data-f="type" title="Cenzus koji važi za ovu listu">${opts}</select>${
-      t === 'manjina' ? `<input class="grp" data-f="grp" list="grp-list" value="${esc(l.grp || '')}" placeholder="manjina" title="Liste iste manjine se sabiraju">` : ''}${
-      t === 'drugi' ? `<input class="sm" data-f="thr" value="${esc(l.thr ?? '')}" placeholder="%" inputmode="decimal">` : ''}</td>`;
+    return `<td class="l thr-cell"><select data-f="type" title="Cenzus koji važi za ovu listu">${opts}</select></td>`;
   }
-  const grpDatalist = (e) => `<datalist id="grp-list">${[...new Set(['Albanci', 'Bošnjaci', ...e.lists.map((l) => l.grp).filter(Boolean)])].map((g) => `<option value="${esc(g)}">`).join('')}</datalist>`;
 
   const MODULES = {
     results: {
@@ -153,18 +154,16 @@
           <td><input data-f="votes" value="${esc(l.votes)}" inputmode="decimal"></td>
           <td><input class="sm" data-f="seats" value="${esc(l.seats)}" inputmode="numeric"></td>
           ${thrCell(l, e)}
-          <td data-out="pv-${l.id}"></td><td data-out="ps-${l.id}"></td>
           <td class="no-print"><button class="icon-btn" data-act="del-list" title="Ukloni listu">✕</button></td></tr>`).join('');
         return `${printHead(e, 'Rezultati i indeksi')}${electionHead(e, `
           <button class="btn small" data-act="paste-lists">Zalijepi iz Excela</button>
           <button class="btn small" data-act="import-lists">Uvezi XLSX/CSV</button>`)}
           <div class="table-wrap"><table class="grid">
-            <thead><tr><th class="l">Lista / stranka</th><th>Glasovi</th><th>Mandati</th><th class="l">Cenzus</th><th>% glasova</th><th>% mandata</th><th class="no-print"></th></tr></thead>
+            <thead><tr><th class="l">Lista / stranka</th><th>Glasovi</th><th>Mandati</th><th class="l">Cenzus</th><th class="no-print"></th></tr></thead>
             <tbody>${rows}</tbody>
-            <tfoot><tr><td class="l">Ukupno</td><td data-out="tv"></td><td data-out="ts"></td><td></td><td>100,00</td><td>100,00</td><td class="no-print"></td></tr></tfoot>
-          </table></div>${grpDatalist(e)}
-          <div class="row no-print" style="margin-top:8px"><button class="btn small" data-act="add-list">+ Dodaj listu</button>
-            <span class="muted" style="font-size:12px">Imena lista mijenjaš direktno u tabeli. „Ostali“ unesi kao posljednji red, ako ih ima.</span></div>
+            <tfoot><tr><td class="l">Ukupno</td><td data-out="tv"></td><td data-out="ts"></td><td></td><td class="no-print"></td></tr></tfoot>
+          </table></div>
+          <div class="row no-print" style="margin-top:8px"><button class="btn small" data-act="add-list">+ Dodaj listu</button></div>
           <div class="metrics">
             <div class="metric"><div class="k">Indeks disproporcionalnosti (LSq)</div><div class="v" data-out="lsq"></div><div class="h">0 = savršena proporcionalnost</div></div>
             <div class="metric alt"><div class="k">Efektivni broj izbornih stranaka (ENEP)</div><div class="v" data-out="enep"></div><div class="h">na osnovu glasova</div></div>
@@ -174,15 +173,14 @@
       },
       paint(e) {
         const r = calcResults(e), o = {};
-        e.lists.forEach((l, i) => { o['pv-' + l.id] = fmt(pct(r.V[i], r.tv)); o['ps-' + l.id] = fmt(pct(r.M[i], r.ts)); });
         Object.assign(o, { tv: fmtInt(r.tv), ts: fmtInt(r.ts), lsq: fmt(r.lsq), enep: fmt(r.enep), enpp: fmt(r.enpp) });
         return o;
       },
       table(e) {
         const r = calcResults(e);
         return {
-          header: ['Lista', 'Glasovi', 'Mandati', 'Cenzus', '% glasova', '% mandata'],
-          rows: e.lists.map((l, i) => [l.name, r.V[i], r.M[i], thrLabel(l, e), pct(r.V[i], r.tv), pct(r.M[i], r.ts)]),
+          header: ['Lista', 'Glasovi', 'Mandati', 'Cenzus'],
+          rows: e.lists.map((l, i) => [l.name, r.V[i], r.M[i], thrLabel(l, e)]),
           summary: [['LSq (Gallagher)', r.lsq], ['ENEP', r.enep], ['ENPP', r.enpp], ['Ukupno glasova', r.tv], ['Ukupno mandata', r.ts]],
         };
       },
@@ -191,9 +189,10 @@
     alloc: {
       title: 'Raspodjela mandata',
       render(e) {
+        const sp = hasSpecial(e);
         const rows = e.lists.map((l) => `<tr data-id="${l.id}">
-          <td class="l clip" title="${esc(l.name)}">${esc(l.name)}</td><td>${fmtInt(parseNum(l.votes))}</td><td data-out="pv-${l.id}"></td>
-          ${thrCell(l, e)}<td class="l muted" data-out="nt-${l.id}" style="font-size:12px"></td>
+          <td class="l clip" title="${esc(l.name)}">${esc(l.name)}</td><td>${fmtInt(parseNum(l.votes))}</td>
+          ${sp ? `<td><input data-sp="${l.id}" value="${esc(e.special.votes?.[l.id] ?? '')}" inputmode="numeric"></td>` : thrCell(l, e)}
           <td data-out="al-${l.id}" style="font-weight:600"></td><td>${fmtInt(parseNum(l.seats))}</td><td data-out="df-${l.id}"></td></tr>`).join('');
         return `${printHead(e, 'Raspodjela mandata')}${electionHead(e)}
           <div class="row" style="margin-bottom:12px">
@@ -203,14 +202,12 @@
               <option value="sainte-lague" ${e.method === 'sainte-lague' ? 'selected' : ''}>Sainte-Laguë</option>
               <option value="hare" ${e.method === 'hare' ? 'selected' : ''}>Hare–Niemeyer</option></select></label>
             <label class="field">Opšti cenzus (%)<input data-bind="threshold" value="${esc(e.threshold)}" inputmode="decimal"></label>
-            <div class="spacer"></div>
-            <button class="btn small accent" data-act="apply-alloc">Upiši kao stvarne mandate</button>
           </div>
           <div class="table-wrap"><table class="grid">
-            <thead><tr><th class="l">Lista</th><th>Glasovi</th><th>% glasova</th><th class="l">Cenzus</th><th class="l">Napomena</th><th>Dodijeljeno</th><th>Stvarno</th><th>Razlika</th></tr></thead>
+            <thead><tr><th class="l">Lista</th><th>Glasovi</th>${sp ? '<th>Glasovi u posebnoj jedinici</th>' : '<th class="l">Cenzus</th>'}<th>Dodijeljeno</th><th>Stvarno</th><th>Razlika</th></tr></thead>
             <tbody>${rows}</tbody>
-            <tfoot><tr><td class="l">Ukupno</td><td data-out="tv"></td><td></td><td></td><td></td><td data-out="tal"></td><td data-out="tst"></td><td></td></tr></tfoot>
-          </table></div>${grpDatalist(e)}
+            <tfoot><tr><td class="l">Ukupno</td><td data-out="tv"></td><td data-out="tsp"></td><td data-out="tal"></td><td data-out="tst"></td><td></td></tr></tfoot>
+          </table></div>
           <div data-out-html="allocwarn"></div>
           <div class="metrics"><div class="metric"><div class="k">LSq za ovu raspodjelu</div><div class="v" data-out="lsq"></div><div class="h">Gallagherov indeks disproporcionalnosti</div></div></div>
           <div class="cite">${CITES.alloc}</div>`;
@@ -218,12 +215,11 @@
       paint(e) {
         const r = calcAlloc(e), o = {};
         e.lists.forEach((l, i) => {
-          o['pv-' + l.id] = fmt(pct(r.V[i], r.tv));
           o['al-' + l.id] = r.eligible[i] || r.seats[i] ? String(r.seats[i]) : '—';
-          o['nt-' + l.id] = r.note[i] || (r.eligible[i] ? '' : 'ispod cenzusa');
           const d = r.seats[i] - parseNum(l.seats);
           o['df-' + l.id] = d === 0 ? '0' : (d > 0 ? '+' : '') + d;
         });
+        o.tsp = hasSpecial(e) ? fmtInt(I.sum(e.lists.map((l) => parseNum(e.special.votes?.[l.id])))) : '';
         o.tv = fmtInt(r.tv); o.tal = String(I.sum(r.seats)); o.tst = fmtInt(I.sum(e.lists.map((l) => parseNum(l.seats))));
         o.lsq = fmt(r.lsq);
         o.allocwarn = r.tie ? '<div class="warn">Posljednji mandat je neriješen (isti količnik/ostatak). Zakon obično propisuje kako se takav slučaj rješava; provjeri ručno.</div>' : '';
@@ -232,8 +228,8 @@
       table(e) {
         const r = calcAlloc(e);
         return {
-          header: ['Lista', 'Glasovi', '% glasova', 'Cenzus', 'Napomena', 'Dodijeljeno', 'Stvarno', 'Razlika'],
-          rows: e.lists.map((l, i) => [l.name, r.V[i], pct(r.V[i], r.tv), thrLabel(l, e), r.note[i] || (r.eligible[i] ? '' : 'ispod cenzusa'), r.seats[i], parseNum(l.seats), r.seats[i] - parseNum(l.seats)]),
+          header: ['Lista', 'Glasovi', hasSpecial(e) ? 'Glasovi u posebnoj jedinici' : 'Cenzus', 'Dodijeljeno', 'Stvarno', 'Razlika'],
+          rows: e.lists.map((l, i) => [l.name, r.V[i], hasSpecial(e) ? parseNum(e.special.votes?.[l.id]) : thrLabel(l, e), r.seats[i], parseNum(l.seats), r.seats[i] - parseNum(l.seats)]),
           summary: [['Metoda', { dhondt: "D'Hondt", 'sainte-lague': 'Sainte-Laguë', hare: 'Hare–Niemeyer' }[e.method]], ['Broj mandata', parseNum(e.seats)], ['Opšti cenzus (%)', parseNum(e.threshold)], ['LSq za raspodjelu', r.lsq]],
         };
       },
@@ -248,19 +244,17 @@
           <td><input data-uf="valid" value="${esc(u.valid)}"></td>
           ${e.lists.map((l) => `<td><input class="sm" data-uv="${l.id}" value="${esc(u.votes[l.id] ?? '')}"></td>`).join('')}
           <td class="no-print"><button class="icon-btn" data-act="del-unit" title="Ukloni jedinicu">✕</button></td></tr>`).join('');
-        const res = e.lists.map((l) => `<tr><td class="l clip" title="${esc(l.name)}">${esc(l.name)}</td><td data-out="ns-${l.id}"></td><td data-out="nsh-${l.id}"></td><td data-out="np-${l.id}"></td><td data-out="nz-${l.id}" style="font-weight:600"></td><td data-out="nc-${l.id}"></td></tr>`).join('');
+        const res = e.lists.map((l) => `<tr><td class="l clip" title="${esc(l.name)}">${esc(l.name)}</td><td data-out="np-${l.id}"></td><td data-out="nz-${l.id}" style="font-weight:600"></td></tr>`).join('');
         return `${printHead(e, 'Nacionalizacija stranaka')}${electionHead(e, `
           <button class="btn small" data-act="paste-units">Zalijepi iz Excela</button>
           <button class="btn small" data-act="import-units">Uvezi XLSX/CSV</button>`)}
           <div class="table-wrap"><table class="grid">
             <thead><tr><th class="l">Teritorijalna jedinica</th><th>Važeći glasovi</th>${head}<th class="no-print"></th></tr></thead>
             <tbody>${rows || `<tr><td colspan="${e.lists.length + 3}" class="empty">Dodaj opštine (ili druge jedinice) i unesi glasove svake liste u njima.</td></tr>`}</tbody>
-            <tfoot><tr><td class="l">Zbir jedinica</td><td data-out="nvalid"></td>${e.lists.map((l) => `<td data-out="nsum-${l.id}"></td>`).join('')}<td class="no-print"></td></tr></tfoot>
           </table></div>
           <div class="row no-print" style="margin-top:8px">
             <button class="btn small" data-act="add-unit">+ Dodaj jedinicu</button>
             <button class="btn small ghost" data-act="clear-units">Obriši sve jedinice</button>
-            <span class="muted" style="font-size:12px">„Važeći glasovi“ su svi važeći glasovi u jedinici (uključujući ostale liste). Prazno = zbir unesenih lista.</span>
           </div>
           <div data-out-html="natwarn"></div>
           <div class="metrics">
@@ -269,24 +263,18 @@
             <div class="metric alt"><div class="k">Efektivni broj jedinica (E)</div><div class="v" data-out="E"></div><div class="h" data-out="ucount"></div></div>
             <div class="metric alt"><div class="k">N2 državni / N2 jedinice</div><div class="v" data-out="n2"></div><div class="h">efektivni broj stranaka</div></div>
           </div>
-          <h2>Rezultati po listama</h2>
+          <h2>Po listama</h2>
           <div class="table-wrap"><table class="grid">
-            <thead><tr><th class="l">Lista</th><th>Glasovi (zbir)</th><th>Udio</th><th>PNSw</th><th>sPNS</th><th>Teritorijalna pokrivenost</th></tr></thead>
+            <thead><tr><th class="l">Lista</th><th>PNSw</th><th>sPNS</th></tr></thead>
             <tbody>${res}</tbody></table></div>
           <div class="cite">${CITES.nat}</div>`;
       },
       paint(e) {
         const r = calcNat(e), o = {};
-        const tot = I.sum(r.sums);
-        o.nvalid = fmtInt(I.sum(r.units.map((u) => u.valid)));
         e.lists.forEach((l, j) => {
-          o['nsum-' + l.id] = fmtInt(r.sums[j]);
-          o['ns-' + l.id] = fmtInt(r.sums[j]);
-          o['nsh-' + l.id] = fmt(pct(r.sums[j], tot)) + ' %';
           const p = r.ok ? r.parties[j] : null;
           o['np-' + l.id] = p ? fmt(p.pnsw, 3) : '–';
           o['nz-' + l.id] = p ? fmt(p.spns, 3) : '–';
-          o['nc-' + l.id] = p && Number.isFinite(p.pnsw) ? fmt(p.coverage * 100, 1) + ' %' : '–';
         });
         o['sys-s'] = r.ok ? fmt(r.systemSpns, 3) : '–';
         o['sys-w'] = r.ok ? fmt(r.systemPnsw, 3) : '–';
@@ -297,10 +285,10 @@
         return o;
       },
       table(e) {
-        const r = calcNat(e); const tot = I.sum(r.sums);
+        const r = calcNat(e);
         return {
-          header: ['Lista', 'Glasovi (zbir jedinica)', 'Udio %', 'PNSw', 'sPNS', 'Pokrivenost %'],
-          rows: e.lists.map((l, j) => { const p = r.ok ? r.parties[j] : {}; return [l.name, r.sums[j], pct(r.sums[j], tot), p.pnsw ?? '', p.spns ?? '', Number.isFinite(p.pnsw) ? p.coverage * 100 : '']; }),
+          header: ['Lista', 'PNSw', 'sPNS'],
+          rows: e.lists.map((l, j) => { const p = r.ok ? r.parties[j] : {}; return [l.name, p.pnsw ?? '', p.spns ?? '']; }),
           summary: r.ok ? [['sPNS sistema', r.systemSpns], ['PNSw sistema', r.systemPnsw], ['Efektivni broj jedinica (E)', r.E], ['Broj jedinica', r.unitCount], ['N2 državni', r.n2national], ['N2 jedinice (ponderisan)', r.n2district]] : [['Napomena', 'Potrebne su bar 2 teritorijalne jedinice']],
           units: { header: ['Jedinica', 'Važeći glasovi', ...e.lists.map((l) => l.name)], rows: e.units.map((u) => [u.name, parseNum(u.valid), ...e.lists.map((l) => parseNum(u.votes[l.id]))]) },
         };
@@ -349,30 +337,24 @@
             <div class="metric alt"><div class="k">Tip B (stabilne stranke)</div><div class="v" data-out="tb"></div></div>
           </div>
           <div data-out-html="volwarn"></div>
-          <h2>Promjene po strankama</h2>
-          <div class="table-wrap"><table class="grid"><thead><tr><th class="l">Na t₁</th><th class="l">Na t₂</th><th>% t₁</th><th>% t₂</th><th>Promjena</th><th>Tip</th></tr></thead><tbody data-out-html="volrows"></tbody></table></div>
           <h2 class="no-print">Povezivanje lista</h2>
-          <div class="row no-print" style="margin-bottom:8px"><button class="btn small" data-act="auto-links">Poveži liste istog imena</button><button class="btn small ghost" data-act="clear-links">Ukloni sve veze</button>
-            <span class="muted" style="font-size:12px">Klikni na ime liste sa t₁ da je povežeš ili odvežeš.</span></div>
+          <div class="row no-print" style="margin-bottom:8px"><button class="btn small" data-act="auto-links">Poveži liste istog imena</button><button class="btn small ghost" data-act="clear-links">Ukloni sve veze</button></div>
           <div class="links no-print">${linkRows}</div>`}
           <h2>Objašnjenje</h2>${explain}
           <div class="cite">${CITES.vol}</div>`;
       },
       paint() {
         const r = calcVol(); if (!r) return {};
-        const name = (a) => (a.length ? a.map(esc).join(' + ') : '<span class="muted">—</span>');
-        const tag = { stabilna: '<span class="tag">stabilna</span>', nova: '<span class="tag new">nova</span>', 'izašla': '<span class="tag out">ugašena</span>' };
         return {
           tv: fmt(r.total), ta: fmt(r.typeA), tb: fmt(r.typeB),
           volwarn: r.links.length ? '' : '<div class="warn">Nijedna lista nije povezana sa prethodnicom, pa se sve liste računaju kao nove (volatilnost 100). Poveži liste u dijelu „Povezivanje lista“ ispod.</div>',
-          volrows: r.rows.map((x) => `<tr><td class="l clip" title="${esc(x.from.join(' + '))}">${name(x.from)}</td><td class="l clip" title="${esc(x.to.join(' + '))}">${name(x.to)}</td><td>${fmt(x.pa)}</td><td>${fmt(x.pb)}</td><td class="${x.change > 0 ? 'pos' : x.change < 0 ? 'neg' : ''}">${x.change > 0 ? '+' : ''}${fmt(x.change)}</td><td>${tag[x.kind]}</td></tr>`).join(''),
         };
       },
       table() {
         const r = calcVol(); if (!r) return null;
         return {
-          header: ['Na t1', 'Na t2', '% t1', '% t2', 'Promjena', 'Tip'],
-          rows: r.rows.map((x) => [x.from.join(' + '), x.to.join(' + '), x.pa, x.pb, x.change, x.kind === 'izašla' ? 'ugašena' : x.kind]),
+          header: ['Na t1', 'Na t2'],
+          rows: r.rows.map((x) => [x.from.join(' + '), x.to.join(' + ')]),
           summary: [['Prvi izbori', r.A.name], ['Drugi izbori', r.B.name], ['Osnova', S.state.vol.basis === 'seats' ? 'mandati' : 'glasovi'], ['Ukupna volatilnost (TV)', r.total], ['Tip A', r.typeA], ['Tip B', r.typeB]],
         };
       },
@@ -415,7 +397,9 @@
       if (t.dataset.bind === 'name') renderNav();
     } else if (t.dataset.f && e) {
       const l = e.lists.find((x) => x.id === t.closest('tr').dataset.id);
-      if (l) l[t.dataset.f] = t.dataset.f === 'name' || t.dataset.f === 'grp' ? t.value : t.value.trim();
+      if (l) l[t.dataset.f] = t.dataset.f === 'name' ? t.value : t.value.trim();
+    } else if (t.dataset.sp && e && e.special) {
+      (e.special.votes = e.special.votes || {})[t.dataset.sp] = t.value.trim();
     } else if ((t.dataset.uf || t.dataset.uv) && e) {
       const u = e.units.find((x) => x.id === t.closest('tr').dataset.uid);
       if (u) { if (t.dataset.uf) u[t.dataset.uf] = t.value; else u.votes[t.dataset.uv] = t.value.trim(); }
@@ -425,7 +409,7 @@
   main.addEventListener('change', (ev) => {
     const t = ev.target;
     if (t.dataset.vol) { S.state.vol[t.dataset.vol] = t.value; S.save(); render(); }
-    else if (t.dataset.f === 'type') { S.save(); render(); main.querySelector(`tr[data-id="${t.closest('tr').dataset.id}"] [data-f="${t.value === 'manjina' ? 'grp' : t.value === 'drugi' ? 'thr' : 'type'}"]`)?.focus(); }
+    else if (t.dataset.f === 'type') { S.save(); render(); }
     else if (t.tagName === 'SELECT' && t.dataset.bind) { S.save(); paint(); }
   });
 
@@ -454,9 +438,6 @@
           S.save(); render();
         }
         break;
-      }
-      case 'apply-alloc': {
-        const r = calcAlloc(e); e.lists.forEach((l, i) => { l.seats = r.seats[i]; }); S.save(); render(); toast('Mandati upisani'); break;
       }
       case 'add-unit': e.units.push(S.newUnit('Jedinica ' + (e.units.length + 1))); S.save(); render();
         main.querySelector(`tr[data-uid="${e.units[e.units.length - 1].id}"] input.name`)?.select(); break;

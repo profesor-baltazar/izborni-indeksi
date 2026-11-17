@@ -12,7 +12,7 @@ close(I.enp(V), 3.964396, 1e-6, 'ENEP');
 close(I.enp(S), 3.708875, 1e-6, 'ENPP');
 close(I.lsq(V, S), 1.7064, 1e-3, 'LSq'); // Gallagherov fajl daje 1,7043 jer zaokružuje procente na 2 decimale
 
-const args = (x) => ({ votes: x.lists.map((l) => l.votes), seats: 81, threshold: 3, types: x.lists.map((l) => l.type), groups: x.lists.map((l) => l.grp), thresholds: x.lists.map((l) => l.thr) });
+const args = (x) => ({ votes: x.lists.map((l) => l.votes), seats: 81, threshold: 3, types: x.lists.map((l) => l.type) });
 const r = I.allocate(args(e));
 assert.deepStrictEqual(r.seats, S, "D'Hondt CG 2020");
 
@@ -41,4 +41,11 @@ for (const x of window.SEED_ELECTIONS.filter((x) => !['cg2006', 'cg2009'].includ
 const e23 = window.SEED_ELECTIONS.find((x) => x.id === 'cg2023');
 const n23 = I.nationalisation(e23.units.map((u) => ({ valid: u.valid, votes: e23.lists.map((l) => u.votes[l.id]) })), e23.lists.length);
 close(n23.systemPnsw, 0.728396, 1e-6, 'PNSw 2023'); close(n23.systemSpns, 0.716889, 1e-6, 'sPNS 2023'); close(n23.E, 8.796419, 1e-6, 'E 2023');
+// 2006. i 2009: posebna izborna jedinica (čl. 94a tada važećeg zakona)
+for (const id of ['cg2006', 'cg2009']) {
+  const x = window.SEED_ELECTIONS.find((y) => y.id === id);
+  const a = I.allocateSpecial({ votes: x.lists.map((l) => l.votes), seats: 81, threshold: 3,
+    special: { seats: x.special.seats, votes: x.lists.map((l) => x.special.votes[l.id]) } });
+  assert.deepStrictEqual(a.seats, x.lists.map((l) => l.seats), 'Posebna jedinica ' + id);
+}
 console.log('Svi testovi prošli.');

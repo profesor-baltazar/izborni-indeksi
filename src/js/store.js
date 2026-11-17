@@ -20,12 +20,11 @@
   // Starije verzije: poseban cenzus (thr) i garantovani mandati (res) -> tip cenzusa
   function normalize(s) {
     s.elections.forEach((e) => e.lists.forEach((l) => {
-      if (!l.type) {
-        const t = String(l.thr ?? '').trim();
-        l.type = t === '' ? 'opsti' : Number(t.replace(',', '.')) === 0.7 ? 'manjina' : Number(t.replace(',', '.')) === 0.35 ? 'hrvati' : 'drugi';
-        l.grp = l.grp || '';
+      if (!['opsti', 'manjina', 'hrvati'].includes(l.type)) {
+        const t = Number(String(l.thr ?? '').trim().replace(',', '.'));
+        l.type = t === 0.7 ? 'manjina' : t === 0.35 ? 'hrvati' : 'opsti';
       }
-      delete l.res;
+      delete l.res; delete l.grp; delete l.thr;
     }));
     return s;
   }
@@ -46,7 +45,7 @@
       this.save();
       return e;
     },
-    newList(name) { return { id: uid('l'), name: name || 'Nova lista', votes: 0, seats: 0, type: 'opsti', grp: '', thr: '' }; },
+    newList(name) { return { id: uid('l'), name: name || 'Nova lista', votes: 0, seats: 0, type: 'opsti' }; },
     newUnit(name) { return { id: uid('u'), name: name || 'Nova jedinica', valid: 0, votes: {} }; },
     duplicate(e) {
       const c = JSON.parse(JSON.stringify(e));

@@ -124,7 +124,6 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--accent-soft
 .thr-cell { white-space: nowrap; }
 .thr-cell select { border: 1px solid var(--border); border-radius: 6px; padding: 3px 4px; background: var(--input-bg); font-size: 13px; }
 table.grid .thr-cell input { margin-left: 6px; }
-table.grid input.grp { width: 100px; text-align: left; }
 .clip { max-width: 380px; overflow: hidden; text-overflow: ellipsis; }
 .clip-h { max-width: 120px; overflow: hidden; text-overflow: ellipsis; }
 .chip { max-width: 320px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
