@@ -1,6 +1,6 @@
 [package]
 name = "izborni-indeksi"
-version = "0.2.0"
+version = "0.3.0"
 description = "Izborni indeksi"
 edition = "2021"
 

@@ -60,8 +60,10 @@
   const CITES = {
     results: `<b>Izvori formula.</b> Indeks najmanjih kvadrata (LSq): Gallagher, M. (1991). Proportionality, disproportionality and electoral systems. <i>Electoral Studies</i> 10(1): 33–51.
       Efektivni broj stranaka (ENEP, ENPP): Laakso, M. i Taagepera, R. (1979). “Effective” number of parties: a measure with application to West Europe. <i>Comparative Political Studies</i> 12(1): 3–27.`,
-    alloc: `<b>Metode.</b> D'Hondt (najveći količnik, djelioci 1, 2, 3…), Sainte-Laguë (djelioci 1, 3, 5…) i Hare–Niemeyer (prosta kvota i najveći ostatak).
-      Kolone „poseban cenzus“ i „garantovani mandati“ služe za modelovanje posebnih pravila za manjinske liste. U priloženim izborima tako se dobija stvarna raspodjela mandata, osim 2009, kad je postojala posebna izborna jedinica za albansku manjinu.`,
+    alloc: `<b>Metode.</b> D'Hondt (djelioci 1, 2, 3…), Sainte-Laguë (djelioci 1, 3, 5…) i Hare–Niemeyer (prosta kvota i najveći ostatak).
+      <b>Cenzus po listi</b> (čl. 94 Zakona o izboru odbornika i poslanika, od izmjena iz 2011): <i>Manjinski 0,7%</i> – ako nijedna lista iste manjine ne pređe opšti cenzus, liste te manjine sa najmanje 0,7% glasova učestvuju u raspodjeli kao jedna zbirna lista, sa najviše tri mandata, koji se zatim dijele među njima istom metodom;
+      <i>Hrvatski 0,35%</i> – ako nijedna lista hrvatskog naroda ne ispuni te uslove, najuspješnija sa najmanje 0,35% glasova dobija jedan mandat;
+      <i>Drugi</i> – sopstveni cenzus za tu listu. Na izborima 2006. i 2009. važio je drugi sistem (opšti cenzus i posebna izborna jedinica sa pet mandata za albansku manjinu), koji aplikacija ne modeluje.`,
     nat: `<b>Autor formule.</b> Ponderisani indeks nacionalizacije stranaka (PNSw) i standardizovani indeks nacionalizacije (sPNS) razvio je <b>Daniel Bochsler</b> (Univerzitet u Cirihu):
       Bochsler, D. (2010). Measuring party nationalisation: A new Gini-based indicator that corrects for the number of units. <i>Electoral Studies</i> 29(1): 155–168.
       Indeks se oslanja na Gini-zasnovan indeks nacionalizacije: Jones, M. P. i Mainwaring, S. (2003). The nationalization of parties and party systems. <i>Party Politics</i> 9(2): 139–166.
@@ -80,7 +82,7 @@
   function calcAlloc(e) {
     const V = e.lists.map((l) => parseNum(l.votes));
     const r = I.allocate({ votes: V, seats: parseNum(e.seats), method: e.method, threshold: parseNum(e.threshold),
-      thresholds: e.lists.map((l) => (String(l.thr ?? '').trim() === '' ? null : parseNum(l.thr))), reserved: e.lists.map((l) => parseNum(l.res)) });
+      types: e.lists.map((l) => l.type || 'opsti'), groups: e.lists.map((l) => l.grp || ''), thresholds: e.lists.map((l) => parseNum(l.thr)) });
     return { V, tv: I.sum(V), ...r, lsq: I.lsq(V, r.seats) };
   }
   function unitValid(u, e) {
@@ -124,6 +126,24 @@
     </div>`;
   }
 
+  // Izbor cenzusa po listi
+  const THR_LABEL = { opsti: 'Opšti', manjina: 'Manjinski 0,7%', hrvati: 'Hrvatski 0,35%', drugi: 'Drugi…' };
+  function thrLabel(l, e) {
+    const t = l.type || 'opsti';
+    if (t === 'opsti') return `Opšti (${fmt(parseNum(e.threshold), 1)}%)`;
+    if (t === 'manjina') return 'Manjinski 0,7%' + (l.grp ? ' – ' + l.grp : '');
+    if (t === 'hrvati') return 'Hrvatski 0,35%';
+    return `Drugi (${fmt(parseNum(l.thr), 2)}%)`;
+  }
+  function thrCell(l, e) {
+    const t = l.type || 'opsti';
+    const opts = Object.entries(THR_LABEL).map(([k, v]) => `<option value="${k}" ${k === t ? 'selected' : ''}>${k === 'opsti' ? `Opšti (${fmt(parseNum(e.threshold), 1)}%)` : v}</option>`).join('');
+    return `<td class="l thr-cell"><select data-f="type" title="Cenzus koji važi za ovu listu">${opts}</select>${
+      t === 'manjina' ? `<input class="grp" data-f="grp" list="grp-list" value="${esc(l.grp || '')}" placeholder="manjina" title="Liste iste manjine se sabiraju">` : ''}${
+      t === 'drugi' ? `<input class="sm" data-f="thr" value="${esc(l.thr ?? '')}" placeholder="%" inputmode="decimal">` : ''}</td>`;
+  }
+  const grpDatalist = (e) => `<datalist id="grp-list">${[...new Set(['Albanci', 'Bošnjaci', ...e.lists.map((l) => l.grp).filter(Boolean)])].map((g) => `<option value="${esc(g)}">`).join('')}</datalist>`;
+
   const MODULES = {
     results: {
       title: 'Rezultati i indeksi',
@@ -132,16 +152,17 @@
           <td class="l"><input class="name" data-f="name" title="${esc(l.name)}" value="${esc(l.name)}" placeholder="Naziv liste ili stranke"></td>
           <td><input data-f="votes" value="${esc(l.votes)}" inputmode="decimal"></td>
           <td><input class="sm" data-f="seats" value="${esc(l.seats)}" inputmode="numeric"></td>
+          ${thrCell(l, e)}
           <td data-out="pv-${l.id}"></td><td data-out="ps-${l.id}"></td>
           <td class="no-print"><button class="icon-btn" data-act="del-list" title="Ukloni listu">✕</button></td></tr>`).join('');
         return `${printHead(e, 'Rezultati i indeksi')}${electionHead(e, `
           <button class="btn small" data-act="paste-lists">Zalijepi iz Excela</button>
           <button class="btn small" data-act="import-lists">Uvezi XLSX/CSV</button>`)}
           <div class="table-wrap"><table class="grid">
-            <thead><tr><th class="l">Lista / stranka</th><th>Glasovi</th><th>Mandati</th><th>% glasova</th><th>% mandata</th><th class="no-print"></th></tr></thead>
+            <thead><tr><th class="l">Lista / stranka</th><th>Glasovi</th><th>Mandati</th><th class="l">Cenzus</th><th>% glasova</th><th>% mandata</th><th class="no-print"></th></tr></thead>
             <tbody>${rows}</tbody>
-            <tfoot><tr><td class="l">Ukupno</td><td data-out="tv"></td><td data-out="ts"></td><td>100,00</td><td>100,00</td><td class="no-print"></td></tr></tfoot>
-          </table></div>
+            <tfoot><tr><td class="l">Ukupno</td><td data-out="tv"></td><td data-out="ts"></td><td></td><td>100,00</td><td>100,00</td><td class="no-print"></td></tr></tfoot>
+          </table></div>${grpDatalist(e)}
           <div class="row no-print" style="margin-top:8px"><button class="btn small" data-act="add-list">+ Dodaj listu</button>
             <span class="muted" style="font-size:12px">Imena lista mijenjaš direktno u tabeli. „Ostali“ unesi kao posljednji red, ako ih ima.</span></div>
           <div class="metrics">
@@ -160,8 +181,8 @@
       table(e) {
         const r = calcResults(e);
         return {
-          header: ['Lista', 'Glasovi', 'Mandati', '% glasova', '% mandata'],
-          rows: e.lists.map((l, i) => [l.name, r.V[i], r.M[i], pct(r.V[i], r.tv), pct(r.M[i], r.ts)]),
+          header: ['Lista', 'Glasovi', 'Mandati', 'Cenzus', '% glasova', '% mandata'],
+          rows: e.lists.map((l, i) => [l.name, r.V[i], r.M[i], thrLabel(l, e), pct(r.V[i], r.tv), pct(r.M[i], r.ts)]),
           summary: [['LSq (Gallagher)', r.lsq], ['ENEP', r.enep], ['ENPP', r.enpp], ['Ukupno glasova', r.tv], ['Ukupno mandata', r.ts]],
         };
       },
@@ -172,8 +193,7 @@
       render(e) {
         const rows = e.lists.map((l) => `<tr data-id="${l.id}">
           <td class="l clip" title="${esc(l.name)}">${esc(l.name)}</td><td>${fmtInt(parseNum(l.votes))}</td><td data-out="pv-${l.id}"></td>
-          <td><input class="sm" data-f="thr" value="${esc(l.thr ?? '')}" placeholder="opšti"></td>
-          <td><input class="sm" data-f="res" value="${esc(l.res || '')}" placeholder="0"></td>
+          ${thrCell(l, e)}<td class="l muted" data-out="nt-${l.id}" style="font-size:12px"></td>
           <td data-out="al-${l.id}" style="font-weight:600"></td><td>${fmtInt(parseNum(l.seats))}</td><td data-out="df-${l.id}"></td></tr>`).join('');
         return `${printHead(e, 'Raspodjela mandata')}${electionHead(e)}
           <div class="row" style="margin-bottom:12px">
@@ -187,10 +207,10 @@
             <button class="btn small accent" data-act="apply-alloc">Upiši kao stvarne mandate</button>
           </div>
           <div class="table-wrap"><table class="grid">
-            <thead><tr><th class="l">Lista</th><th>Glasovi</th><th>% glasova</th><th>Poseban cenzus (%)</th><th>Garantovani mandati</th><th>Dodijeljeno</th><th>Stvarno</th><th>Razlika</th></tr></thead>
+            <thead><tr><th class="l">Lista</th><th>Glasovi</th><th>% glasova</th><th class="l">Cenzus</th><th class="l">Napomena</th><th>Dodijeljeno</th><th>Stvarno</th><th>Razlika</th></tr></thead>
             <tbody>${rows}</tbody>
             <tfoot><tr><td class="l">Ukupno</td><td data-out="tv"></td><td></td><td></td><td></td><td data-out="tal"></td><td data-out="tst"></td><td></td></tr></tfoot>
-          </table></div>
+          </table></div>${grpDatalist(e)}
           <div data-out-html="allocwarn"></div>
           <div class="metrics"><div class="metric"><div class="k">LSq za ovu raspodjelu</div><div class="v" data-out="lsq"></div><div class="h">Gallagherov indeks disproporcionalnosti</div></div></div>
           <div class="cite">${CITES.alloc}</div>`;
@@ -200,6 +220,7 @@
         e.lists.forEach((l, i) => {
           o['pv-' + l.id] = fmt(pct(r.V[i], r.tv));
           o['al-' + l.id] = r.eligible[i] || r.seats[i] ? String(r.seats[i]) : '—';
+          o['nt-' + l.id] = r.note[i] || (r.eligible[i] ? '' : 'ispod cenzusa');
           const d = r.seats[i] - parseNum(l.seats);
           o['df-' + l.id] = d === 0 ? '0' : (d > 0 ? '+' : '') + d;
         });
@@ -211,8 +232,8 @@
       table(e) {
         const r = calcAlloc(e);
         return {
-          header: ['Lista', 'Glasovi', '% glasova', 'Poseban cenzus', 'Garantovani', 'Dodijeljeno', 'Stvarno', 'Razlika'],
-          rows: e.lists.map((l, i) => [l.name, r.V[i], pct(r.V[i], r.tv), l.thr === '' ? '' : parseNum(l.thr), parseNum(l.res), r.seats[i], parseNum(l.seats), r.seats[i] - parseNum(l.seats)]),
+          header: ['Lista', 'Glasovi', '% glasova', 'Cenzus', 'Napomena', 'Dodijeljeno', 'Stvarno', 'Razlika'],
+          rows: e.lists.map((l, i) => [l.name, r.V[i], pct(r.V[i], r.tv), thrLabel(l, e), r.note[i] || (r.eligible[i] ? '' : 'ispod cenzusa'), r.seats[i], parseNum(l.seats), r.seats[i] - parseNum(l.seats)]),
           summary: [['Metoda', { dhondt: "D'Hondt", 'sainte-lague': 'Sainte-Laguë', hare: 'Hare–Niemeyer' }[e.method]], ['Broj mandata', parseNum(e.seats)], ['Opšti cenzus (%)', parseNum(e.threshold)], ['LSq za raspodjelu', r.lsq]],
         };
       },
@@ -394,7 +415,7 @@
       if (t.dataset.bind === 'name') renderNav();
     } else if (t.dataset.f && e) {
       const l = e.lists.find((x) => x.id === t.closest('tr').dataset.id);
-      if (l) l[t.dataset.f] = t.dataset.f === 'name' ? t.value : t.value.trim();
+      if (l) l[t.dataset.f] = t.dataset.f === 'name' || t.dataset.f === 'grp' ? t.value : t.value.trim();
     } else if ((t.dataset.uf || t.dataset.uv) && e) {
       const u = e.units.find((x) => x.id === t.closest('tr').dataset.uid);
       if (u) { if (t.dataset.uf) u[t.dataset.uf] = t.value; else u.votes[t.dataset.uv] = t.value.trim(); }
@@ -404,6 +425,7 @@
   main.addEventListener('change', (ev) => {
     const t = ev.target;
     if (t.dataset.vol) { S.state.vol[t.dataset.vol] = t.value; S.save(); render(); }
+    else if (t.dataset.f === 'type') { S.save(); render(); main.querySelector(`tr[data-id="${t.closest('tr').dataset.id}"] [data-f="${t.value === 'manjina' ? 'grp' : t.value === 'drugi' ? 'thr' : 'type'}"]`)?.focus(); }
     else if (t.tagName === 'SELECT' && t.dataset.bind) { S.save(); paint(); }
   });
 

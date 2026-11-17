@@ -23,57 +23,87 @@
     return h > 0 ? 1 / h : NaN;
   }
 
-  // Raspodjela mandata. thresholds: niz (u %), null/'' = koristi opšti cenzus.
-  // reserved: garantovani mandati po listi (posebna pravila za manjinske liste);
-  // takva lista dobija tačno toliko mandata i ne učestvuje u raspodjeli ostatka.
-  function allocate({ votes, seats, method = 'dhondt', threshold = 0, thresholds = [], reserved = [] }) {
-    const total = sum(votes);
-    const n = votes.length;
-    const res = votes.map((_, i) => Math.max(0, Math.floor(num(reserved[i]))));
-    const eligible = votes.map((v, i) => {
-      if (res[i] > 0) return false;
-      const t = thresholds[i] === null || thresholds[i] === undefined || thresholds[i] === '' ? threshold : Number(thresholds[i]);
-      return total > 0 && (num(v) / total) * 100 >= t && num(v) > 0;
-    });
-    const out = res.slice();
-    seats = Math.max(0, seats - sum(res));
+  // Raspodjela mandata (D'Hondt, Sainte-Laguë, Hare–Niemeyer) sa cenzusom po listi.
+  // types[i]: 'opsti' (opšti cenzus), 'manjina' (manjinska lista), 'hrvati' (lista hrvatskog naroda), 'drugi' (thresholds[i] %)
+  // groups[i]: naziv manjine; liste iste manjine se sabiraju (čl. 94 st. 2 t. 1 Zakona o izboru odbornika i poslanika)
+  // rules: { minority: 0.7, cap: 3, croat: 0.35 }
+  function divisorAlloc(v, seats, method) {
+    const out = v.map(() => 0);
     let tie = false;
+    if (!v.some((x) => x > 0) || seats <= 0) return { seats: out, tie };
     if (method === 'hare') {
-      const ev = votes.reduce((s, v, i) => s + (eligible[i] ? num(v) : 0), 0);
-      if (ev === 0) return { seats: out, eligible, tie };
-      const q = ev / seats;
-      const rem = [];
-      votes.forEach((v, i) => {
-        if (!eligible[i]) return;
-        const exact = num(v) / q;
-        out[i] = Math.floor(exact);
-        rem.push({ i, r: exact - out[i], v: num(v) });
-      });
-      let left = seats - rem.reduce((s, x) => s + out[x.i], 0);
-      rem.sort((a, b) => b.r - a.r || b.v - a.v);
-      if (left > 0 && left < rem.length && rem[left - 1].r === rem[left].r) tie = true;
+      const ev = sum(v), q = ev / seats;
+      const rem = v.map((x, i) => { out[i] = Math.floor(x / q); return { i, r: x / q - out[i], x }; }).filter((r) => r.x > 0);
+      const left = seats - sum(out);
+      rem.sort((a, b) => b.r - a.r || b.x - a.x);
+      if (left > 0 && left < rem.length && Math.abs(rem[left - 1].r - rem[left].r) < 1e-12) tie = true;
       for (let k = 0; k < left && k < rem.length; k++) out[rem[k].i]++;
-      return { seats: out, eligible, tie, quota: q };
+      return { seats: out, tie };
     }
     const div = method === 'sainte-lague' ? (s) => 2 * s + 1 : (s) => s + 1;
     let lastQ = null;
-    const start = sum(out);
     for (let k = 0; k < seats; k++) {
       let best = -1, bq = -1;
-      for (let i = 0; i < n; i++) {
-        if (!eligible[i]) continue;
-        const q = num(votes[i]) / div(out[i]);
-        if (q > bq || (q === bq && num(votes[i]) > num(votes[best]))) { bq = q; best = i; }
-      }
+      v.forEach((x, i) => { if (x <= 0) return; const q = x / div(out[i]); if (q > bq || (q === bq && x > v[best])) { bq = q; best = i; } });
       if (best < 0) break;
-      out[best]++;
-      lastQ = bq;
+      out[best]++; lastQ = bq;
     }
-    // provjera neriješenog posljednjeg mandata
-    if (lastQ !== null) {
-      for (let i = 0; i < n; i++) if (eligible[i] && Math.abs(num(votes[i]) / div(out[i]) - lastQ) < 1e-9) tie = true;
+    if (lastQ !== null) v.forEach((x, i) => { if (x > 0 && Math.abs(x / div(out[i]) - lastQ) < 1e-9) tie = true; });
+    return { seats: out, tie };
+  }
+
+  function allocate({ votes, seats, method = 'dhondt', threshold = 3, types = [], groups = [], thresholds = [], rules = {} }) {
+    const R = { minority: 0.7, cap: 3, croat: 0.35, ...rules };
+    const n = votes.length, V = votes.map(num), total = sum(V);
+    const pct = (i) => (total > 0 ? (V[i] / total) * 100 : 0);
+    const type = (i) => types[i] || 'opsti';
+    const out = new Array(n).fill(0);
+    const eff = V.map((_, i) => (type(i) === 'manjina' ? R.minority : type(i) === 'hrvati' ? R.croat : type(i) === 'drugi' ? num(thresholds[i]) : threshold));
+    const eligible = new Array(n).fill(false);
+    const note = new Array(n).fill('');
+    // 1) liste sa opštim ili sopstvenim cenzusom
+    const units = []; // { members:[i], votes, cap }
+    for (let i = 0; i < n; i++) {
+      const t = type(i);
+      if ((t === 'opsti' || t === 'drugi') && V[i] > 0 && pct(i) >= eff[i]) units.push({ members: [i], votes: V[i] });
     }
-    return { seats: out, eligible, tie };
+    // 2) manjinske liste: koja pređe opšti cenzus, ide samostalno; inače se liste iste manjine sa >= 0,7% sabiraju (najviše 3 mandata)
+    const grpNames = [...new Set(V.map((_, i) => (type(i) === 'manjina' ? String(groups[i] || '').trim().toLowerCase() || '#' + i : null)).filter(Boolean))];
+    grpNames.forEach((g) => {
+      const mem = V.map((_, i) => i).filter((i) => type(i) === 'manjina' && (String(groups[i] || '').trim().toLowerCase() || '#' + i) === g);
+      const over = mem.filter((i) => pct(i) >= threshold);
+      if (over.length) { over.forEach((i) => units.push({ members: [i], votes: V[i] })); return; }
+      const ok = mem.filter((i) => V[i] > 0 && pct(i) >= R.minority);
+      if (ok.length) { units.push({ members: ok, votes: sum(ok.map((i) => V[i])), cap: R.cap, pooled: ok.length > 1 }); ok.forEach((i) => (note[i] = ok.length > 1 ? 'zbirna lista' : '')); }
+    });
+    // 3) hrvatske liste: samostalno ako pređu opšti cenzus; inače najuspješnija sa >= 0,35% dobija jedan mandat
+    const cro = V.map((_, i) => i).filter((i) => type(i) === 'hrvati');
+    let fixed = 0;
+    const croOver = cro.filter((i) => pct(i) >= threshold);
+    if (croOver.length) croOver.forEach((i) => units.push({ members: [i], votes: V[i] }));
+    else if (cro.length) {
+      const best = cro.reduce((a, b) => (V[b] > V[a] ? b : a));
+      if (pct(best) >= R.croat && V[best] > 0) { out[best] = 1; fixed = 1; eligible[best] = true; note[best] = '1 mandat (0,35%)'; }
+    }
+    units.forEach((u) => u.members.forEach((i) => (eligible[i] = true)));
+    // 4) raspodjela među jedinicama, uz ograničenje broja mandata zbirnih lista
+    let active = units.slice(), avail = Math.max(0, seats - fixed), tie = false, guard = 0;
+    const unitSeats = new Map();
+    while (guard++ < 50) {
+      const r = divisorAlloc(active.map((u) => u.votes), avail, method);
+      const over = active.findIndex((u, k) => u.cap && r.seats[k] > u.cap);
+      if (over < 0) { active.forEach((u, k) => unitSeats.set(u, r.seats[k])); tie = r.tie; break; }
+      unitSeats.set(active[over], active[over].cap);
+      avail -= active[over].cap;
+      active = active.filter((_, k) => k !== over);
+    }
+    // 5) mandati zbirne liste dijele se među njenim listama istom metodom
+    units.forEach((u) => {
+      const s = unitSeats.get(u) || 0;
+      if (u.members.length === 1) out[u.members[0]] += s;
+      else { const r = divisorAlloc(u.members.map((i) => V[i]), s, method); u.members.forEach((i, k) => (out[i] += r.seats[k])); }
+    });
+    return { seats: out, eligible, tie, eff, note };
   }
 
   // Bochsler (2010): ponderisani PNS i standardizovani PNS (10 jedinica).

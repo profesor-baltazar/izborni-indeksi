@@ -17,8 +17,21 @@
     };
   }
 
+  // Starije verzije: poseban cenzus (thr) i garantovani mandati (res) -> tip cenzusa
+  function normalize(s) {
+    s.elections.forEach((e) => e.lists.forEach((l) => {
+      if (!l.type) {
+        const t = String(l.thr ?? '').trim();
+        l.type = t === '' ? 'opsti' : Number(t.replace(',', '.')) === 0.7 ? 'manjina' : Number(t.replace(',', '.')) === 0.35 ? 'hrvati' : 'drugi';
+        l.grp = l.grp || '';
+      }
+      delete l.res;
+    }));
+    return s;
+  }
+
   const Store = {
-    state: load(),
+    state: normalize(load()),
     uid,
     save() {
       try { localStorage.setItem(KEY, JSON.stringify(this.state)); } catch (e) { console.error(e); }
@@ -33,7 +46,7 @@
       this.save();
       return e;
     },
-    newList(name) { return { id: uid('l'), name: name || 'Nova lista', votes: 0, seats: 0, thr: '', res: 0 }; },
+    newList(name) { return { id: uid('l'), name: name || 'Nova lista', votes: 0, seats: 0, type: 'opsti', grp: '', thr: '' }; },
     newUnit(name) { return { id: uid('u'), name: name || 'Nova jedinica', valid: 0, votes: {} }; },
     duplicate(e) {
       const c = JSON.parse(JSON.stringify(e));
@@ -48,7 +61,7 @@
       this.save();
     },
     linkKey(a, b) { return a + '|' + b; },
-    replaceAll(s) { this.state = s; this.save(); },
+    replaceAll(s) { this.state = normalize(s); this.save(); },
   };
   window.Store = Store;
 })();

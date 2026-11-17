@@ -48,8 +48,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
 select option { background: var(--surface); color: var(--text); }
 
 .topbar { display: flex; align-items: center; gap: 12px; padding: 8px 16px; background: var(--surface); border-bottom: 1px solid var(--border); }
-.logo { width: 30px; height: 30px; border-radius: 8px; background: var(--accent); color: var(--on-accent); display: flex; align-items: center; justify-content: center; }
-.logo svg { width: 18px; height: 18px; }
+.logo { width: 30px; height: 30px; display: block; }
 .brand-title { font-weight: 600; font-size: 16px; }
 .spacer { flex: 1; }
 .pill { font-size: 12px; padding: 3px 10px; border-radius: 999px; background: var(--surface-2); color: var(--muted); border: 1px solid var(--border); }
@@ -122,6 +121,10 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--accent-soft
 .link-row { display: grid; grid-template-columns: minmax(160px, 1fr) minmax(0, 2fr); gap: 10px; align-items: start; padding: 8px 10px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; }
 .chips { display: flex; flex-wrap: wrap; gap: 6px; }
 .chip { font-size: 12px; padding: 3px 9px; border-radius: 999px; border: 1px solid var(--border); cursor: pointer; user-select: none; background: var(--input-bg); }
+.thr-cell { white-space: nowrap; }
+.thr-cell select { border: 1px solid var(--border); border-radius: 6px; padding: 3px 4px; background: var(--input-bg); font-size: 13px; }
+table.grid .thr-cell input { margin-left: 6px; }
+table.grid input.grp { width: 100px; text-align: left; }
 .clip { max-width: 380px; overflow: hidden; text-overflow: ellipsis; }
 .clip-h { max-width: 120px; overflow: hidden; text-overflow: ellipsis; }
 .chip { max-width: 320px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

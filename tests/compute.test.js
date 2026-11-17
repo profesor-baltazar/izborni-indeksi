@@ -12,7 +12,8 @@ close(I.enp(V), 3.964396, 1e-6, 'ENEP');
 close(I.enp(S), 3.708875, 1e-6, 'ENPP');
 close(I.lsq(V, S), 1.7064, 1e-3, 'LSq'); // Gallagherov fajl daje 1,7043 jer zaokružuje procente na 2 decimale
 
-const r = I.allocate({ votes: V, seats: 81, threshold: 3, thresholds: e.lists.map((l) => (l.thr === '' ? null : Number(l.thr))), reserved: e.lists.map((l) => l.res) });
+const args = (x) => ({ votes: x.lists.map((l) => l.votes), seats: 81, threshold: 3, types: x.lists.map((l) => l.type), groups: x.lists.map((l) => l.grp), thresholds: x.lists.map((l) => l.thr) });
+const r = I.allocate(args(e));
 assert.deepStrictEqual(r.seats, S, "D'Hondt CG 2020");
 
 const units = e.units.map((u) => ({ valid: u.valid, votes: e.lists.map((l) => u.votes[l.id]) }));
@@ -31,9 +32,9 @@ const vol = I.volatility(
   [['a', 'a'], ['b', 'bc'], ['c', 'bc']]
 );
 close(vol.total, 20, 1e-9, 'TV'); close(vol.typeA, 10, 1e-9, 'Tip A'); close(vol.typeB, 10, 1e-9, 'Tip B');
-// Raspodjela mandata svih izbora (osim 2009, kad je postojala posebna izborna jedinica za albansku manjinu)
-for (const x of window.SEED_ELECTIONS.filter((x) => x.id !== 'cg2009')) {
-  const a = I.allocate({ votes: x.lists.map((l) => l.votes), seats: 81, threshold: 3, thresholds: x.lists.map((l) => (l.thr === '' ? null : Number(l.thr))), reserved: x.lists.map((l) => l.res) });
+// Raspodjela mandata po zakonskim pravilima (od 2012; 2006. i 2009. imale su posebnu izbornu jedinicu za Albance)
+for (const x of window.SEED_ELECTIONS.filter((x) => !['cg2006', 'cg2009'].includes(x.id))) {
+  const a = I.allocate(args(x));
   assert.deepStrictEqual(a.seats, x.lists.map((l) => l.seats), "D'Hondt " + x.id);
 }
 // Nacionalizacija 2023 (Bochsler, Nacionalization_Index_2023)
