@@ -11,7 +11,7 @@
     return {
       elections: JSON.parse(JSON.stringify(window.SEED_ELECTIONS || [])),
       links: {},
-      current: (window.SEED_ELECTIONS || [])[0]?.id || null,
+      current: (window.SEED_ELECTIONS || []).slice(-1)[0]?.id || null,
       module: 'results',
       vol: { a: null, b: null, basis: 'votes' },
     };

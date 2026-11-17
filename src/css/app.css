@@ -92,7 +92,7 @@ table.grid th { font-size: 12px; font-weight: 600; color: var(--muted); backgrou
 table.grid td.l, table.grid th.l { text-align: left; }
 table.grid tfoot td { font-weight: 600; background: var(--surface-2); }
 table.grid input { width: 100px; text-align: right; border: 1px solid var(--border); border-radius: 6px; padding: 3px 6px; background: var(--input-bg); }
-table.grid input.name { width: 100%; min-width: 160px; text-align: left; }
+table.grid input.name { width: 100%; min-width: 360px; text-align: left; }
 table.grid input.sm { width: 64px; }
 input:focus, select:focus, textarea:focus { outline: 2px solid var(--accent-soft); border-color: var(--accent) !important; }
 .table-wrap { overflow: auto; max-height: 60vh; border: 1px solid var(--border); border-radius: 12px; }
@@ -122,6 +122,9 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--accent-soft
 .link-row { display: grid; grid-template-columns: minmax(160px, 1fr) minmax(0, 2fr); gap: 10px; align-items: start; padding: 8px 10px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; }
 .chips { display: flex; flex-wrap: wrap; gap: 6px; }
 .chip { font-size: 12px; padding: 3px 9px; border-radius: 999px; border: 1px solid var(--border); cursor: pointer; user-select: none; background: var(--input-bg); }
+.clip { max-width: 380px; overflow: hidden; text-overflow: ellipsis; }
+.clip-h { max-width: 120px; overflow: hidden; text-overflow: ellipsis; }
+.chip { max-width: 320px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .chip.on { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
 
 .exportbar { display: flex; gap: 8px; align-items: center; padding: 8px 16px; background: var(--surface); border-top: 1px solid var(--border); }

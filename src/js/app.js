@@ -61,7 +61,7 @@
     results: `<b>Izvori formula.</b> Indeks najmanjih kvadrata (LSq): Gallagher, M. (1991). Proportionality, disproportionality and electoral systems. <i>Electoral Studies</i> 10(1): 33–51.
       Efektivni broj stranaka (ENEP, ENPP): Laakso, M. i Taagepera, R. (1979). “Effective” number of parties: a measure with application to West Europe. <i>Comparative Political Studies</i> 12(1): 3–27.`,
     alloc: `<b>Metode.</b> D'Hondt (najveći količnik, djelioci 1, 2, 3…), Sainte-Laguë (djelioci 1, 3, 5…) i Hare–Niemeyer (prosta kvota i najveći ostatak).
-      Kolone „poseban cenzus“ i „garantovani mandati“ služe za modelovanje posebnih pravila za manjinske liste; primjer CG 2020 tako daje stvarnu raspodjelu od 81 mandata.`,
+      Kolone „poseban cenzus“ i „garantovani mandati“ služe za modelovanje posebnih pravila za manjinske liste. U priloženim izborima tako se dobija stvarna raspodjela mandata, osim 2009, kad je postojala posebna izborna jedinica za albansku manjinu.`,
     nat: `<b>Autor formule.</b> Ponderisani indeks nacionalizacije stranaka (PNSw) i standardizovani indeks nacionalizacije (sPNS) razvio je <b>Daniel Bochsler</b> (Univerzitet u Cirihu):
       Bochsler, D. (2010). Measuring party nationalisation: A new Gini-based indicator that corrects for the number of units. <i>Electoral Studies</i> 29(1): 155–168.
       Indeks se oslanja na Gini-zasnovan indeks nacionalizacije: Jones, M. P. i Mainwaring, S. (2003). The nationalization of parties and party systems. <i>Party Politics</i> 9(2): 139–166.
@@ -129,7 +129,7 @@
       title: 'Rezultati i indeksi',
       render(e) {
         const rows = e.lists.map((l) => `<tr data-id="${l.id}">
-          <td class="l"><input class="name" data-f="name" value="${esc(l.name)}" placeholder="Naziv liste ili stranke"></td>
+          <td class="l"><input class="name" data-f="name" title="${esc(l.name)}" value="${esc(l.name)}" placeholder="Naziv liste ili stranke"></td>
           <td><input data-f="votes" value="${esc(l.votes)}" inputmode="decimal"></td>
           <td><input class="sm" data-f="seats" value="${esc(l.seats)}" inputmode="numeric"></td>
           <td data-out="pv-${l.id}"></td><td data-out="ps-${l.id}"></td>
@@ -171,7 +171,7 @@
       title: 'Raspodjela mandata',
       render(e) {
         const rows = e.lists.map((l) => `<tr data-id="${l.id}">
-          <td class="l">${esc(l.name)}</td><td>${fmtInt(parseNum(l.votes))}</td><td data-out="pv-${l.id}"></td>
+          <td class="l clip" title="${esc(l.name)}">${esc(l.name)}</td><td>${fmtInt(parseNum(l.votes))}</td><td data-out="pv-${l.id}"></td>
           <td><input class="sm" data-f="thr" value="${esc(l.thr ?? '')}" placeholder="opšti"></td>
           <td><input class="sm" data-f="res" value="${esc(l.res || '')}" placeholder="0"></td>
           <td data-out="al-${l.id}" style="font-weight:600"></td><td>${fmtInt(parseNum(l.seats))}</td><td data-out="df-${l.id}"></td></tr>`).join('');
@@ -221,13 +221,13 @@
     nat: {
       title: 'Nacionalizacija stranaka',
       render(e) {
-        const head = e.lists.map((l) => `<th title="${esc(l.name)}">${esc(l.name)}</th>`).join('');
+        const head = e.lists.map((l) => `<th class="clip-h" title="${esc(l.name)}">${esc(l.name)}</th>`).join('');
         const rows = e.units.map((u) => `<tr data-uid="${u.id}">
           <td class="l"><input class="name" data-uf="name" value="${esc(u.name)}" placeholder="Opština / jedinica"></td>
           <td><input data-uf="valid" value="${esc(u.valid)}"></td>
           ${e.lists.map((l) => `<td><input class="sm" data-uv="${l.id}" value="${esc(u.votes[l.id] ?? '')}"></td>`).join('')}
           <td class="no-print"><button class="icon-btn" data-act="del-unit" title="Ukloni jedinicu">✕</button></td></tr>`).join('');
-        const res = e.lists.map((l) => `<tr><td class="l">${esc(l.name)}</td><td data-out="ns-${l.id}"></td><td data-out="nsh-${l.id}"></td><td data-out="np-${l.id}"></td><td data-out="nz-${l.id}" style="font-weight:600"></td><td data-out="nc-${l.id}"></td></tr>`).join('');
+        const res = e.lists.map((l) => `<tr><td class="l clip" title="${esc(l.name)}">${esc(l.name)}</td><td data-out="ns-${l.id}"></td><td data-out="nsh-${l.id}"></td><td data-out="np-${l.id}"></td><td data-out="nz-${l.id}" style="font-weight:600"></td><td data-out="nc-${l.id}"></td></tr>`).join('');
         return `${printHead(e, 'Nacionalizacija stranaka')}${electionHead(e, `
           <button class="btn small" data-act="paste-units">Zalijepi iz Excela</button>
           <button class="btn small" data-act="import-units">Uvezi XLSX/CSV</button>`)}
@@ -314,7 +314,7 @@
         if (!S.state.links[key]) { S.state.links[key] = autoLinks(A, B); S.save(); }
         const links = S.state.links[key];
         const linkRows = B.lists.map((lb) => `<div class="link-row"><div><b>${esc(lb.name)}</b><div class="muted" style="font-size:12px">prethodnik(ci):</div></div>
-          <div class="chips">${A.lists.map((la) => `<span class="chip ${links.some(([x, y]) => x === la.id && y === lb.id) ? 'on' : ''}" data-act="toggle-link" data-a="${la.id}" data-b="${lb.id}">${esc(la.name)}</span>`).join('')}</div></div>`).join('');
+          <div class="chips">${A.lists.map((la) => `<span class="chip ${links.some(([x, y]) => x === la.id && y === lb.id) ? 'on' : ''}" data-act="toggle-link" data-a="${la.id}" data-b="${lb.id}" title="${esc(la.name)}">${esc(la.name)}</span>`).join('')}</div></div>`).join('');
         return `${printHead(null, 'Volatilnost')}<div class="head"><h1>Volatilnost</h1></div>
           <div class="row" style="margin-bottom:12px">
             <label class="field">Prvi izbori (t₁)<select data-vol="a">${opts(v.a)}</select></label>
@@ -327,6 +327,7 @@
             <div class="metric alt"><div class="k">Tip A (nove i ugašene stranke)</div><div class="v" data-out="ta"></div></div>
             <div class="metric alt"><div class="k">Tip B (stabilne stranke)</div><div class="v" data-out="tb"></div></div>
           </div>
+          <div data-out-html="volwarn"></div>
           <h2>Promjene po strankama</h2>
           <div class="table-wrap"><table class="grid"><thead><tr><th class="l">Na t₁</th><th class="l">Na t₂</th><th>% t₁</th><th>% t₂</th><th>Promjena</th><th>Tip</th></tr></thead><tbody data-out-html="volrows"></tbody></table></div>
           <h2 class="no-print">Povezivanje lista</h2>
@@ -342,7 +343,8 @@
         const tag = { stabilna: '<span class="tag">stabilna</span>', nova: '<span class="tag new">nova</span>', 'izašla': '<span class="tag out">ugašena</span>' };
         return {
           tv: fmt(r.total), ta: fmt(r.typeA), tb: fmt(r.typeB),
-          volrows: r.rows.map((x) => `<tr><td class="l">${name(x.from)}</td><td class="l">${name(x.to)}</td><td>${fmt(x.pa)}</td><td>${fmt(x.pb)}</td><td class="${x.change > 0 ? 'pos' : x.change < 0 ? 'neg' : ''}">${x.change > 0 ? '+' : ''}${fmt(x.change)}</td><td>${tag[x.kind]}</td></tr>`).join(''),
+          volwarn: r.links.length ? '' : '<div class="warn">Nijedna lista nije povezana sa prethodnicom, pa se sve liste računaju kao nove (volatilnost 100). Poveži liste u dijelu „Povezivanje lista“ ispod.</div>',
+          volrows: r.rows.map((x) => `<tr><td class="l clip" title="${esc(x.from.join(' + '))}">${name(x.from)}</td><td class="l clip" title="${esc(x.to.join(' + '))}">${name(x.to)}</td><td>${fmt(x.pa)}</td><td>${fmt(x.pb)}</td><td class="${x.change > 0 ? 'pos' : x.change < 0 ? 'neg' : ''}">${x.change > 0 ? '+' : ''}${fmt(x.change)}</td><td>${tag[x.kind]}</td></tr>`).join(''),
         };
       },
       table() {
@@ -632,14 +634,6 @@
   $('#exp-drive').addEventListener('click', exportDrive);
 
   // ---------- Google Drive ----------
-  async function refreshDrivePill() {
-    try {
-      const st = await P.driveStatus();
-      const pill = $('#net-pill');
-      pill.textContent = st.connected ? 'Google Drive povezan' : 'Radi offline';
-      pill.classList.toggle('ok', !!st.connected);
-    } catch (e) { /* ignore */ }
-  }
   async function driveDialog() {
     const st = await P.driveStatus();
     if (st.desktopOnly) return toast('Google Drive radi samo u desktop aplikaciji.', 4000);
@@ -674,7 +668,6 @@
         catch (err) { toast('Povezivanje nije uspjelo: ' + (err.message || err), 6000); }
       }
     }
-    refreshDrivePill();
   }
   $('#drive-btn').addEventListener('click', driveDialog);
 
@@ -696,5 +689,4 @@
   });
 
   render();
-  refreshDrivePill();
 })();

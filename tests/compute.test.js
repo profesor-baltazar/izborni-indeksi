@@ -4,7 +4,7 @@ const assert = require('assert');
 const I = require('../src/js/compute.js');
 global.window = {};
 require('../src/js/seed.js');
-const e = window.SEED_ELECTIONS[0];
+const e = window.SEED_ELECTIONS.find((x) => x.id === 'cg2020');
 const V = e.lists.map((l) => l.votes), S = e.lists.map((l) => l.seats);
 const close = (a, b, eps, msg) => assert.ok(Math.abs(a - b) < eps, `${msg}: ${a} != ${b}`);
 
@@ -31,4 +31,13 @@ const vol = I.volatility(
   [['a', 'a'], ['b', 'bc'], ['c', 'bc']]
 );
 close(vol.total, 20, 1e-9, 'TV'); close(vol.typeA, 10, 1e-9, 'Tip A'); close(vol.typeB, 10, 1e-9, 'Tip B');
+// Raspodjela mandata svih izbora (osim 2009, kad je postojala posebna izborna jedinica za albansku manjinu)
+for (const x of window.SEED_ELECTIONS.filter((x) => x.id !== 'cg2009')) {
+  const a = I.allocate({ votes: x.lists.map((l) => l.votes), seats: 81, threshold: 3, thresholds: x.lists.map((l) => (l.thr === '' ? null : Number(l.thr))), reserved: x.lists.map((l) => l.res) });
+  assert.deepStrictEqual(a.seats, x.lists.map((l) => l.seats), "D'Hondt " + x.id);
+}
+// Nacionalizacija 2023 (Bochsler, Nacionalization_Index_2023)
+const e23 = window.SEED_ELECTIONS.find((x) => x.id === 'cg2023');
+const n23 = I.nationalisation(e23.units.map((u) => ({ valid: u.valid, votes: e23.lists.map((l) => u.votes[l.id]) })), e23.lists.length);
+close(n23.systemPnsw, 0.728396, 1e-6, 'PNSw 2023'); close(n23.systemSpns, 0.716889, 1e-6, 'sPNS 2023'); close(n23.E, 8.796419, 1e-6, 'E 2023');
 console.log('Svi testovi prošli.');

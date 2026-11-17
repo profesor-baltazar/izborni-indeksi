@@ -24,7 +24,7 @@
   }
 
   // Raspodjela mandata. thresholds: niz (u %), null/'' = koristi opšti cenzus.
-  // reserved: garantovani mandati po listi (npr. pravilo za hrvatsku listu u CG);
+  // reserved: garantovani mandati po listi (posebna pravila za manjinske liste);
   // takva lista dobija tačno toliko mandata i ne učestvuje u raspodjeli ostatka.
   function allocate({ votes, seats, method = 'dhondt', threshold = 0, thresholds = [], reserved = [] }) {
     const total = sum(votes);
