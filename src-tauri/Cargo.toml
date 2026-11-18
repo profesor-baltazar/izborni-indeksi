@@ -1,6 +1,6 @@
 [package]
 name = "izborni-indeksi"
-version = "0.4.0"
+version = "0.5.0"
 description = "Izborni indeksi"
 edition = "2021"
 
@@ -14,14 +14,9 @@ tauri-build = { version = "2", features = [] }
 [dependencies]
 tauri = { version = "2", features = [] }
 tauri-plugin-dialog = "2"
-tauri-plugin-opener = "2"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
-reqwest = { version = "0.12", default-features = false, features = ["json", "rustls-tls"] }
 base64 = "0.22"
-sha2 = "0.10"
-rand = "0.8"
-url = "2"
 
 [target.'cfg(windows)'.dependencies]
 winreg = "0.55"

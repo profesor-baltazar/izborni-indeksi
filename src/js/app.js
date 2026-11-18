@@ -636,61 +636,9 @@
     try { const p = await P.saveFile(fileBase() + '.xlsx', await buildWorkbook()); if (p) toast(t('Sačuvano: {p}', { p })); }
     catch (err) { toast(t('Izvoz nije uspio: {e}', { e: err.message || err }), 5000); }
   }
-  async function exportDrive() {
-    try {
-      let st = await P.driveStatus();
-      if (st.desktopOnly) return toast(t('Google Drive radi samo u desktop aplikaciji.'), 4000);
-      if (!st.configured || !st.connected) { await driveDialog(); st = await P.driveStatus(); if (!st.connected) return; }
-      toast(t('Šaljem na Google Drive…'), 10000);
-      const res = await P.driveUpload(fileBase() + '.xlsx', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', await buildWorkbook());
-      const open = await modal(`<h3>${t('Poslato na Google Drive')}</h3><p>${t('Fajl je u folderu <b>Izborni indeksi</b> na tvom Google Drive-u.')}</p>
-        <div class="actions"><button class="btn" data-close="">${t('Zatvori')}</button>${res.link ? `<button class="btn primary" data-close="open">${t('Otvori na Drive-u')}</button>` : ''}</div>`);
-      $('#toast').classList.remove('show');
-      if (open === 'open' && res.link) P.openUrl(res.link);
-    } catch (err) { toast(t('Slanje nije uspjelo: {e}', { e: err.message || err }), 6000); }
-  }
   $('#exp-csv').addEventListener('click', exportCsv);
   $('#exp-xlsx').addEventListener('click', exportXlsx);
   $('#exp-pdf').addEventListener('click', () => window.print());
-  $('#exp-drive').addEventListener('click', exportDrive);
-
-  // ---------- Google Drive ----------
-  async function driveDialog() {
-    const st = await P.driveStatus();
-    if (st.desktopOnly) return toast(t('Google Drive radi samo u desktop aplikaciji.'), 4000);
-    if (!st.configured) {
-      await modal(`<h3>${t('Podešavanje Google Drive-a')}</h3>
-        <p>${t('Aplikacija radi potpuno offline. Internet i Google nalog koriste se samo kad pošalješ fajl na Drive. Jednom je potrebno da učitaš „OAuth client“ fajl iz Google Cloud konzole:')}</p>
-        <ol><li>${t('Na <b>console.cloud.google.com</b> napravi projekat i uključi <b>Google Drive API</b>.')}</li>
-        <li>${t('<b>APIs &amp; Services → OAuth consent screen</b>: tip „External“, dodaj sebe (i kolege) kao test korisnike.')}</li>
-        <li>${t('<b>Credentials → Create credentials → OAuth client ID → Desktop app</b>, pa preuzmi JSON.')}</li>
-        <li>${t('Učitaj taj JSON ovdje.')}</li></ol>
-        <div class="actions"><button class="btn" data-close="">${t('Otkaži')}</button><button class="btn primary" id="cfg-load">${t('Učitaj JSON…')}</button></div>`,
-      (m, close) => {
-        m.querySelector('#cfg-load').addEventListener('click', async () => {
-          const f = await pickFile('.json'); if (!f) return;
-          try { await P.driveSetClient(await f.text()); close('ok'); toast(t('Google klijent podešen')); }
-          catch (err) { toast(String(err.message || err), 5000); }
-        });
-      });
-      if (!(await P.driveStatus()).configured) return;
-    }
-    const s2 = await P.driveStatus();
-    if (s2.connected) {
-      const v = await modal(`<h3>Google Drive</h3><p>${t('Povezano. Aplikacija ima pristup samo fajlovima koje je sama napravila (dozvola <code>drive.file</code>).')}</p>
-        <div class="actions"><button class="btn danger" data-close="disc">${t('Prekini vezu')}</button><button class="btn primary" data-close="">${t('Zatvori')}</button></div>`);
-      if (v === 'disc') { await P.driveDisconnect(); toast(t('Veza prekinuta')); }
-    } else {
-      const v = await modal(`<h3>${t('Poveži Google nalog')}</h3><p>${t('Otvoriće se pregledač sa Google prijavom. Nakon prijave vrati se u aplikaciju. Traži se samo pristup fajlovima koje ova aplikacija napravi.')}</p>
-        <div class="actions"><button class="btn" data-close="">${t('Otkaži')}</button><button class="btn primary" data-close="go">${t('Poveži')}</button></div>`);
-      if (v === 'go') {
-        toast(t('Čekam prijavu u pregledaču…'), 120000);
-        try { await P.driveConnect(); toast(t('Google Drive povezan')); }
-        catch (err) { toast(t('Povezivanje nije uspjelo: {e}', { e: err.message || err }), 6000); }
-      }
-    }
-  }
-  $('#drive-btn').addEventListener('click', driveDialog);
 
   // ---------- rezervna kopija ----------
   $('#backup-btn').addEventListener('click', async () => {

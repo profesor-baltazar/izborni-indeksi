@@ -22,21 +22,6 @@
       setTimeout(() => URL.revokeObjectURL(a.href), 2000);
       return name;
     },
-    async driveStatus() {
-      if (!isTauri) return { configured: false, connected: false, desktopOnly: true };
-      return invoke('drive_status');
-    },
-    async driveSetClient(json) { return invoke('drive_set_client', { json }); },
-    async driveConnect() { return invoke('drive_connect'); },
-    async driveDisconnect() { return invoke('drive_disconnect'); },
-    async driveUpload(name, mime, bytes) {
-      if (!isTauri) throw new Error('Slanje na Google Drive radi samo u desktop aplikaciji.');
-      return invoke('drive_upload', { name, mime, dataB64: toBase64(bytes) });
-    },
-    async openUrl(url) {
-      if (isTauri) return invoke('open_url', { url });
-      window.open(url, '_blank');
-    },
   };
   window.Platform = Platform;
 })();

@@ -9,7 +9,7 @@ Pokreni instalacioni `.exe` fajl i prati korake. Ako Windows prikaže upozorenje
 ## Moduli
 
 - **Rezultati i indeksi:** disproporcionalnost (LSq) i efektivni broj stranaka po glasovima (ENEP) i mandatima (ENPP).
-- **Raspodjela mandata:** D'Hondt, Sainte-Laguë ili Hare–Niemeyer, sa cenzusom. Za pojedinačne liste možeš zadati poseban cenzus ili garantovane mandate.
+- **Raspodjela mandata:** D'Hondt, Sainte-Laguë ili Hare–Niemeyer, sa cenzusom. Za svaku listu biraš cenzus: opšti, manjinski (0,7%) ili hrvatski (0,35%).
 - **Nacionalizacija stranaka:** koliko je podrška stranke ravnomjerno raspoređena po opštinama (Bochsler).
 - **Volatilnost:** koliki se dio glasova pomjerio između stranaka od jednih do drugih izbora.
 
@@ -28,14 +28,11 @@ Dugmad na dnu ekrana:
 - **CSV:** tabela trenutnog modula.
 - **Excel:** svi moduli u jednom fajlu.
 - **PDF / štampa:** u prozoru za štampu izaberi „Microsoft Print to PDF“.
-- **Google Drive:** šalje Excel fajl u folder „Izborni indeksi“ na tvom Drive-u.
-
-Za Google Drive klikni **Google Drive → Poveži** i prijavi se u pregledaču. Aplikacija vidi samo fajlove koje je sama napravila. Ako traži JSON fajl, dobićeš ga od osobe koja ti je dala aplikaciju. Vezu prekidaš istim dugmetom.
 
 ## Rezervna kopija
 
 **Rezervna kopija (JSON)** u lijevom meniju čuva sve izbore u jedan fajl. **Vrati iz kopije** ih vraća, na primjer na drugom računaru.
 
-## Izgled
+## Izgled i jezik
 
-Tema može biti svijetla, tamna ili kao sistem (izbor gore desno). Akcentna boja prati boju izabranu u Windowsu.
+Gore desno biraš jezik (crnogorski ili engleski) i temu (svijetla, tamna ili kao sistem). Akcentna boja prati boju izabranu u Windowsu.

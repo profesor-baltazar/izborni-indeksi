@@ -1,11 +1,11 @@
-mod drive;
-
+use base64::Engine;
 use std::sync::atomic::{AtomicBool, Ordering};
+use tauri_plugin_dialog::DialogExt;
 
-/// Jezik poruka iz Rust dijela (greške, stranica nakon Google prijave). Postavlja ga interfejs.
+/// Jezik poruka iz Rust dijela (greške). Postavlja ga interfejs.
 static ENGLISH: AtomicBool = AtomicBool::new(false);
 
-pub(crate) fn tr(me: &str, en: &str) -> String {
+fn tr(me: &str, en: &str) -> String {
     if ENGLISH.load(Ordering::Relaxed) { en.to_string() } else { me.to_string() }
 }
 
@@ -13,10 +13,6 @@ pub(crate) fn tr(me: &str, en: &str) -> String {
 fn set_lang(lang: String) {
     ENGLISH.store(lang == "en", Ordering::Relaxed);
 }
-
-use base64::Engine;
-use tauri_plugin_dialog::DialogExt;
-use tauri_plugin_opener::OpenerExt;
 
 /// Snima fajl: korisnik bira lokaciju u standardnom "Sačuvaj kao" dijalogu.
 #[tauri::command]
@@ -33,14 +29,6 @@ async fn save_file(app: tauri::AppHandle, name: String, data_b64: String) -> Res
     let path = fp.into_path().map_err(|e| e.to_string())?;
     std::fs::write(&path, bytes).map_err(|e| format!("{}: {e}", tr("Ne mogu da sačuvam fajl", "Cannot save the file")))?;
     Ok(Some(path.display().to_string()))
-}
-
-#[tauri::command]
-fn open_url(app: tauri::AppHandle, url: String) -> Result<(), String> {
-    if !url.starts_with("https://") {
-        return Err(tr("Dozvoljeni su samo https linkovi", "Only https links are allowed"));
-    }
-    app.opener().open_url(url, None::<&str>).map_err(|e| e.to_string())
 }
 
 /// Akcentna boja izabrana u Windows podešavanjima (Personalizacija → Boje), kao "#rrggbb".
@@ -66,17 +54,10 @@ fn system_accent() -> Option<String> {
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())
-        .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
             save_file,
-            open_url,
             system_accent,
-            set_lang,
-            drive::drive_status,
-            drive::drive_set_client,
-            drive::drive_connect,
-            drive::drive_disconnect,
-            drive::drive_upload
+            set_lang
         ])
         .run(tauri::generate_context!())
         .expect("greška pri pokretanju aplikacije");

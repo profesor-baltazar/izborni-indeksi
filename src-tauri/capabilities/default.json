@@ -3,5 +3,5 @@
   "identifier": "default",
   "description": "Osnovne dozvole glavnog prozora",
   "windows": ["main"],
-  "permissions": ["core:default", "core:window:allow-set-theme", "dialog:default", "opener:default"]
+  "permissions": ["core:default", "core:window:allow-set-theme", "dialog:default"]
 }
