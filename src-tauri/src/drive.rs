@@ -16,6 +16,8 @@ use std::time::{Duration, Instant};
 use tauri::Manager;
 use tauri_plugin_opener::OpenerExt;
 
+use crate::tr;
+
 const SCOPE: &str = "https://www.googleapis.com/auth/drive.file";
 const FOLDER_NAME: &str = "Izborni indeksi";
 const LOGIN_TIMEOUT: Duration = Duration::from_secs(300);
@@ -98,12 +100,15 @@ pub fn drive_status(app: tauri::AppHandle) -> Status {
 /// Prima JSON preuzet iz Google Cloud konzole (tip "Desktop app").
 #[tauri::command]
 pub fn drive_set_client(app: tauri::AppHandle, json: String) -> Result<(), String> {
-    let v: serde_json::Value = serde_json::from_str(&json).map_err(|_| "Fajl nije ispravan JSON.".to_string())?;
+    let v: serde_json::Value = serde_json::from_str(&json).map_err(|_| tr("Fajl nije ispravan JSON.", "The file is not valid JSON."))?;
     let inner = v.get("installed").or_else(|| v.get("web")).unwrap_or(&v);
     let id = inner.get("client_id").and_then(|x| x.as_str()).unwrap_or_default();
     let secret = inner.get("client_secret").and_then(|x| x.as_str()).unwrap_or_default();
     if id.is_empty() || secret.is_empty() {
-        return Err("U fajlu nema client_id/client_secret. Preuzmi JSON za OAuth klijent tipa „Desktop app“.".into());
+        return Err(tr(
+            "U fajlu nema client_id/client_secret. Preuzmi JSON za OAuth klijent tipa „Desktop app“.",
+            "The file has no client_id/client_secret. Download the JSON for an OAuth client of type “Desktop app”.",
+        ));
     }
     let c = Client { client_id: id.into(), client_secret: secret.into() };
     std::fs::write(client_path(&app)?, serde_json::to_string(&c).map_err(|e| e.to_string())?).map_err(|e| e.to_string())
@@ -123,7 +128,7 @@ fn wait_for_code(listener: TcpListener, expected_state: String) -> Result<String
     let deadline = Instant::now() + LOGIN_TIMEOUT;
     loop {
         if Instant::now() > deadline {
-            return Err("Isteklo je vrijeme za prijavu.".into());
+            return Err(tr("Isteklo je vrijeme za prijavu.", "Sign-in timed out."));
         }
         match listener.accept() {
             Ok((mut stream, _)) => {
@@ -141,11 +146,14 @@ fn wait_for_code(listener: TcpListener, expected_state: String) -> Result<String
                     continue;
                 }
                 let ok = get("code").is_some() && get("state").as_deref() == Some(expected_state.as_str());
-                let body = if ok {
-                    "<html><meta charset='utf-8'><body style='font-family:sans-serif;padding:40px'><h2 style='color:#1e62a5'>Prijava uspjela</h2><p>Možeš zatvoriti ovaj prozor i vratiti se u aplikaciju Izborni indeksi.</p></body></html>"
+                let (title, text) = if ok {
+                    (tr("Prijava uspjela", "Signed in"), tr("Možeš zatvoriti ovaj prozor i vratiti se u aplikaciju Izborni indeksi.", "You can close this window and return to the Election Indices application."))
                 } else {
-                    "<html><meta charset='utf-8'><body style='font-family:sans-serif;padding:40px'><h2>Prijava nije uspjela</h2><p>Vrati se u aplikaciju i pokušaj ponovo.</p></body></html>"
+                    (tr("Prijava nije uspjela", "Sign-in failed"), tr("Vrati se u aplikaciju i pokušaj ponovo.", "Return to the application and try again."))
                 };
+                let body = format!(
+                    "<html><meta charset='utf-8'><body style='font-family:sans-serif;padding:40px'><h2>{title}</h2><p>{text}</p></body></html>"
+                );
                 let resp = format!(
                     "HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=utf-8\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{}",
                     body.len(),
@@ -153,10 +161,10 @@ fn wait_for_code(listener: TcpListener, expected_state: String) -> Result<String
                 );
                 let _ = stream.write_all(resp.as_bytes());
                 if let Some(err) = get("error") {
-                    return Err(format!("Google je odbio prijavu: {err}"));
+                    return Err(format!("{}: {err}", tr("Google je odbio prijavu", "Google refused the sign-in")));
                 }
                 if !ok {
-                    return Err("Neispravan odgovor pri prijavi (state).".into());
+                    return Err(tr("Neispravan odgovor pri prijavi (state).", "Invalid sign-in response (state)."));
                 }
                 return Ok(get("code").unwrap());
             }
@@ -176,7 +184,7 @@ struct TokenResp {
 
 #[tauri::command]
 pub async fn drive_connect(app: tauri::AppHandle) -> Result<(), String> {
-    let client = load_client(&app).ok_or("Google klijent nije podešen.")?;
+    let client = load_client(&app).ok_or_else(|| tr("Google klijent nije podešen.", "The Google client is not configured."))?;
     let listener = TcpListener::bind("127.0.0.1:0").map_err(|e| e.to_string())?;
     let port = listener.local_addr().map_err(|e| e.to_string())?.port();
     let redirect = format!("http://127.0.0.1:{port}");
@@ -213,14 +221,14 @@ pub async fn drive_connect(app: tauri::AppHandle) -> Result<(), String> {
         ])
         .send()
         .await
-        .map_err(|e| format!("Nema veze sa Google-om: {e}"))?
+        .map_err(|e| format!("{}: {e}", tr("Nema veze sa Google-om", "No connection to Google")))?
         .json()
         .await
         .map_err(|e| e.to_string())?;
     if let Some(err) = resp.error {
         return Err(format!("{err}: {}", resp.error_description.unwrap_or_default()));
     }
-    let refresh = resp.refresh_token.ok_or("Google nije vratio refresh token.")?;
+    let refresh = resp.refresh_token.ok_or_else(|| tr("Google nije vratio refresh token.", "Google did not return a refresh token."))?;
     save_tokens(&app, &Tokens { refresh_token: Some(refresh), folder_id: None })
 }
 
@@ -244,8 +252,8 @@ pub async fn drive_disconnect(app: tauri::AppHandle) -> Result<(), String> {
 }
 
 async fn access_token(app: &tauri::AppHandle, http: &reqwest::Client) -> Result<String, String> {
-    let client = load_client(app).ok_or("Google klijent nije podešen.")?;
-    let rt = load_tokens(app).refresh_token.ok_or("Google nalog nije povezan.")?;
+    let client = load_client(app).ok_or_else(|| tr("Google klijent nije podešen.", "The Google client is not configured."))?;
+    let rt = load_tokens(app).refresh_token.ok_or_else(|| tr("Google nalog nije povezan.", "The Google account is not connected."))?;
     let resp: TokenResp = http
         .post("https://oauth2.googleapis.com/token")
         .form(&[
@@ -256,18 +264,18 @@ async fn access_token(app: &tauri::AppHandle, http: &reqwest::Client) -> Result<
         ])
         .send()
         .await
-        .map_err(|e| format!("Nema veze sa Google-om: {e}"))?
+        .map_err(|e| format!("{}: {e}", tr("Nema veze sa Google-om", "No connection to Google")))?
         .json()
         .await
         .map_err(|e| e.to_string())?;
     if let Some(err) = resp.error {
         if err == "invalid_grant" {
             let _ = std::fs::remove_file(tokens_path(app)?);
-            return Err("Veza sa Google nalogom je istekla. Poveži nalog ponovo.".into());
+            return Err(tr("Veza sa Google nalogom je istekla. Poveži nalog ponovo.", "The connection to the Google account has expired. Connect the account again."));
         }
         return Err(format!("{err}: {}", resp.error_description.unwrap_or_default()));
     }
-    resp.access_token.ok_or_else(|| "Google nije vratio access token.".into())
+    resp.access_token.ok_or_else(|| tr("Google nije vratio access token.", "Google did not return an access token."))
 }
 
 async fn ensure_folder(app: &tauri::AppHandle, http: &reqwest::Client, token: &str) -> Result<String, String> {
@@ -294,11 +302,11 @@ async fn ensure_folder(app: &tauri::AppHandle, http: &reqwest::Client, token: &s
         .await
         .map_err(|e| e.to_string())?
         .error_for_status()
-        .map_err(|e| format!("Ne mogu da napravim folder na Drive-u: {e}"))?
+        .map_err(|e| format!("{}: {e}", tr("Ne mogu da napravim folder na Drive-u", "Cannot create the folder on Drive")))?
         .json()
         .await
         .map_err(|e| e.to_string())?;
-    let id = created["id"].as_str().ok_or("Drive nije vratio ID foldera.")?.to_string();
+    let id = created["id"].as_str().ok_or_else(|| tr("Drive nije vratio ID foldera.", "Drive did not return the folder ID."))?.to_string();
     t.folder_id = Some(id.clone());
     save_tokens(app, &t)?;
     Ok(id)
@@ -325,9 +333,9 @@ pub async fn drive_upload(app: tauri::AppHandle, name: String, mime: String, dat
         .body(body)
         .send()
         .await
-        .map_err(|e| format!("Nema veze sa Google-om: {e}"))?
+        .map_err(|e| format!("{}: {e}", tr("Nema veze sa Google-om", "No connection to Google")))?
         .error_for_status()
-        .map_err(|e| format!("Drive je odbio fajl: {e}"))?
+        .map_err(|e| format!("{}: {e}", tr("Drive je odbio fajl", "Drive rejected the file")))?
         .json()
         .await
         .map_err(|e| e.to_string())?;
