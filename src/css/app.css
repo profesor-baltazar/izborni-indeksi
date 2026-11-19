@@ -156,6 +156,13 @@ table.grid .thr-cell input { margin-left: 6px; }
 .ch-val { fill: var(--text); font-size: 11px; font-weight: 600; }
 .ch-line { fill: none; stroke: var(--accent); stroke-width: 2.5; }
 .ch-dot { fill: var(--surface); stroke: var(--accent); stroke-width: 2.5; }
+/* izbor izbora i indeksa u pregledu */
+.trend-pick { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 18px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; margin-bottom: 14px; }
+.trend-pick .side-label { margin: 0 0 6px; padding: 0; }
+.trend-pick .chip { max-width: 360px; }
+.chip .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; vertical-align: 1px; }
+.chip.on .dot { box-shadow: 0 0 0 1.5px var(--on-accent); }
+.trend-empty { margin-top: 0; line-height: 1.8; }
 table.grid.trend td.clip { max-width: 230px; white-space: normal; }
 table.grid.trend th, table.grid.trend td { padding: 5px 6px; }
 @media print {

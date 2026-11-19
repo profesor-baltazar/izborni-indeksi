@@ -79,7 +79,7 @@
       vol: `<b>Izvori formula.</b> Ukupna volatilnost: Pedersen, M. N. (1979). The dynamics of European party systems: changing patterns of electoral volatility. <i>European Journal of Political Research</i> 7(1): 1–26.
         Podjela na tip A i tip B: Powell, E. N. i Tucker, J. A. (2014). Revisiting electoral volatility in post-communist countries: new data, new results and new approaches. <i>British Journal of Political Science</i> 44(1): 123–147.`,
       trend: `<b>Pregled.</b> Isti indeksi kao u modulima „Rezultati i indeksi“ (LSq, Loosemore–Hanby, Sainte-Laguë, ENEP, ENPP, Golosov, Rae F), „Nacionalizacija stranaka“ (sPNS i PNSw sistema, samo za izbore sa bar dvije teritorijalne jedinice) i „Volatilnost“ (Pedersen; tip A i B po Powellu i Tuckeru).
-        Volatilnost se računa prema prethodnim izborima u listi izbora, na osnovu glasova i veza između lista sačuvanih u modulu „Volatilnost“. Izvori formula navedeni su u tim modulima.`,
+        Volatilnost se računa prema prethodnim izabranim izborima (redosljedom iz liste izbora), na osnovu glasova i veza između lista sačuvanih u modulu „Volatilnost“. Izvori formula navedeni su u tim modulima.`,
       explain: `<b>Kako se računa.</b> Volatilnost pokazuje koliki se dio biračkog tijela „preselio“ između stranaka od jednih do drugih izbora.
         Za svaku stranku uzmeš udio glasova u procentima na prvim i na drugim izborima, izračunaš razliku, sabereš apsolutne vrijednosti svih razlika i podijeliš sa 2:
         <code>TV = ½ · Σ |pᵢ,₂ − pᵢ,₁|</code>. Dijeli se sa 2 jer se svaki procenat koji jedna stranka izgubi pojavljuje kao dobitak neke druge.
@@ -107,7 +107,7 @@
       vol: `<b>Formula sources.</b> Total volatility: Pedersen, M. N. (1979). The dynamics of European party systems: changing patterns of electoral volatility. <i>European Journal of Political Research</i> 7(1): 1–26.
         Split into type A and type B: Powell, E. N. and Tucker, J. A. (2014). Revisiting electoral volatility in post-communist countries: new data, new results and new approaches. <i>British Journal of Political Science</i> 44(1): 123–147.`,
       trend: `<b>Overview.</b> The same indices as in the modules “Results and indices” (LSq, Loosemore–Hanby, Sainte-Laguë, ENEP, ENPP, Golosov, Rae F), “Party nationalisation” (system sPNS and PNSw, only for elections with at least two territorial units) and “Volatility” (Pedersen; types A and B after Powell and Tucker).
-        Volatility is calculated against the previous election in the list of elections, from votes and the links between lists saved in the “Volatility” module. Formula sources are given in those modules.`,
+        Volatility is calculated against the previous selected election (in the order of the list of elections), from votes and the links between lists saved in the “Volatility” module. Formula sources are given in those modules.`,
       explain: `<b>How it is calculated.</b> Volatility shows what share of the electorate “moved” between parties from one election to the next.
         For each party, take its vote share in percent at the first and at the second election, compute the difference, add up the absolute values of all differences and divide by 2:
         <code>TV = ½ · Σ |pᵢ,₂ − pᵢ,₁|</code>. It is divided by 2 because every percentage point one party loses appears as a gain for another.
@@ -168,14 +168,37 @@
     const val = (l) => parseNum(basis === 'seats' ? l.seats : l.votes);
     return I.volatility(A.lists.map((l) => ({ id: l.id, name: l.name, value: val(l) })), B.lists.map((l) => ({ id: l.id, name: l.name, value: val(l) })), links);
   }
-  // Pregled kroz vrijeme: jedan red po izborima, redosljedom iz liste izbora
+  // Pregled kroz vrijeme: korisnik bira izbore (redosljed kao u listi izbora) i indekse za grafikon
+  // [ključ, oznaka, decimale, puno ime, boja linije]
   const TREND_COLS = [
-    ['lsq', 'LSq', 2], ['lh', 'LH', 2], ['sl', 'SL', 2], ['enep', 'ENEP', 2], ['enpp', 'ENPP', 2],
-    ['golV', 'Golosov (gl.)', 2], ['golM', 'Golosov (m.)', 2], ['raeV', 'Rae F (gl.)', 3], ['raeM', 'Rae F (m.)', 3],
-    ['spns', 'sPNS', 3], ['pnsw', 'PNSw', 3], ['tv', 'TV', 2], ['ta', 'A', 2], ['tb', 'B', 2],
+    ['lsq', 'LSq', 2, 'Gallagherov indeks najmanjih kvadrata (disproporcionalnost)', 'var(--accent)'],
+    ['lh', 'LH', 2, 'Loosemore–Hanby indeks disproporcionalnosti', '#D85A30'],
+    ['sl', 'SL', 2, 'Sainte-Laguë indeks disproporcionalnosti', '#7F77DD'],
+    ['enep', 'ENEP', 2, 'Efektivni broj izbornih stranaka (po glasovima, Laakso–Taagepera)', '#1D9E75'],
+    ['enpp', 'ENPP', 2, 'Efektivni broj parlamentarnih stranaka (po mandatima, Laakso–Taagepera)', '#BA7517'],
+    ['golV', 'Golosov (gl.)', 2, 'Golosovljev efektivni broj stranaka, po glasovima', '#D4537E'],
+    ['golM', 'Golosov (m.)', 2, 'Golosovljev efektivni broj stranaka, po mandatima', '#993556'],
+    ['raeV', 'Rae F (gl.)', 3, 'Raeov indeks frakcionalizacije, po glasovima', '#0F6E56'],
+    ['raeM', 'Rae F (m.)', 3, 'Raeov indeks frakcionalizacije, po mandatima', '#854F0B'],
+    ['spns', 'sPNS', 3, 'Standardizovani indeks nacionalizacije stranačkog sistema (Bochsler)', '#534AB7'],
+    ['pnsw', 'PNSw', 3, 'Ponderisani indeks nacionalizacije stranačkog sistema (Bochsler)', '#185FA5'],
+    ['tv', 'TV', 2, 'Ukupna volatilnost (Pedersen), prema prethodnim izabranim izborima', '#A32D2D'],
+    ['ta', 'A', 2, 'Volatilnost tipa A (nove i ugašene stranke), prema prethodnim izabranim izborima', '#639922'],
+    ['tb', 'B', 2, 'Volatilnost tipa B (stranke prisutne na oba izbora), prema prethodnim izabranim izborima', '#5F5E5A'],
   ];
+  const colOf = (k) => TREND_COLS.find((c) => c[0] === k);
+  function trendState() {
+    const st = S.state.trend || (S.state.trend = {});
+    if (!Array.isArray(st.sel)) st.sel = [];
+    if (!Array.isArray(st.idx)) st.idx = st.metric && colOf(st.metric) ? [st.metric] : ['enep'];
+    delete st.metric;
+    st.sel = st.sel.filter((id) => S.byId(id));
+    st.idx = st.idx.filter((k) => colOf(k));
+    return st;
+  }
   function calcTrend() {
-    const els = S.state.elections;
+    const st = trendState();
+    const els = S.state.elections.filter((e) => st.sel.includes(e.id));
     return els.map((e, i) => {
       const r = calcResults(e), n = calcNat(e);
       const prev = i > 0 ? els[i - 1] : null;
@@ -184,27 +207,55 @@
         spns: n.ok ? n.systemSpns : NaN, pnsw: n.ok ? n.systemPnsw : NaN, tv: v ? v.total : NaN, ta: v ? v.typeA : NaN, tb: v ? v.typeB : NaN };
     });
   }
-  const shortName = (e) => (/(\d{4})(?!.*\d{4})/.exec(e.name) || [])[1] || e.name;
-  function trendChart(rows, key) {
-    const pts = rows.map((r, i) => ({ i, x: shortName(r.e), y: r[key] })).filter((p) => Number.isFinite(p.y));
-    if (pts.length < 2) return `<div class="muted" style="padding:12px">${t('Za grafikon su potrebne vrijednosti za bar dvoje izbora.')}</div>`;
-    const W = 960, H = 250, padL = 56, padR = 16, padT = 22, padB = 30, inset = 28;
-    let lo = Math.min(...pts.map((p) => p.y)), hi = Math.max(...pts.map((p) => p.y));
+  // Oznaka na osi: godina iz naziva; ako se godina ponavlja (ili je nema), cijeli naziv
+  const yearOf = (e) => (/(\d{4})(?!.*\d{4})/.exec(e.name) || [])[1] || null;
+  function axisLabels(rows) {
+    const years = rows.map((r) => yearOf(r.e));
+    return rows.map((r, i) => (years[i] && years.filter((y) => y === years[i]).length === 1 ? years[i] : r.e.name));
+  }
+  function wrapText(s, max = 20) {
+    const out = []; let line = '';
+    String(s).split(/\s+/).forEach((w) => { if (line && (line + ' ' + w).length > max) { out.push(line); line = w; } else line = line ? line + ' ' + w : w; });
+    if (line) out.push(line);
+    return out;
+  }
+  function trendChart(rows, keys) {
+    if (!keys.length) return `<div class="muted" style="padding:12px">${t('Izaberi bar jedan indeks za grafikon.')}</div>`;
+    const series = keys.map((k) => ({ c: colOf(k), pts: rows.map((r, i) => ({ i, y: r[k] })).filter((p) => Number.isFinite(p.y)) })).filter((x) => x.pts.length);
+    if (!series.length) return `<div class="muted" style="padding:12px">${t('Za izabrane izbore nema vrijednosti ovih indeksa.')}</div>`;
+    const labels = axisLabels(rows).map((l) => wrapText(l));
+    const lines = Math.max(...labels.map((l) => l.length));
+    const W = 960, padL = 56, padR = 16, padT = 34, padB = 16 + lines * 14, inset = 40, plotH = 210, H = padT + plotH + padB;
+    const all = series.flatMap((x) => x.pts.map((p) => p.y));
+    let lo = Math.min(...all), hi = Math.max(...all);
     if (hi === lo) { hi += 1; lo = Math.max(0, lo - 1); }
     const span = hi - lo; lo = Math.max(0, lo - span * 0.1); hi += span * 0.1;
     const n = rows.length;
-    const X = (i) => padL + inset + (n === 1 ? 0 : (i * (W - padL - padR - 2 * inset)) / (n - 1));
-    const Y = (y) => padT + (1 - (y - lo) / (hi - lo)) * (H - padT - padB);
-    const dec = (TREND_COLS.find((c) => c[0] === key) || [])[2] ?? 2;
+    const X = (i) => (n === 1 ? (padL + W - padR) / 2 : padL + inset + (i * (W - padL - padR - 2 * inset)) / (n - 1));
+    const Y = (y) => padT + (1 - (y - lo) / (hi - lo)) * plotH;
+    const dec = Math.max(...series.map((x) => x.c[2]));
     let g = '';
     for (let k = 0; k <= 4; k++) {
       const yv = lo + ((hi - lo) * k) / 4, yy = Y(yv);
       g += `<line x1="${padL}" x2="${W - padR}" y1="${yy}" y2="${yy}" class="ch-grid"/><text x="${padL - 6}" y="${yy + 4}" text-anchor="end" class="ch-ax">${fmt(yv, dec)}</text>`;
     }
-    rows.forEach((r, i) => { g += `<text x="${X(i)}" y="${H - 12}" text-anchor="middle" class="ch-ax">${esc(shortName(r.e))}</text>`; });
-    const path = pts.map((p, k) => `${k ? 'L' : 'M'}${X(p.i).toFixed(1)},${Y(p.y).toFixed(1)}`).join(' ');
-    const dots = pts.map((p) => `<circle cx="${X(p.i)}" cy="${Y(p.y)}" r="4" class="ch-dot"><title>${esc(p.x)}: ${fmt(p.y, dec)}</title></circle><text x="${X(p.i)}" y="${Y(p.y) - 9}" text-anchor="middle" class="ch-val">${fmt(p.y, dec)}</text>`).join('');
-    return `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img">${g}<path d="${path}" class="ch-line"/>${dots}</svg>`;
+    rows.forEach((r, i) => {
+      g += `<text x="${X(i)}" y="${padT + plotH + 18}" text-anchor="middle" class="ch-ax"><title>${esc(r.e.name)}</title>${labels[i].map((l, j) => `<tspan x="${X(i)}" dy="${j ? 14 : 0}">${esc(l)}</tspan>`).join('')}</text>`;
+    });
+    // legenda
+    let lx = padL;
+    series.forEach(({ c }) => {
+      const lab = t(c[1]);
+      g += `<g><title>${esc(t(c[3]))}</title><line x1="${lx}" x2="${lx + 18}" y1="12" y2="12" stroke="${c[4]}" stroke-width="3"/><text x="${lx + 24}" y="16" class="ch-ax">${esc(lab)}</text></g>`;
+      lx += 24 + lab.length * 7 + 22;
+    });
+    series.forEach(({ c, pts }, si) => {
+      const path = pts.map((p, k) => `${k ? 'L' : 'M'}${X(p.i).toFixed(1)},${Y(p.y).toFixed(1)}`).join(' ');
+      g += `<path d="${path}" fill="none" stroke="${c[4]}" stroke-width="2.5"/>`;
+      g += pts.map((p) => `<circle cx="${X(p.i)}" cy="${Y(p.y)}" r="4" class="ch-dot" style="stroke:${c[4]}"><title>${esc(rows[p.i].e.name)} · ${esc(t(c[1]))}: ${fmt(p.y, c[2])}</title></circle>`
+        + (series.length <= 2 ? `<text x="${X(p.i)}" y="${si === 0 ? Y(p.y) - 9 : Y(p.y) + 18}" text-anchor="middle" class="ch-val" style="fill:${c[4]}">${fmt(p.y, c[2])}</text>` : '')).join('');
+    });
+    return `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img">${g}</svg>`;
   }
   function calcVol() {
     const v = S.state.vol;
@@ -386,7 +437,7 @@
           </div>
           <h2>${t('Po listama')}</h2>
           <div class="table-wrap"><table class="grid">
-            <thead><tr><th class="l">${t('Lista')}</th><th>PNSw</th><th>sPNS</th></tr></thead>
+            <thead><tr><th class="l">${t('Lista')}</th><th title="${t('Ponderisani indeks nacionalizacije stranke (Bochsler)')}">PNSw</th><th title="${t('Standardizovani indeks nacionalizacije stranke (Bochsler)')}">sPNS</th></tr></thead>
             <tbody>${res}</tbody></table></div>
           <div class="cite">${cite('nat')}</div>`;
       },
@@ -418,23 +469,34 @@
 
     trend: {
       render() {
+        const st = trendState();
+        const els = S.state.elections;
+        if (!els.length) return `<div class="card empty">${t('Nema izbora.')}</div>`;
         const rows = calcTrend();
-        if (!rows.length) return `<div class="card empty">${t('Nema izbora.')}</div>`;
-        const tr0 = S.state.trend || (S.state.trend = { metric: 'lsq' });
-        const name = (k) => t((TREND_COLS.find((c) => c[0] === k) || [k, k])[1]);
+        const name = (k) => t(colOf(k)[1]);
+        const full = (k) => t(colOf(k)[3]);
+        const elChips = els.map((e) => `<span class="chip ${st.sel.includes(e.id) ? 'on' : ''}" data-act="trend-el" data-id="${e.id}" title="${esc(e.name)}">${esc(e.name)}</span>`).join('');
+        const idxChips = TREND_COLS.map(([k, , , , c]) => `<span class="chip ${st.idx.includes(k) ? 'on' : ''}" data-act="trend-idx" data-k="${k}" title="${esc(full(k))}"><span class="dot" style="background:${c}"></span>${esc(name(k))}</span>`).join('');
+        const picker = `<div class="trend-pick no-print">
+            <div><div class="side-label">${t('Izbori za poređenje')}${st.sel.length ? ` (${st.sel.length})` : ''}</div>
+              <div class="chips">${elChips}</div>
+              <div class="row" style="margin-top:8px"><button class="btn small ghost" data-act="trend-all">${t('Izaberi sve')}</button><button class="btn small ghost" data-act="trend-none">${t('Poništi izbor')}</button></div></div>
+            <div><div class="side-label">${t('Indeksi na grafikonu')}</div><div class="chips">${idxChips}</div></div>
+          </div>`;
+        const head = `${printHead(null, t('Pregled kroz vrijeme'))}<div class="head"><h1>${t('Pregled kroz vrijeme')}</h1></div>`;
+        if (!rows.length) {
+          return `${head}${picker}<div class="card empty trend-empty">${t('Izaberi izbore koje želiš da porediš.')}<br><span class="muted">${t('Grafikon i tabela pojaviće se kad izabereš bar jedne izbore. Redosljed je isti kao u listi izbora lijevo.')}</span></div><div class="cite">${cite('trend')}</div>`;
+        }
         const body = rows.map((r) => `<tr><td class="l clip" title="${esc(r.e.name)}">${esc(r.e.name)}</td>
           ${TREND_COLS.map(([k, , d]) => `<td>${fmt(r[k], d)}</td>`).join('')}
           <td class="no-print l">${r.prev ? `<button class="btn small ghost" data-act="trend-links" data-a="${r.prev.id}" data-b="${r.e.id}">${r.linked ? t('Uredi veze') : t('Poveži liste')}</button>` : ''}</td></tr>`).join('');
         const unlinked = rows.some((r) => r.prev && !r.linked);
-        return `${printHead(null, t('Pregled kroz vrijeme'))}<div class="head"><h1>${t('Pregled kroz vrijeme')}</h1></div>
-          <div class="row" style="margin-bottom:8px">
-            <label class="field">${t('Grafikon')}<select data-trend="metric">${TREND_COLS.map(([k]) => `<option value="${k}" ${k === tr0.metric ? 'selected' : ''}>${esc(name(k))}</option>`).join('')}</select></label>
-          </div>
-          <div class="card chart-card">${trendChart(rows, tr0.metric)}</div>
+        return `${head}${picker}
+          <div class="card chart-card">${trendChart(rows, st.idx)}</div>
           <div class="table-wrap" style="margin-top:14px"><table class="grid trend">
-            <thead><tr><th class="l">${t('Izbori')}</th>${TREND_COLS.map(([k]) => `<th>${esc(name(k))}</th>`).join('')}<th class="no-print"></th></tr></thead>
+            <thead><tr><th class="l">${t('Izbori')}</th>${TREND_COLS.map(([k]) => `<th title="${esc(full(k))}">${esc(name(k))}</th>`).join('')}<th class="no-print"></th></tr></thead>
             <tbody>${body}</tbody></table></div>
-          ${unlinked ? `<div class="warn">${t('Volatilnost (TV, A, B) se prikazuje samo za uzastopne izbore čije su liste povezane u modulu „Volatilnost“. Za ostale klikni „Poveži liste“.')}</div>` : ''}
+          ${unlinked ? `<div class="warn">${t('Volatilnost (TV, A, B) se računa prema prethodnim izabranim izborima i prikazuje samo kad su njihove liste povezane u modulu „Volatilnost“. Za ostale klikni „Poveži liste“.')}</div>` : ''}
           <div class="cite">${cite('trend')}</div>`;
       },
       paint() { return {}; },
@@ -444,7 +506,8 @@
         return {
           header: [t('Izbori'), ...TREND_COLS.map((c) => t(c[1]))],
           rows: rows.map((r) => [r.e.name, ...TREND_COLS.map(([k]) => (Number.isFinite(r[k]) ? r[k] : ''))]),
-          summary: [[t('Napomena'), t('Volatilnost je računata prema prethodnim izborima u listi, na osnovu glasova i sačuvanih veza između lista.')]],
+          summary: [...TREND_COLS.map((c) => [t(c[1]), t(c[3])]),
+            [t('Napomena'), t('Volatilnost je računata prema prethodnim izabranim izborima, na osnovu glasova i sačuvanih veza između lista.')]],
         };
       },
     },
@@ -554,7 +617,6 @@
   main.addEventListener('change', (ev) => {
     const el = ev.target;
     if (el.dataset.vol) { S.state.vol[el.dataset.vol] = el.value; S.save(); render(); }
-    else if (el.dataset.trend) { (S.state.trend = S.state.trend || {})[el.dataset.trend] = el.value; S.save(); render(); }
     else if (el.dataset.f === 'type') { S.save(); render(); }
     else if (el.tagName === 'SELECT' && el.dataset.bind) { S.save(); paint(); }
   });
@@ -601,6 +663,10 @@
         S.save(); render(); break;
       }
       case 'auto-links': { const A = S.byId(S.state.vol.a), B = S.byId(S.state.vol.b); S.state.links[S.linkKey(A.id, B.id)] = autoLinks(A, B); S.save(); render(); break; }
+      case 'trend-el': { const st = trendState(); const i = st.sel.indexOf(b.dataset.id); if (i >= 0) st.sel.splice(i, 1); else st.sel.push(b.dataset.id); S.save(); render(); break; }
+      case 'trend-idx': { const st = trendState(); const i = st.idx.indexOf(b.dataset.k); if (i >= 0) st.idx.splice(i, 1); else st.idx.push(b.dataset.k); S.save(); render(); break; }
+      case 'trend-all': trendState().sel = S.state.elections.map((x) => x.id); S.save(); render(); break;
+      case 'trend-none': trendState().sel = []; S.save(); render(); break;
       case 'trend-links': S.state.vol.a = b.dataset.a; S.state.vol.b = b.dataset.b; S.state.module = 'vol'; S.save(); render(); break;
       case 'clear-links': S.state.links[S.linkKey(S.state.vol.a, S.state.vol.b)] = []; S.save(); render(); break;
     }

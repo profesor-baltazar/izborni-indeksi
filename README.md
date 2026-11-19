@@ -12,7 +12,7 @@ Pokreni instalacioni `.exe` fajl i prati korake. Ako Windows prikaže upozorenje
 - **Raspodjela mandata:** D'Hondt, Sainte-Laguë ili Hare–Niemeyer, sa cenzusom. Za svaku listu biraš cenzus: opšti, manjinski (0,7%) ili hrvatski (0,35%).
 - **Nacionalizacija stranaka:** koliko je podrška stranke ravnomjerno raspoređena po opštinama (Bochsler).
 - **Volatilnost:** koliki se dio glasova pomjerio između stranaka od jednih do drugih izbora.
-- **Pregled kroz vrijeme:** svi indeksi za sve izbore u jednoj tabeli i grafikonu, sa volatilnošću prema prethodnim izborima.
+- **Pregled kroz vrijeme:** biraš izbore koje porediš i indekse koje želiš na grafikonu. Tabela prikazuje sve indekse za izabrane izbore, a volatilnost se računa prema prethodnim izabranim izborima. Kad pređeš mišem preko skraćenice (LSq, ENEP…), vidiš puno ime indeksa.
 
 Uz svaki modul je naveden izvor formule.
 
