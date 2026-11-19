@@ -145,6 +145,12 @@ table.grid .thr-cell input { margin-left: 6px; }
 .empty { padding: 30px; text-align: center; color: var(--muted); }
 
 .print-head { display: none; border-bottom: 2px solid #333; padding-bottom: 8px; margin-bottom: 12px; }
+/* pravila cenzusa i posebna jedinica */
+label.check { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; align-self: flex-end; padding-bottom: 8px; }
+table.grid.rules td.rule-kind select { width: 340px; max-width: 100%; }
+table.grid.rules td.rule-kind { white-space: nowrap; }
+table.grid.rules input.sm { width: 64px; }
+.muted.small { font-size: 12px; line-height: 1.5; max-width: 900px; }
 /* traka za ažuriranje */
 .update-bar { display: flex; align-items: center; gap: 10px; padding: 8px 16px; background: var(--accent-soft, var(--surface-2)); border-bottom: 1px solid var(--border); font-size: 13px; }
 .update-bar span { flex: 1; }

@@ -9,7 +9,7 @@ Pokreni instalacioni `.exe` fajl i prati korake. Ako Windows prikaže upozorenje
 ## Moduli
 
 - **Rezultati i indeksi:** disproporcionalnost (Gallagher LSq, Loosemore–Hanby, Sainte-Laguë), efektivni broj stranaka (ENEP, ENPP, Golosov), frakcionalizacija (Rae F) i odnos prednosti za svaku listu.
-- **Raspodjela mandata:** D'Hondt, Sainte-Laguë ili Hare–Niemeyer, sa cenzusom. Za svaku listu biraš cenzus: opšti, manjinski (0,7%) ili hrvatski (0,35%).
+- **Raspodjela mandata:** D'Hondt, Sainte-Laguë ili Hare–Niemeyer. Za svake izbore zadaješ pravila cenzusa (npr. poseban cenzus za koalicije, izuzeće ili zbirnu listu za manjine, garantovani mandat, uvećane količnike), a za svaku listu biraš koje pravilo važi. Može se dodati i posebna izborna jedinica sa svojim brojem mandata.
 - **Nacionalizacija stranaka:** koliko je podrška stranke ravnomjerno raspoređena po opštinama (Bochsler).
 - **Volatilnost:** koliki se dio glasova pomjerio između stranaka od jednih do drugih izbora.
 - **Pregled kroz vrijeme:** biraš izbore koje porediš i indekse koje želiš na grafikonu. Tabela prikazuje sve indekse za izabrane izbore, a volatilnost se računa prema prethodnim izabranim izborima. Kad pređeš mišem preko skraćenice (LSq, ENEP…), vidiš puno ime indeksa.

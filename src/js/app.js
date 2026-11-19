@@ -69,9 +69,12 @@
         Golosovljev efektivni broj stranaka: Golosov, G. V. (2010). The effective number of parties: a new approach. <i>Party Politics</i> 16(2): 171–192.
         Odnos prednosti (advantage ratio, udio mandata / udio glasova): Taagepera, R. i Shugart, M. S. (1989). <i>Seats and Votes</i>. New Haven: Yale University Press.`,
       alloc: `<b>Metode.</b> D'Hondt (djelioci 1, 2, 3…), Sainte-Laguë (djelioci 1, 3, 5…) i Hare–Niemeyer (prosta kvota i najveći ostatak).
-        <b>Cenzus po listi</b> (čl. 94 Zakona o izboru odbornika i poslanika, od izmjena iz 2011): <i>Manjinski 0,7%</i> – manjinske liste koje ne pređu opšti cenzus, a imaju najmanje 0,7% glasova, učestvuju u raspodjeli kao jedna zbirna lista, sa najviše tri mandata, koji se zatim dijele među njima istom metodom;
-        <i>Hrvatski 0,35%</i> – ako nijedna lista hrvatskog naroda ne ispuni te uslove, najuspješnija sa najmanje 0,35% glasova dobija jedan mandat.
-        <b>Posebna izborna jedinica</b> postoji samo za izbore 2006. i 2009. (čl. 94a tada važećeg zakona, ukinut izmjenama iz 2011): pet mandata bira se na posebno određenim biračkim mjestima; cenzus je 3% u opštoj, odnosno u posebnoj jedinici; lista koja u jednoj jedinici ne učestvuje ili ne osvoji mandat, tim glasovima dodaje glasove iz druge.`,
+        <b>Pravila cenzusa</b> se zadaju za svake izbore. Svaka lista ima jedno pravilo: <i>samostalno</i> (lista ulazi u raspodjelu ako ima najmanje zadati procenat; 0% znači bez cenzusa);
+        <i>zbirna lista</i> (liste tog pravila koje ne pređu opšti cenzus, a imaju najmanje zadati procenat, učestvuju kao jedna lista sa najviše zadatim brojem mandata, koji se zatim dijele među njima istom metodom);
+        <i>garantovani mandat</i> (ako nijedna lista tog pravila ne pređe opšti cenzus, najuspješnija sa najmanje zadatim procentom dobija zadati broj mandata);
+        <i>uvećani količnici</i> (količnici liste uvećavaju se za zadati procenat).
+        Za Crnu Goru od 2011. (čl. 94 Zakona o izboru odbornika i poslanika): manjinske liste – zbirna lista, 0,7%, najviše 3 mandata; liste hrvatskog naroda – garantovani mandat, 0,35%, 1 mandat.
+        <b>Posebna izborna jedinica:</b> dio mandata bira se odvojeno. Sa prenosom glasova (Crna Gora 2006. i 2009, čl. 94a tada važećeg zakona: pet mandata na posebno određenim biračkim mjestima) lista koja u jednoj jedinici ne učestvuje ili ne osvoji mandat, tim glasovima dodaje glasove iz druge; bez prenosa se obje raspodjele računaju odvojeno i mandati saberu.`,
       nat: `<b>Autor formule.</b> Ponderisani indeks nacionalizacije stranaka (PNSw) i standardizovani indeks nacionalizacije (sPNS) razvio je <b>Daniel Bochsler</b> (Univerzitet u Cirihu):
         Bochsler, D. (2010). Measuring party nationalisation: A new Gini-based indicator that corrects for the number of units. <i>Electoral Studies</i> 29(1): 155–168.
         Indeks se oslanja na Gini-zasnovan indeks nacionalizacije: Jones, M. P. i Mainwaring, S. (2003). The nationalization of parties and party systems. <i>Party Politics</i> 9(2): 139–166.
@@ -97,9 +100,12 @@
         Golosov's effective number of parties: Golosov, G. V. (2010). The effective number of parties: a new approach. <i>Party Politics</i> 16(2): 171–192.
         Advantage ratio (seat share / vote share): Taagepera, R. and Shugart, M. S. (1989). <i>Seats and Votes</i>. New Haven: Yale University Press.`,
       alloc: `<b>Methods.</b> D'Hondt (divisors 1, 2, 3…), Sainte-Laguë (divisors 1, 3, 5…) and Hare–Niemeyer (simple quota and largest remainder).
-        <b>Threshold per list</b> (Art. 94 of the Law on the Election of Councillors and Members of Parliament, as amended in 2011): <i>Minority 0.7%</i> – minority lists that do not pass the general threshold but have at least 0.7% of the votes take part in the allocation as one combined list, with at most three seats, which are then divided among them by the same method;
-        <i>Croatian 0.35%</i> – if no list of the Croatian people meets these conditions, the most successful one with at least 0.35% of the votes wins one seat.
-        <b>Special electoral unit</b> exists only for the 2006 and 2009 elections (Art. 94a of the law then in force, abolished by the 2011 amendments): five seats are elected at specially designated polling stations; the threshold is 3% in the general and in the special unit; a list that does not take part or does not win a seat in one unit adds those votes to the other.`,
+        <b>Threshold rules</b> are set for each election. Each list has one rule: <i>on its own</i> (the list takes part in the allocation if it has at least the given percentage; 0% means no threshold);
+        <i>combined list</i> (lists with this rule that do not pass the general threshold but have at least the given percentage take part as one list with at most the given number of seats, which are then divided among them by the same method);
+        <i>guaranteed seat</i> (if no list with this rule passes the general threshold, the most successful one with at least the given percentage wins the given number of seats);
+        <i>increased quotients</i> (the list's quotients are increased by the given percentage).
+        For Montenegro since 2011 (Art. 94 of the Law on the Election of Councillors and Members of Parliament): minority lists – combined list, 0.7%, at most 3 seats; lists of the Croatian people – guaranteed seat, 0.35%, 1 seat.
+        <b>Special electoral unit:</b> part of the seats is elected separately. With vote transfer (Montenegro 2006 and 2009, Art. 94a of the law then in force: five seats at specially designated polling stations) a list that does not take part or does not win a seat in one unit adds those votes to the other; without transfer both allocations are calculated separately and the seats are added up.`,
       nat: `<b>Formula author.</b> The weighted party nationalisation score (PNSw) and the standardised party nationalisation score (sPNS) were developed by <b>Daniel Bochsler</b> (University of Zurich):
         Bochsler, D. (2010). Measuring party nationalisation: A new Gini-based indicator that corrects for the number of units. <i>Electoral Studies</i> 29(1): 155–168.
         The index builds on the Gini-based party nationalisation score: Jones, M. P. and Mainwaring, S. (2003). The nationalization of parties and party systems. <i>Party Politics</i> 9(2): 139–166.
@@ -140,15 +146,25 @@
     return out;
   }
   const hasSpecial = (e) => !!(e.special && parseNum(e.special.seats) > 0);
+  // Pravila cenzusa izbora -> pravilo za svaku listu (null = opšti cenzus)
+  const ruleOf = (e, l) => (e.rules || []).find((r) => r.id === l.rule) || null;
+  function listRules(e) {
+    return e.lists.map((l) => {
+      const r = ruleOf(e, l);
+      if (!r || r.id === 'opsti') return null;
+      return { key: r.id, kind: r.kind, pct: parseNum(r.pct), cap: parseNum(r.cap), seats: parseNum(r.seats), bonus: parseNum(r.bonus) };
+    });
+  }
   function calcAlloc(e) {
     const V = e.lists.map((l) => parseNum(l.votes));
+    const rules = listRules(e);
     let r;
     if (hasSpecial(e)) {
-      r = I.allocateSpecial({ votes: V, seats: parseNum(e.seats), method: e.method, threshold: parseNum(e.threshold),
-        special: { seats: parseNum(e.special.seats), votes: e.lists.map((l) => parseNum(e.special.votes?.[l.id])) } });
+      const sp = e.special;
+      r = I.allocateSpecial({ votes: V, seats: parseNum(e.seats), method: e.method, threshold: parseNum(e.threshold), rules,
+        special: { seats: parseNum(sp.seats), votes: e.lists.map((l) => parseNum(sp.votes?.[l.id])), threshold: String(sp.threshold ?? '').trim() === '' ? undefined : parseNum(sp.threshold), transfer: sp.transfer !== false } });
     } else {
-      r = I.allocate({ votes: V, seats: parseNum(e.seats), method: e.method, threshold: parseNum(e.threshold),
-        types: e.lists.map((l) => l.type || 'opsti') });
+      r = I.allocate({ votes: V, seats: parseNum(e.seats), method: e.method, threshold: parseNum(e.threshold), rules });
     }
     return { V, tv: I.sum(V), ...r, lsq: I.lsq(V, r.seats) };
   }
@@ -287,17 +303,57 @@
     </div>`;
   }
 
-  // Izbor cenzusa po listi
-  const THR_TYPES = ['opsti', 'manjina', 'hrvati'];
+  // Pravila cenzusa: svaki izbori imaju svoja; "Opšti" postoji uvijek i koristi opšti cenzus izbora
+  const RULE_KINDS = {
+    own: 'Samostalno, sa ovim cenzusom',
+    pool: 'Zbirna lista, ako ne pređu opšti cenzus',
+    guar: 'Garantovani mandat, ako nijedna ne pređe opšti cenzus',
+    bonus: 'Količnici uvećani za određeni procenat',
+  };
+  // broj u polju za unos u formatu jezika (0.7 -> 0,7)
+  const numIn = (v) => (typeof v === 'number' && L.lang === 'me' ? String(v).replace('.', ',') : esc(v ?? ''));
+  const ruleName = (r) => (r.id === 'opsti' ? t('Opšti') : t(r.name || ''));
+  const rulePct = (r, e) => (r.id === 'opsti' ? parseNum(e.threshold) : parseNum(r.pct));
   function thrLabel(l, e) {
-    const k = THR_TYPES.includes(l.type) ? l.type : 'opsti';
-    if (k === 'opsti') return t('Opšti ({p}%)', { p: fmt(parseNum(e.threshold), 1) });
-    return k === 'manjina' ? t('Manjinski (0,7%)') : t('Hrvatski (0,35%)');
+    const r = ruleOf(e, l) || { id: 'opsti' };
+    return `${ruleName(r)} (${fmt(rulePct(r, e), 2).replace(/[,.]?0+$/, '')}%)`;
   }
   function thrCell(l, e) {
-    const cur = THR_TYPES.includes(l.type) ? l.type : 'opsti';
-    const opts = THR_TYPES.map((k) => `<option value="${k}" ${k === cur ? 'selected' : ''}>${thrLabel({ type: k }, e)}</option>`).join('');
-    return `<td class="l thr-cell"><select data-f="type" title="${t('Cenzus koji važi za ovu listu')}">${opts}</select></td>`;
+    const cur = (ruleOf(e, l) || { id: 'opsti' }).id;
+    const opts = (e.rules || []).map((r) => `<option value="${esc(r.id)}" ${r.id === cur ? 'selected' : ''}>${esc(thrLabel({ rule: r.id }, e))}</option>`).join('');
+    return `<td class="l thr-cell"><select data-f="rule" title="${t('Pravilo cenzusa koje važi za ovu listu')}">${opts}</select></td>`;
+  }
+  function rulesEditor(e) {
+    const rows = (e.rules || []).map((r) => {
+      if (r.id === 'opsti') {
+        return `<tr><td class="l">${esc(t('Opšti'))}</td><td>${fmt(parseNum(e.threshold), 2).replace(/[,.]?0+$/, '')} %</td><td class="l muted">${t('opšti cenzus izbora (polje iznad)')}</td><td></td></tr>`;
+      }
+      const extra = r.kind === 'pool' ? `<span class="muted">${t('najviše')}</span> <input class="sm" data-rule-f="cap" value="${esc(r.cap ?? '')}" inputmode="numeric"> <span class="muted">${t('mandata')}</span>`
+        : r.kind === 'guar' ? `<input class="sm" data-rule-f="seats" value="${esc(r.seats ?? 1)}" inputmode="numeric"> <span class="muted">${t('mandat(a)')}</span>`
+        : r.kind === 'bonus' ? `<span class="muted">+</span><input class="sm" data-rule-f="bonus" value="${numIn(r.bonus)}" inputmode="decimal"> <span class="muted">%</span>` : '';
+      return `<tr data-rid="${esc(r.id)}"><td class="l"><input class="name" data-rule-f="name" value="${esc(r.name || '')}" placeholder="${t('Naziv pravila')}"></td>
+        <td><input class="sm" data-rule-f="pct" value="${numIn(r.pct)}" inputmode="decimal"> %</td>
+        <td class="l rule-kind"><select data-rule-f="kind">${Object.entries(RULE_KINDS).map(([k, v]) => `<option value="${k}" ${k === r.kind ? 'selected' : ''}>${t(v)}</option>`).join('')}</select> ${extra}</td>
+        <td class="no-print"><button class="icon-btn" data-act="del-rule" title="${t('Ukloni pravilo')}">✕</button></td></tr>`;
+    }).join('');
+    return `<h2>${t('Pravila cenzusa')}</h2>
+      <div class="table-wrap"><table class="grid rules">
+        <thead><tr><th class="l">${t('Naziv pravila')}</th><th>${t('Cenzus')}</th><th class="l">${t('Šta važi za liste sa ovim pravilom')}</th><th class="no-print"></th></tr></thead>
+        <tbody>${rows}</tbody></table></div>
+      <div class="row no-print" style="margin-top:8px"><button class="btn small" data-act="add-rule">${t('+ Dodaj pravilo')}</button></div>`;
+  }
+  function specialEditor(e) {
+    const sp = e.special;
+    if (!sp) return `<div class="row no-print" style="margin-top:14px"><button class="btn small" data-act="add-special">${t('+ Dodaj posebnu izbornu jedinicu')}</button></div>`;
+    return `<h2>${t('Posebna izborna jedinica')}</h2>
+      <div class="row" style="margin-bottom:6px">
+        <label class="field">${t('Broj mandata u posebnoj jedinici')}<input data-spf="seats" value="${esc(sp.seats ?? '')}" inputmode="numeric"></label>
+        <label class="field">${t('Cenzus u posebnoj jedinici (%)')}<input data-spf="threshold" value="${numIn(sp.threshold)}" placeholder="${esc(fmt(parseNum(e.threshold), 1))}" inputmode="decimal"></label>
+        <label class="check"><input type="checkbox" data-spf="transfer" ${sp.transfer !== false ? 'checked' : ''}> ${t('Prenos glasova između opšte i posebne raspodjele')}</label>
+        <button class="btn small danger no-print" data-act="del-special">${t('Ukloni posebnu jedinicu')}</button>
+      </div>
+      <div class="muted small">${t('Glasovi lista u tabeli su ukupni; u kolonu „Posebna jedinica“ upiši koliko je od toga dobijeno u posebnoj jedinici.')}
+        ${sp.transfer !== false ? t('Sa prenosom glasova: lista koja u jednoj raspodjeli ne učestvuje ili ne osvoji mandat, tim glasovima dodaje glasove iz druge (Crna Gora 2006. i 2009). Tada se primjenjuje samo opšti cenzus.') : t('Bez prenosa: opšta raspodjela (sa pravilima cenzusa) i posebna jedinica računaju se odvojeno, a mandati se saberu.')}</div>`;
   }
 
   const METHODS = { dhondt: "D'Hondt", 'sainte-lague': 'Sainte-Laguë', hare: 'Hare–Niemeyer' };
@@ -364,10 +420,10 @@
 
     alloc: {
       render(e) {
-        const sp = hasSpecial(e);
+        const sp = !!e.special;
         const rows = e.lists.map((l) => `<tr data-id="${l.id}">
           <td class="l clip" title="${esc(l.name)}">${esc(l.name)}</td><td>${fmtInt(parseNum(l.votes))}</td>
-          ${sp ? `<td><input data-sp="${l.id}" value="${esc(e.special.votes?.[l.id] ?? '')}" inputmode="numeric"></td>` : thrCell(l, e)}
+          ${sp ? `<td><input data-sp="${l.id}" value="${esc(e.special.votes?.[l.id] ?? '')}" inputmode="numeric"></td>` : ''}${thrCell(l, e)}
           <td data-out="al-${l.id}" style="font-weight:600"></td><td>${fmtInt(parseNum(l.seats))}</td><td data-out="df-${l.id}"></td></tr>`).join('');
         return `${printHead(e, t('Raspodjela mandata'))}${electionHead(e)}
           <div class="row" style="margin-bottom:12px">
@@ -377,11 +433,13 @@
             <label class="field">${t('Opšti cenzus (%)')}<input data-bind="threshold" value="${esc(e.threshold)}" inputmode="decimal"></label>
           </div>
           <div class="table-wrap"><table class="grid">
-            <thead><tr><th class="l">${t('Lista')}</th><th>${t('Glasovi')}</th>${sp ? `<th>${t('Glasovi u posebnoj jedinici')}</th>` : `<th class="l">${t('Cenzus')}</th>`}<th>${t('Dodijeljeno')}</th><th>${t('Stvarno')}</th><th>${t('Razlika')}</th></tr></thead>
+            <thead><tr><th class="l">${t('Lista')}</th><th>${t('Glasovi')}</th>${sp ? `<th>${t('Posebna jedinica')}</th>` : ''}<th class="l">${t('Cenzus')}</th><th>${t('Dodijeljeno')}</th><th>${t('Stvarno')}</th><th>${t('Razlika')}</th></tr></thead>
             <tbody>${rows}</tbody>
-            <tfoot><tr><td class="l">${t('Ukupno')}</td><td data-out="tv"></td><td data-out="tsp"></td><td data-out="tal"></td><td data-out="tst"></td><td></td></tr></tfoot>
+            <tfoot><tr><td class="l">${t('Ukupno')}</td><td data-out="tv"></td>${sp ? '<td data-out="tsp"></td>' : ''}<td></td><td data-out="tal"></td><td data-out="tst"></td><td></td></tr></tfoot>
           </table></div>
           <div data-out-html="allocwarn"></div>
+          ${rulesEditor(e)}
+          ${specialEditor(e)}
           <div class="metrics"><div class="metric"><div class="k">${t('LSq za ovu raspodjelu')}</div><div class="v" data-out="lsq"></div><div class="h">${t('Gallagherov indeks disproporcionalnosti')}</div></div></div>
           <div class="cite">${cite('alloc')}</div>`;
       },
@@ -392,18 +450,27 @@
           const d = r.seats[i] - parseNum(l.seats);
           o['df-' + l.id] = d === 0 ? '0' : (d > 0 ? '+' : '') + d;
         });
-        o.tsp = hasSpecial(e) ? fmtInt(I.sum(e.lists.map((l) => parseNum(e.special.votes?.[l.id])))) : '';
+        o.tsp = e.special ? fmtInt(I.sum(e.lists.map((l) => parseNum(e.special.votes?.[l.id])))) : '';
         o.tv = fmtInt(r.tv); o.tal = String(I.sum(r.seats)); o.tst = fmtInt(I.sum(e.lists.map((l) => parseNum(l.seats))));
         o.lsq = fmt(r.lsq);
-        o.allocwarn = r.tie ? `<div class="warn">${t('Posljednji mandat je neriješen (isti količnik/ostatak). Zakon obično propisuje kako se takav slučaj rješava; provjeri ručno.')}</div>` : '';
+        const w = [];
+        if (r.tie) w.push(t('Posljednji mandat je neriješen (isti količnik/ostatak). Zakon obično propisuje kako se takav slučaj rješava; provjeri ručno.'));
+        if (hasSpecial(e) && e.special.transfer !== false && e.lists.some((l) => l.rule && l.rule !== 'opsti')) w.push(t('Uz prenos glasova u posebnoj jedinici primjenjuje se samo opšti cenzus; pravila cenzusa lista se ne koriste.'));
+        o.allocwarn = w.length ? `<div class="warn">${w.map(esc).join('<br>')}</div>` : '';
         return o;
       },
       table(e) {
         const r = calcAlloc(e), sp = hasSpecial(e);
+        const ruleRows = (e.rules || []).filter((x) => x.id !== 'opsti').map((x) => {
+          const d = x.kind === 'pool' ? t('najviše {n} mandata', { n: parseNum(x.cap) }) : x.kind === 'guar' ? t('{n} mandat(a)', { n: parseNum(x.seats) || 1 }) : x.kind === 'bonus' ? `+${fmt(parseNum(x.bonus), 1)}%` : '';
+          return [t('Pravilo cenzusa'), `${ruleName(x)}: ${fmt(parseNum(x.pct), 2)}%, ${t(RULE_KINDS[x.kind] || '')}${d ? ', ' + d : ''}`];
+        });
         return {
-          header: [t('Lista'), t('Glasovi'), sp ? t('Glasovi u posebnoj jedinici') : t('Cenzus'), t('Dodijeljeno'), t('Stvarno'), t('Razlika')],
-          rows: e.lists.map((l, i) => [l.name, r.V[i], sp ? parseNum(e.special.votes?.[l.id]) : thrLabel(l, e), r.seats[i], parseNum(l.seats), r.seats[i] - parseNum(l.seats)]),
-          summary: [[t('Metoda'), METHODS[e.method]], [t('Broj mandata'), parseNum(e.seats)], [t('Opšti cenzus (%)'), parseNum(e.threshold)], [t('LSq za raspodjelu'), r.lsq]],
+          header: [t('Lista'), t('Glasovi'), ...(sp ? [t('Posebna jedinica')] : []), t('Cenzus'), t('Dodijeljeno'), t('Stvarno'), t('Razlika')],
+          rows: e.lists.map((l, i) => [l.name, r.V[i], ...(sp ? [parseNum(e.special.votes?.[l.id])] : []), thrLabel(l, e), r.seats[i], parseNum(l.seats), r.seats[i] - parseNum(l.seats)]),
+          summary: [[t('Metoda'), METHODS[e.method]], [t('Broj mandata'), parseNum(e.seats)], [t('Opšti cenzus (%)'), parseNum(e.threshold)], ...ruleRows,
+            ...(sp ? [[t('Mandata u posebnoj jedinici'), parseNum(e.special.seats)], [t('Prenos glasova između opšte i posebne raspodjele'), e.special.transfer !== false ? t('da') : t('ne')]] : []),
+            [t('LSq za raspodjelu'), r.lsq]],
         };
       },
     },
@@ -594,6 +661,10 @@
     main.querySelectorAll('[data-out-html]').forEach((el) => { const k = el.dataset.outHtml; if (k in o) el.innerHTML = o[k]; });
   }
 
+  // nazivi pravila u padajućim listama osvježavaju se bez ponovnog crtanja (da se ne izgubi fokus)
+  function refreshRuleLabels(e) {
+    main.querySelectorAll('select[data-f="rule"] option').forEach((o) => { o.textContent = thrLabel({ rule: o.value }, e); });
+  }
   // ---------- događaji ----------
   let saveTimer;
   const saveSoon = () => { clearTimeout(saveTimer); saveTimer = setTimeout(() => S.save(), 300); };
@@ -603,11 +674,21 @@
     if (el.dataset.bind && e) {
       e[el.dataset.bind] = el.value;
       if (el.dataset.bind === 'name') renderNav();
+      if (el.dataset.bind === 'threshold') refreshRuleLabels(e);
     } else if (el.dataset.f && e) {
       const l = e.lists.find((x) => x.id === el.closest('tr').dataset.id);
       if (l) l[el.dataset.f] = el.dataset.f === 'name' ? el.value : el.value.trim();
     } else if (el.dataset.sp && e && e.special) {
       (e.special.votes = e.special.votes || {})[el.dataset.sp] = el.value.trim();
+    } else if (el.dataset.ruleF && e) {
+      const r = (e.rules || []).find((x) => x.id === el.closest('tr').dataset.rid);
+      if (!r) return;
+      r[el.dataset.ruleF] = el.dataset.ruleF === 'name' ? el.value : el.value.trim();
+      if (el.dataset.ruleF === 'kind') { S.save(); render(); return; }
+      saveSoon(); refreshRuleLabels(e); paint(); return;
+    } else if (el.dataset.spf && e && e.special) {
+      e.special[el.dataset.spf] = el.type === 'checkbox' ? el.checked : el.value.trim();
+      if (el.type === 'checkbox') { S.save(); render(); return; }
     } else if ((el.dataset.uf || el.dataset.uv) && e) {
       const u = e.units.find((x) => x.id === el.closest('tr').dataset.uid);
       if (u) { if (el.dataset.uf) u[el.dataset.uf] = el.value; else u.votes[el.dataset.uv] = el.value.trim(); }
@@ -617,7 +698,7 @@
   main.addEventListener('change', (ev) => {
     const el = ev.target;
     if (el.dataset.vol) { S.state.vol[el.dataset.vol] = el.value; S.save(); render(); }
-    else if (el.dataset.f === 'type') { S.save(); render(); }
+    else if (el.dataset.f === 'rule') { S.save(); render(); }
     else if (el.tagName === 'SELECT' && el.dataset.bind) { S.save(); paint(); }
   });
 
@@ -663,6 +744,19 @@
         S.save(); render(); break;
       }
       case 'auto-links': { const A = S.byId(S.state.vol.a), B = S.byId(S.state.vol.b); S.state.links[S.linkKey(A.id, B.id)] = autoLinks(A, B); S.save(); render(); break; }
+      case 'add-rule': { const e = S.current(); e.rules = e.rules || []; e.rules.push({ id: S.uid('r'), name: t('Novo pravilo'), kind: 'own', pct: 0 }); S.save(); render(); break; }
+      case 'del-rule': {
+        const e = S.current(), id = b.closest('tr').dataset.rid;
+        e.rules = e.rules.filter((x) => x.id !== id);
+        e.lists.forEach((l) => { if (l.rule === id) l.rule = 'opsti'; });
+        S.save(); render(); break;
+      }
+      case 'add-special': { const e = S.current(); e.special = { seats: '', threshold: '', transfer: false, votes: {} }; S.save(); render(); break; }
+      case 'del-special': {
+        const e = S.current();
+        if (!(await confirmBox(t('Ukloni posebnu jedinicu'), t('Uklanjaju se broj mandata i glasovi u posebnoj jedinici za ove izbore.'), t('Ukloni')))) break;
+        e.special = null; S.save(); render(); break;
+      }
       case 'trend-el': { const st = trendState(); const i = st.sel.indexOf(b.dataset.id); if (i >= 0) st.sel.splice(i, 1); else st.sel.push(b.dataset.id); S.save(); render(); break; }
       case 'trend-idx': { const st = trendState(); const i = st.idx.indexOf(b.dataset.k); if (i >= 0) st.idx.splice(i, 1); else st.idx.push(b.dataset.k); S.save(); render(); break; }
       case 'trend-all': trendState().sel = S.state.elections.map((x) => x.id); S.save(); render(); break;
