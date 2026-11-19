@@ -50,14 +50,64 @@ fn system_accent() -> Option<String> {
     None
 }
 
+/// Automatsko ažuriranje radi samo u izdanjima napravljenim preko GitHub Actions,
+/// gdje se u konfiguraciju dodaje javni ključ i adresa (plugins.updater).
+/// Lokalna izgradnja nema tu konfiguraciju, pa provjera ažuriranja tada ne radi ništa.
+static UPDATER_ON: AtomicBool = AtomicBool::new(false);
+
+#[derive(serde::Serialize)]
+struct UpdateInfo {
+    version: String,
+    notes: Option<String>,
+}
+
+#[tauri::command]
+async fn check_update(app: tauri::AppHandle) -> Result<Option<UpdateInfo>, String> {
+    if !UPDATER_ON.load(Ordering::Relaxed) {
+        return Ok(None);
+    }
+    use tauri_plugin_updater::UpdaterExt;
+    let update = app.updater().map_err(|e| e.to_string())?.check().await.map_err(|e| e.to_string())?;
+    Ok(update.map(|u| UpdateInfo { version: u.version.clone(), notes: u.body.clone() }))
+}
+
+#[tauri::command]
+async fn install_update(app: tauri::AppHandle) -> Result<(), String> {
+    if !UPDATER_ON.load(Ordering::Relaxed) {
+        return Err(tr("Ažuriranje nije dostupno u ovoj verziji.", "Updating is not available in this build."));
+    }
+    use tauri_plugin_updater::UpdaterExt;
+    let update = app
+        .updater()
+        .map_err(|e| e.to_string())?
+        .check()
+        .await
+        .map_err(|e| e.to_string())?
+        .ok_or_else(|| tr("Nema novije verzije.", "No newer version is available."))?;
+    update
+        .download_and_install(|_, _| {}, || {})
+        .await
+        .map_err(|e| format!("{}: {e}", tr("Ažuriranje nije uspjelo", "The update failed")))?;
+    app.restart();
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())
+        .setup(|app| {
+            if app.config().plugins.0.contains_key("updater") {
+                app.handle().plugin(tauri_plugin_updater::Builder::new().build())?;
+                UPDATER_ON.store(true, Ordering::Relaxed);
+            }
+            Ok(())
+        })
         .invoke_handler(tauri::generate_handler![
             save_file,
             system_accent,
-            set_lang
+            set_lang,
+            check_update,
+            install_update
         ])
         .run(tauri::generate_context!())
         .expect("greška pri pokretanju aplikacije");

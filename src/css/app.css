@@ -50,6 +50,7 @@ select option { background: var(--surface); color: var(--text); }
 .topbar { display: flex; align-items: center; gap: 12px; padding: 8px 16px; background: var(--surface); border-bottom: 1px solid var(--border); }
 .logo { width: 30px; height: 30px; display: block; }
 .brand-title { font-weight: 600; font-size: 16px; }
+.app-version { font-size: 12px; color: var(--muted); margin-left: -4px; }
 .spacer { flex: 1; }
 .pill { font-size: 12px; padding: 3px 10px; border-radius: 999px; background: var(--surface-2); color: var(--muted); border: 1px solid var(--border); }
 .pill.ok { background: var(--ok-soft); color: var(--ok); border-color: transparent; }
@@ -144,6 +145,19 @@ table.grid .thr-cell input { margin-left: 6px; }
 .empty { padding: 30px; text-align: center; color: var(--muted); }
 
 .print-head { display: none; border-bottom: 2px solid #333; padding-bottom: 8px; margin-bottom: 12px; }
+/* traka za ažuriranje */
+.update-bar { display: flex; align-items: center; gap: 10px; padding: 8px 16px; background: var(--accent-soft, var(--surface-2)); border-bottom: 1px solid var(--border); font-size: 13px; }
+.update-bar span { flex: 1; }
+/* grafikon kroz vrijeme */
+.chart-card { padding: 8px 10px; }
+.chart { width: 100%; height: auto; display: block; }
+.ch-grid { stroke: var(--border); stroke-width: 1; }
+.ch-ax { fill: var(--muted); font-size: 11px; }
+.ch-val { fill: var(--text); font-size: 11px; font-weight: 600; }
+.ch-line { fill: none; stroke: var(--accent); stroke-width: 2.5; }
+.ch-dot { fill: var(--surface); stroke: var(--accent); stroke-width: 2.5; }
+table.grid.trend td.clip { max-width: 230px; white-space: normal; }
+table.grid.trend th, table.grid.trend td { padding: 5px 6px; }
 @media print {
   :root { --text: #000; --muted: #444; --border: #bbb; --bg: #fff; --surface: #fff; --surface-2: #f2f2f2; --input-bg: #fff; color-scheme: light; }
   .topbar, .sidebar, .exportbar, .no-print, button { display: none !important; }

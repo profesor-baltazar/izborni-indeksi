@@ -28,6 +28,12 @@
       // posebna izborna jedinica (2006, 2009) za podatke sačuvane prije nego što je dodata
       const seed = seeds.find((x) => x.id === e.id);
       if (seed && seed.special && !e.special && e.lists.every((l) => seed.lists.some((x) => x.id === l.id))) e.special = JSON.parse(JSON.stringify(seed.special));
+      // zvanični broj važećih glasova (za provjeru unosa)
+      // 2006: "Demokratska stranka Crne Gore – dio koji nedostaje" ima 1.286 glasova (u odluci RIK-a greškom 1.284)
+      if (seed && e.id === 'cg2006') { const l = e.lists.find((x) => x.id === 'y2006l5'); if (l && Number(l.votes) === 1284) l.votes = 1286; }
+      if (seed && e.validTotal === undefined) e.validTotal = seed.validTotal;
+      // 2020: u Bochslerovom fajlu Rožaje greškom nose naziv "Tuzi"; ispravke naziva opština
+      if (seed && e.id === 'cg2020') e.units.forEach((u) => { const su = seed.units.find((x) => x.id === u.id); if (su && u.name !== su.name && (u.name === 'Tuzi' || su.name.normalize('NFD').replace(/[\u0300-\u036f]/g, '') === u.name)) u.name = su.name; });
     });
     s.elections.forEach((e) => e.lists.forEach((l) => {
       if (!['opsti', 'manjina', 'hrvati'].includes(l.type)) {
@@ -48,7 +54,7 @@
     current() { return this.state.elections.find((e) => e.id === this.state.current) || null; },
     byId(id) { return this.state.elections.find((e) => e.id === id) || null; },
     newElection(name, listName = (i) => 'Lista ' + i) {
-      const e = { id: uid('e'), name: name || tr('Novi izbori'), seats: 81, threshold: 3, method: 'dhondt', lists: [], units: [] };
+      const e = { id: uid('e'), name: name || tr('Novi izbori'), seats: 81, threshold: 3, method: 'dhondt', validTotal: '', lists: [], units: [] };
       for (let i = 1; i <= 3; i++) e.lists.push(this.newList(listName(i)));
       this.state.elections.push(e);
       this.state.current = e.id;

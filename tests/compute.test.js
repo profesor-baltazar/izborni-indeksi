@@ -48,4 +48,20 @@ for (const id of ['cg2006', 'cg2009']) {
     special: { seats: x.special.seats, votes: x.lists.map((l) => x.special.votes[l.id]) } });
   assert.deepStrictEqual(a.seats, x.lists.map((l) => l.seats), 'Posebna jedinica ' + id);
 }
+// Dodatni indeksi: jednostavni primjeri + 2020 (nezavisno izračunato u Pythonu)
+close(I.lh([50, 30, 20], [60, 30, 10]), 10, 1e-9, 'LH primjer');
+close(I.slIndex([50, 50], [75, 25]), 25, 1e-9, 'SL primjer');            // (25²/50 + 25²/50)
+close(I.raeF([60, 40]), 0.48, 1e-12, 'Rae F primjer');
+close(I.golosov([50, 50]), 2, 1e-12, 'Golosov dvije jednake');
+close(I.golosov([100]), 1, 1e-12, 'Golosov jedna');
+close(I.lh(V, S), 2.8565717875663723, 1e-9, 'LH 2020');
+close(I.slIndex(V, S), 0.8724386514840975, 1e-9, 'SL 2020');
+close(I.raeF(V), 0.7477547650043894, 1e-12, 'F glasovi 2020'); close(I.raeF(S), 0.7303764670019814, 1e-12, 'F mandati 2020');
+close(I.golosov(V), 3.7404036071389055, 1e-9, 'Golosov glasovi 2020'); close(I.golosov(S), 3.445795070270455, 1e-9, 'Golosov mandati 2020');
+close(I.advantage(V, S)[7], 1.0565239663940147, 1e-9, 'Odnos prednosti DPS 2020');
+// Zvanični broj važećih glasova (provjera unosa): zbir glasova lista mora biti jednak
+for (const x of window.SEED_ELECTIONS) {
+  assert.strictEqual(x.lists.reduce((a, l) => a + l.votes, 0), x.validTotal, 'Važeći glasovi ' + x.id);
+  assert.strictEqual(x.lists.reduce((a, l) => a + l.seats, 0), 81, 'Mandati ' + x.id);
+}
 console.log('Svi testovi prošli.');

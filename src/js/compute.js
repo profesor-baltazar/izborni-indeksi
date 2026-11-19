@@ -23,6 +23,38 @@
     return h > 0 ? 1 / h : NaN;
   }
 
+  // Loosemore i Hanby (1971): D = 1/2 * sum |v_i - s_i| (u procentima)
+  function lh(votes, seats) {
+    const v = shares(votes), s = shares(seats);
+    return v.reduce((acc, x, i) => acc + Math.abs(x - s[i]) * 100, 0) / 2;
+  }
+
+  // Sainte-Laguë indeks (Sainte-Laguë 1910; Gallagher 1991): sum (s_i - v_i)^2 / v_i, u procentima, za liste sa v_i > 0
+  function slIndex(votes, seats) {
+    const v = shares(votes), s = shares(seats);
+    return v.reduce((acc, x, i) => (x > 0 ? acc + ((s[i] - x) * 100) ** 2 / (x * 100) : acc), 0);
+  }
+
+  // Rae (1967): indeks fragmentacije F = 1 - sum p_i^2
+  function raeF(values) {
+    const p = shares(values);
+    return sum(values) > 0 ? 1 - p.reduce((acc, x) => acc + x * x, 0) : NaN;
+  }
+
+  // Golosov (2010): N = sum p_i / (p_i + p_1^2 - p_i^2), p_1 = najveći udio
+  function golosov(values) {
+    const p = shares(values).filter((x) => x > 0);
+    if (!p.length) return NaN;
+    const p1 = Math.max(...p);
+    return p.reduce((acc, x) => acc + x / (x + p1 * p1 - x * x), 0);
+  }
+
+  // Odnos prednosti (Taagepera i Shugart 1989): udio mandata / udio glasova, po listi
+  function advantage(votes, seats) {
+    const v = shares(votes), s = shares(seats);
+    return v.map((x, i) => (x > 0 ? s[i] / x : NaN));
+  }
+
   // Raspodjela mandata (D'Hondt, Sainte-Laguë, Hare–Niemeyer) sa cenzusom po listi.
   // types[i]: 'opsti' (opšti cenzus), 'manjina' (manjinska lista), 'hrvati' (lista hrvatskog naroda)
   // rules: { minority: 0.7, cap: 3, croat: 0.35 }
@@ -204,7 +236,7 @@
     return { total, typeA, typeB, rows };
   }
 
-  const api = { sum, shares, lsq, enp, allocate, allocateSpecial, pnsParty, effectiveUnits, nationalisation, volatility };
+  const api = { sum, shares, lsq, enp, lh, slIndex, raeF, golosov, advantage, allocate, allocateSpecial, pnsParty, effectiveUnits, nationalisation, volatility };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.Indices = api;
 })(this);

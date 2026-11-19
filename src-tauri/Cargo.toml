@@ -1,6 +1,6 @@
 [package]
 name = "izborni-indeksi"
-version = "0.5.0"
+version = "1.0.0"
 description = "Izborni indeksi"
 edition = "2021"
 
@@ -14,6 +14,7 @@ tauri-build = { version = "2", features = [] }
 [dependencies]
 tauri = { version = "2", features = [] }
 tauri-plugin-dialog = "2"
+tauri-plugin-updater = "2"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 base64 = "0.22"
