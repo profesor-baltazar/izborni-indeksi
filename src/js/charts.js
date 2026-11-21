@@ -60,10 +60,11 @@
 
   // ---------- stubići (vertikalni ili horizontalni) ----------
   // cats: nazivi kategorija; series: [{label, color, values, opacity}]
-  function bars({ cats, series, horizontal, fmt, dec = 1, unit = '' }) {
+  function bars({ cats, series, horizontal, fmt, dec = 1, unit = '', title = '' }) {
     const all = series.flatMap((s) => s.values).filter(Number.isFinite);
     const max = Math.max(0, ...all) || 1;
-    const legend = series.length > 1 ? series.map((s) => ({ label: s.label, color: s.color, opacity: s.opacity })) : [];
+    const legend = !title && series.length > 1 ? series.map((s) => ({ label: s.label, color: s.color, opacity: s.opacity })) : [];
+    const head = !!(title || legend.length);
     let g = '', W, H;
     const legendSvg = (y0, W) => {
       let x = 20, out = '';
@@ -73,7 +74,7 @@
     if (horizontal) {
       const LBL = 40, labelW = Math.min(310, Math.max(...cats.map((c) => tw(cut(c, LBL), 12) * 1.08)) + 12);
       const barH = 14, gap = 4, groupH = series.length * (barH + gap) + 10;
-      W = 760; const x0 = labelW + 10, plotW = W - x0 - 70, top = legend.length ? 34 : 10;
+      W = 760; const x0 = labelW + 10, plotW = W - x0 - 70, top = head ? 34 : 10;
       H = top + cats.length * groupH + 10;
       cats.forEach((c, i) => {
         const y = top + i * groupH;
@@ -85,11 +86,12 @@
             + `<text x="${x0 + w + 5}" y="${yy + barH - 3}" class="ch-ax" style="font-size:11px">${fmt(v, dec)}${unit}</text>`;
         });
       });
-      if (legend.length) g += legendSvg(18, W);
+      if (title) g += `<text x="20" y="20" class="ch-title" style="font-size:13px;font-weight:600">${esc(title)}</text>`;
+      else if (legend.length) g += legendSvg(18, W);
     } else {
       const groupW = Math.max(34, series.length * 16 + 14);
       W = Math.max(960, 70 + cats.length * groupW + 20);
-      const top = legend.length ? 40 : 16, plotH = 230, x0 = 56, base = top + plotH;
+      const top = head ? 40 : 16, plotH = 230, x0 = 56, base = top + plotH;
       const labels = cats.map((c) => cut(c, 18));
       const rot = cats.length > 6;
       H = base + (rot ? 110 : 34);
@@ -109,7 +111,8 @@
         g += rot ? `<text transform="translate(${lx},${base + 12}) rotate(-40)" text-anchor="end" class="ch-ax" style="font-size:11px"><title>${esc(c)}</title>${esc(labels[i])}</text>`
           : `<text x="${lx}" y="${base + 18}" text-anchor="middle" class="ch-ax" style="font-size:11.5px"><title>${esc(c)}</title>${esc(labels[i])}</text>`;
       });
-      if (legend.length) g += legendSvg(20, W);
+      if (title) g += `<text x="20" y="22" class="ch-title" style="font-size:13px;font-weight:600">${esc(title)}</text>`;
+      else if (legend.length) g += legendSvg(20, W);
     }
     return `<svg class="chart" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" role="img">${g}</svg>`;
   }

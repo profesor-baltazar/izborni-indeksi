@@ -443,6 +443,7 @@
     'Najveća stranka – udio mandata (%)': 'Largest party – seat share (%)',
     'ParlGov ne sadrži zakonski cenzus, pa ga upiši u Raspodjeli mandata ako ti treba za efektivni prag ili raspodjelu.': 'ParlGov does not include the legal threshold, so enter it in Seat allocation if you need it for the effective threshold or the allocation.',
     'Zvanični broj nevažećih listića; ako je prazno, računa se kao glasalo minus važeći': 'Official number of invalid ballots; if empty, it is calculated as voted minus valid',
+    'Udio glasova (svjetlija traka) i udio mandata (tamnija traka), %': 'Vote share (lighter bar) and seat share (darker bar), %',
   };
 
   const I18N = {

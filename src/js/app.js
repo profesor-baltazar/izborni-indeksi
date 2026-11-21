@@ -137,7 +137,7 @@
     const items = e.lists.map((l, i) => ({ l, v: r.tv > 0 ? (r.V[i] / r.tv) * 100 : 0, s: r.ts > 0 ? (r.M[i] / r.ts) * 100 : 0 }));
     if (type === 'bars-v' || type === 'bars-h') {
       const shown = items.filter((x) => x.v >= 1 || x.s > 0).sort((a, b) => b.v - a.v);
-      return Charts.bars({ cats: shown.map((x) => x.l.name), horizontal: type === 'bars-h', fmt, dec: 1, unit: '%',
+      return Charts.bars({ cats: shown.map((x) => x.l.name), horizontal: type === 'bars-h', fmt, dec: 1, unit: '%', title: t('Udio glasova (svjetlija traka) i udio mandata (tamnija traka), %'),
         series: [{ label: t('Glasovi (%)'), color: '#8a8a8a', values: shown.map((x) => x.v), opacity: 0.55, perCat: shown.map((x) => col(x.l)) },
           { label: t('Mandati (%)'), color: '#444', values: shown.map((x) => x.s), perCat: shown.map((x) => col(x.l)) }] });
     }
