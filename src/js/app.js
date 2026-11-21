@@ -860,6 +860,50 @@
       case 'msel-none': mselSet(b.dataset.id, []); break;
       case 'msel-group': { const ids = S.state.elections.filter((x) => x.country === b.dataset.g).map((x) => x.id); const cur = mselGet('cmp-e');
         mselSet('cmp-e', ids.every((x) => cur.includes(x)) ? cur.filter((x) => !ids.includes(x)) : [...cur, ...ids]); break; }
+      case 'dup': S.duplicate(e, t(' (kopija)')); render(); toast(t('Napravljena kopija izbora')); break;
+      case 'del-election':
+        if (await confirmBox(t('Obriši izbore'), t('Da li sigurno želiš da obrišeš „{name}“? Ovo se ne može poništiti (osim iz rezervne kopije).', { name: esc(elTitle(e)) }), t('Obriši'), true)) { S.remove(e.id); render(); }
+        break;
+      case 'add-list': e.lists.push(S.newList(`${t('Lista')} ${e.lists.length + 1}`)); S.save(); render();
+        main.querySelector(`tr[data-id="${e.lists[e.lists.length - 1].id}"] input.name`)?.select(); break;
+      case 'del-list': {
+        const id = b.closest('tr').dataset.id; const l = e.lists.find((x) => x.id === id);
+        if (await confirmBox(t('Ukloni listu'), t('Ukloniti „{name}“ iz ovih izbora (zajedno sa njenim glasovima po jedinicama)?', { name: esc(l.name) }), t('Ukloni'), true)) {
+          e.lists = e.lists.filter((x) => x.id !== id); e.units.forEach((u) => delete u.votes[id]);
+          if (e.special && e.special.votes) delete e.special.votes[id];
+          Object.keys(S.state.links).forEach((k) => { S.state.links[k] = S.state.links[k].filter(([a, c]) => a !== id && c !== id); });
+          S.save(); render();
+        }
+        break;
+      }
+      case 'add-unit': e.units.push(S.newUnit(`${t('Jedinica')} ${e.units.length + 1}`)); S.save(); render();
+        main.querySelector(`tr[data-uid="${e.units[e.units.length - 1].id}"] input.name`)?.select(); break;
+      case 'del-unit': { const id = b.closest('tr').dataset.uid; e.units = e.units.filter((u) => u.id !== id); S.save(); render(); break; }
+      case 'clear-units':
+        if (await confirmBox(t('Obriši jedinice'), t('Obrisati sve teritorijalne jedinice za ove izbore?'), t('Obriši'), true)) { e.units = []; S.save(); render(); }
+        break;
+      case 'paste-lists': return pasteDialog('lists');
+      case 'paste-units': return pasteDialog('units');
+      case 'import-lists': return importFile('lists');
+      case 'import-units': return importFile('units');
+      case 'toggle-link': {
+        const key = S.linkKey(S.state.vol.a, S.state.vol.b); const Lk = S.state.links[key] || (S.state.links[key] = []);
+        const i = Lk.findIndex(([x, y]) => x === b.dataset.a && y === b.dataset.b);
+        if (i >= 0) Lk.splice(i, 1); else Lk.push([b.dataset.a, b.dataset.b]);
+        S.save(); render(); break;
+      }
+      case 'auto-links': { const A = S.byId(S.state.vol.a), B = S.byId(S.state.vol.b); S.state.links[S.linkKey(A.id, B.id)] = autoLinks(A, B); S.save(); render(); break; }
+      case 'add-rule': { e.rules = e.rules || []; e.rules.push({ id: S.uid('r'), name: t('Novo pravilo'), kind: 'own', pct: 0 }); S.save(); render(); break; }
+      case 'del-rule': {
+        const id = b.closest('tr').dataset.rid;
+        e.rules = e.rules.filter((x) => x.id !== id);
+        e.lists.forEach((l) => { if (l.rule === id) l.rule = 'opsti'; });
+        S.save(); render(); break;
+      }
+      case 'add-special': e.special = { seats: '', threshold: '', transfer: false, votes: {} }; S.save(); render(); break;
+      case 'del-special':
+        if (!(await confirmBox(t('Ukloni posebnu jedinicu'), t('Uklanjaju se broj mandata i glasovi u posebnoj jedinici za ove izbore.'), t('Ukloni')))) break;
+        e.special = null; S.save(); render(); break;
       case 'cmp-links': S.state.vol.a = b.dataset.a; S.state.vol.b = b.dataset.b; S.state.module = 'vol'; S.save(); render(); break;
       case 'clear-links': S.state.links[S.linkKey(S.state.vol.a, S.state.vol.b)] = []; S.save(); render(); break;
     }
