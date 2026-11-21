@@ -50,6 +50,7 @@ select option { background: var(--surface); color: var(--text); }
 .topbar { display: flex; align-items: center; gap: 12px; padding: 8px 16px; background: var(--surface); border-bottom: 1px solid var(--border); }
 .logo { width: 30px; height: 30px; display: block; }
 .brand-title { font-weight: 600; font-size: 16px; }
+.app-version { font-size: 12px; color: var(--muted); margin-left: -4px; }
 .spacer { flex: 1; }
 .pill { font-size: 12px; padding: 3px 10px; border-radius: 999px; background: var(--surface-2); color: var(--muted); border: 1px solid var(--border); }
 .pill.ok { background: var(--ok-soft); color: var(--ok); border-color: transparent; }
@@ -144,6 +145,32 @@ table.grid .thr-cell input { margin-left: 6px; }
 .empty { padding: 30px; text-align: center; color: var(--muted); }
 
 .print-head { display: none; border-bottom: 2px solid #333; padding-bottom: 8px; margin-bottom: 12px; }
+/* pravila cenzusa i posebna jedinica */
+label.check { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; align-self: flex-end; padding-bottom: 8px; }
+table.grid.rules td.rule-kind select { width: 340px; max-width: 100%; }
+table.grid.rules td.rule-kind { white-space: nowrap; }
+table.grid.rules input.sm { width: 64px; }
+.muted.small { font-size: 12px; line-height: 1.5; max-width: 900px; }
+/* traka za ažuriranje */
+.update-bar { display: flex; align-items: center; gap: 10px; padding: 8px 16px; background: var(--accent-soft, var(--surface-2)); border-bottom: 1px solid var(--border); font-size: 13px; }
+.update-bar span { flex: 1; }
+/* grafikon kroz vrijeme */
+.chart-card { padding: 8px 10px; }
+.chart { width: 100%; height: auto; display: block; }
+.ch-grid { stroke: var(--border); stroke-width: 1; }
+.ch-ax { fill: var(--muted); font-size: 11px; }
+.ch-val { fill: var(--text); font-size: 11px; font-weight: 600; }
+.ch-line { fill: none; stroke: var(--accent); stroke-width: 2.5; }
+.ch-dot { fill: var(--surface); stroke: var(--accent); stroke-width: 2.5; }
+/* izbor izbora i indeksa u pregledu */
+.trend-pick { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 18px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; margin-bottom: 14px; }
+.trend-pick .side-label { margin: 0 0 6px; padding: 0; }
+.trend-pick .chip { max-width: 360px; }
+.chip .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; vertical-align: 1px; }
+.chip.on .dot { box-shadow: 0 0 0 1.5px var(--on-accent); }
+.trend-empty { margin-top: 0; line-height: 1.8; }
+table.grid.trend td.clip { max-width: 230px; white-space: normal; }
+table.grid.trend th, table.grid.trend td { padding: 5px 6px; }
 @media print {
   :root { --text: #000; --muted: #444; --border: #bbb; --bg: #fff; --surface: #fff; --surface-2: #f2f2f2; --input-bg: #fff; color-scheme: light; }
   .topbar, .sidebar, .exportbar, .no-print, button { display: none !important; }
@@ -154,3 +181,51 @@ table.grid .thr-cell input { margin-left: 6px; }
   table.grid input { border: none; padding: 0; }
   .print-head { display: block !important; }
 }
+
+/* države u bočnom meniju */
+.country { margin-bottom: 2px; }
+.country-row { display: flex; align-items: center; gap: 6px; padding: 6px 6px; border-radius: var(--radius); cursor: pointer; font-weight: 600; user-select: none; }
+.country-row:hover { background: var(--surface-2); }
+.country-row .caret { width: 12px; color: var(--muted); font-size: 11px; }
+.country-row .cname { flex: 1; }
+.country-tools { display: none; gap: 2px; }
+.country-row:hover .country-tools { display: inline-flex; }
+.country-tools .icon-btn { padding: 0 5px; font-size: 12px; }
+.country-els { padding-left: 14px; }
+.country-els a { font-size: 13.5px; }
+.add-el { display: block; width: 100%; text-align: left; background: none; border: 0; color: var(--accent); font-size: 12.5px; padding: 5px 10px; cursor: pointer; border-radius: var(--radius); }
+.add-el:hover { background: var(--surface-2); }
+.crumb { font-size: 12px; color: var(--muted); margin: 0 0 -6px 2px; letter-spacing: .02em; }
+.lang-select { width: auto; min-width: 64px; }
+/* uporedna tabela */
+.cmp-pick { grid-template-columns: 1fr; }
+.cmp-row { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 6px; }
+.cmp-c { min-width: 110px; font-size: 13px; font-weight: 600; padding-top: 4px; }
+table.grid.cmp tr.grp td { border-top: 2px solid var(--border); }
+
+/* padajuća lista sa više izbora */
+.msel { position: relative; max-width: 640px; }
+.msel-btn { width: 100%; display: flex; align-items: center; gap: 6px; text-align: left; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 7px 10px; font: inherit; font-size: 13px; color: var(--text); cursor: pointer; }
+.msel-btn:hover { border-color: var(--accent); }
+.msel-k { color: var(--muted); }
+.msel-v { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.msel-c { color: var(--muted); }
+.msel-pop { display: none; position: absolute; z-index: 20; top: calc(100% + 4px); left: 0; right: 0; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; box-shadow: 0 8px 24px rgba(0,0,0,.14); padding: 6px; max-height: 420px; overflow: auto; }
+.msel.open .msel-pop { display: block; }
+.msel-g { font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); padding: 8px 8px 4px; }
+.msel-i { display: flex; align-items: flex-start; gap: 8px; padding: 5px 8px; border-radius: 6px; font-size: 13px; cursor: pointer; }
+.msel-i:hover { background: var(--surface-2); }
+.msel-i b { font-weight: 600; color: var(--muted); }
+.msel-foot { display: flex; justify-content: flex-end; gap: 8px; border-top: 1px solid var(--border); margin-top: 6px; padding: 8px 4px 2px; }
+
+.cmp-pick3 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr) minmax(0, 1.4fr); gap: 10px; margin-bottom: 14px; }
+.cmp-pick3 .msel { max-width: none; }
+.msel-all { float: right; background: none; border: 0; color: var(--accent); font-size: 11px; cursor: pointer; text-transform: none; letter-spacing: 0; }
+
+.year-field { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
+.year-field input { width: 72px; font-size: 15px; font-weight: 600; text-align: center; }
+input.bad { border-color: var(--danger, #c0392b) !important; }
+
+table.grid.cmp th.sortable { cursor: pointer; user-select: none; }
+table.grid.cmp th.sortable:hover { color: var(--accent); }
+table.grid.cmp tfoot td { font-weight: 600; border-top: 2px solid var(--border); }

@@ -1,7 +1,14 @@
 name: Build Windows
 
+# Pokreće se ručno (Actions → Build Windows → Run workflow).
+# Rezultat je NACRT (draft) izdanja u "Releases" sa .exe, .msi i, ako su podešeni ključevi, latest.json za automatsko ažuriranje.
+# Nacrt pregledaš, upišeš izmjene i klikneš "Publish release".
+
 on:
   workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -17,10 +24,31 @@ jobs:
           workspaces: src-tauri
       - run: npm ci
       - run: npm test
-      - run: npx tauri build
-      - uses: actions/upload-artifact@v4
+
+      # Podešavanje automatskog ažuriranja (samo ako je postavljena varijabla TAURI_UPDATER_PUBKEY)
+      - name: Updater config
+        if: ${{ vars.TAURI_UPDATER_PUBKEY != '' }}
+        shell: pwsh
+        env:
+          PUBKEY: ${{ vars.TAURI_UPDATER_PUBKEY }}
+          ENDPOINT: https://github.com/${{ github.repository }}/releases/latest/download/latest.json
+        run: |
+          $cfg = @{
+            bundle  = @{ createUpdaterArtifacts = $true }
+            plugins = @{ updater = @{ pubkey = $env:PUBKEY; endpoints = @($env:ENDPOINT); windows = @{ installMode = 'passive' } } }
+          }
+          $cfg | ConvertTo-Json -Depth 6 | Set-Content -Encoding utf8 src-tauri/updater.conf.json
+
+      - uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
         with:
-          name: izborni-indeksi-windows
-          path: |
-            src-tauri/target/release/bundle/nsis/*.exe
-            src-tauri/target/release/bundle/msi/*.msi
+          tagName: v__VERSION__
+          releaseName: 'Electoral & Party System Indices v__VERSION__'
+          releaseBody: Ovdje upiši izmjene prije objavljivanja.
+          releaseDraft: true
+          prerelease: false
+          includeUpdaterJson: true
+          args: ${{ vars.TAURI_UPDATER_PUBKEY != '' && format('--config {0}/src-tauri/updater.conf.json', github.workspace) || '' }}

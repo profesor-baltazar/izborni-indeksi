@@ -3,17 +3,18 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Izborni indeksi</title>
+  <title>Electoral &amp; Party System Indices</title>
   <link rel="stylesheet" href="css/app.css" />
 </head>
 <body>
   <header class="topbar">
     <img class="logo" src="assets/icon.png" alt="" aria-hidden="true" />
-    <div class="brand-title" data-i18n="Izborni indeksi">Izborni indeksi</div>
+    <div class="brand-title" data-i18n="Indeksi izbornih i stranačkih sistema">Electoral &amp; Party System Indices</div>
+    <span class="app-version" id="app-version"></span>
     <div class="spacer"></div>
-    <select id="lang-select" class="theme-select" data-i18n-title="Jezik" title="Jezik">
-      <option value="me">Crnogorski</option>
-      <option value="en">English</option>
+    <select id="lang-select" class="theme-select lang-select" data-i18n-title="Jezik" title="Jezik">
+      <option value="en" title="English">EN</option>
+      <option value="me" title="Crnogorski">ME</option>
     </select>
     <select id="theme-select" class="theme-select" data-i18n-title="Tema" title="Tema">
       <option value="system" data-i18n="Tema: kao sistem">Tema: kao sistem</option>
@@ -30,10 +31,11 @@
         <a data-mod="alloc" data-i18n="Raspodjela mandata">Raspodjela mandata</a>
         <a data-mod="nat" data-i18n="Nacionalizacija stranaka">Nacionalizacija stranaka</a>
         <a data-mod="vol" data-i18n="Volatilnost">Volatilnost</a>
+        <a data-mod="compare" data-i18n="Poređenje">Poređenje</a>
       </div>
-      <div class="side-label" data-i18n="Izbori">Izbori</div>
+      <div class="side-label" data-i18n="Države i izbori">Države i izbori</div>
       <div class="nav" id="election-nav"></div>
-      <button class="btn small full" id="new-election" data-i18n="+ Novi izbori">+ Novi izbori</button>
+      <button class="btn small full" id="new-country" data-i18n="+ Nova država">+ Nova država</button>
       <div class="side-foot">
         <button class="btn small full ghost" id="backup-btn" data-i18n="Rezervna kopija (JSON)">Rezervna kopija (JSON)</button>
         <button class="btn small full ghost" id="restore-btn" data-i18n="Vrati iz kopije">Vrati iz kopije</button>
@@ -54,6 +56,7 @@
   <div id="toast" class="toast"></div>
 
   <script src="vendor/exceljs.min.js"></script>
+  <script src="vendor/xlsx.full.min.js"></script>
   <script src="js/i18n.js"></script>
   <script src="js/theme.js"></script>
   <script src="js/compute.js"></script>

@@ -23,6 +23,38 @@
     return h > 0 ? 1 / h : NaN;
   }
 
+  // Loosemore i Hanby (1971): D = 1/2 * sum |v_i - s_i| (u procentima)
+  function lh(votes, seats) {
+    const v = shares(votes), s = shares(seats);
+    return v.reduce((acc, x, i) => acc + Math.abs(x - s[i]) * 100, 0) / 2;
+  }
+
+  // Sainte-Laguë indeks (Sainte-Laguë 1910; Gallagher 1991): sum (s_i - v_i)^2 / v_i, u procentima, za liste sa v_i > 0
+  function slIndex(votes, seats) {
+    const v = shares(votes), s = shares(seats);
+    return v.reduce((acc, x, i) => (x > 0 ? acc + ((s[i] - x) * 100) ** 2 / (x * 100) : acc), 0);
+  }
+
+  // Rae (1967): indeks fragmentacije F = 1 - sum p_i^2
+  function raeF(values) {
+    const p = shares(values);
+    return sum(values) > 0 ? 1 - p.reduce((acc, x) => acc + x * x, 0) : NaN;
+  }
+
+  // Golosov (2010): N = sum p_i / (p_i + p_1^2 - p_i^2), p_1 = najveći udio
+  function golosov(values) {
+    const p = shares(values).filter((x) => x > 0);
+    if (!p.length) return NaN;
+    const p1 = Math.max(...p);
+    return p.reduce((acc, x) => acc + x / (x + p1 * p1 - x * x), 0);
+  }
+
+  // Odnos prednosti (Taagepera i Shugart 1989): udio mandata / udio glasova, po listi
+  function advantage(votes, seats) {
+    const v = shares(votes), s = shares(seats);
+    return v.map((x, i) => (x > 0 ? s[i] / x : NaN));
+  }
+
   // Raspodjela mandata (D'Hondt, Sainte-Laguë, Hare–Niemeyer) sa cenzusom po listi.
   // types[i]: 'opsti' (opšti cenzus), 'manjina' (manjinska lista), 'hrvati' (lista hrvatskog naroda)
   // rules: { minority: 0.7, cap: 3, croat: 0.35 }
@@ -51,47 +83,62 @@
     return { seats: out, tie };
   }
 
-  function allocate({ votes, seats, method = 'dhondt', threshold = 3, types = [], rules = {} }) {
-    const R = { minority: 0.7, cap: 3, croat: 0.35, ...rules };
+  // Pravila cenzusa (definiše ih korisnik po izborima); svaka lista ima jedno pravilo:
+  //  own   – lista ulazi u raspodjelu ako ima >= pct% glasova (pct = opšti cenzus za pravilo "Opšti"; 0 = bez cenzusa)
+  //  pool  – lista koja pređe opšti cenzus ide samostalno; ostale liste istog pravila sa >= pct% učestvuju
+  //          kao jedna zbirna lista sa najviše `cap` mandata, koji se dijele među njima istom metodom
+  //          (Crna Gora od 2011: manjinske liste, 0,7%, najviše 3 mandata)
+  //  guar  – lista koja pređe opšti cenzus ide samostalno; ako nijedna lista istog pravila ne pređe opšti cenzus,
+  //          najuspješnija sa >= pct% dobija `seats` mandata (Crna Gora od 2011: hrvatske liste, 0,35%, 1 mandat)
+  //  bonus – lista ulazi u raspodjelu sa >= pct% glasova, a njeni količnici se uvećavaju za `bonus`%
+  // Stari zapis (types: 'opsti' | 'manjina' | 'hrvati') i dalje je podržan.
+  const LEGACY = { manjina: { key: 'manjina', kind: 'pool', pct: 0.7, cap: 3 }, hrvati: { key: 'hrvati', kind: 'guar', pct: 0.35, seats: 1 } };
+  function allocate({ votes, seats, method = 'dhondt', threshold = 3, rules, types = [] }) {
     const n = votes.length, V = votes.map(num), total = sum(V);
     const pct = (i) => (total > 0 ? (V[i] / total) * 100 : 0);
-    const type = (i) => types[i] || 'opsti';
-    const out = new Array(n).fill(0);
-    const eff = V.map((_, i) => (type(i) === 'manjina' ? R.minority : type(i) === 'hrvati' ? R.croat : threshold));
-    const eligible = new Array(n).fill(false);
-    // 1) liste sa opštim ili sopstvenim cenzusom
-    const units = []; // { members:[i], votes, cap }
-    for (let i = 0; i < n; i++) {
-      const t = type(i);
-      if (t !== 'manjina' && t !== 'hrvati' && V[i] > 0 && pct(i) >= eff[i]) units.push({ members: [i], votes: V[i] });
-    }
-    // 2) manjinske liste: koja pređe opšti cenzus, ide samostalno; ostale sa >= 0,7% učestvuju kao jedna zbirna lista (najviše 3 mandata)
-    const minor = V.map((_, i) => i).filter((i) => type(i) === 'manjina');
-    minor.filter((i) => V[i] > 0 && pct(i) >= threshold).forEach((i) => units.push({ members: [i], votes: V[i] }));
-    const pooled = minor.filter((i) => V[i] > 0 && pct(i) < threshold && pct(i) >= R.minority);
-    if (pooled.length) units.push({ members: pooled, votes: sum(pooled.map((i) => V[i])), cap: R.cap });
-    // 3) hrvatske liste: samostalno ako pređu opšti cenzus; inače najuspješnija sa >= 0,35% dobija jedan mandat
-    const cro = V.map((_, i) => i).filter((i) => type(i) === 'hrvati');
+    const general = { key: '__opsti', kind: 'own', pct: num(threshold) };
+    const rule = (i) => {
+      const r = rules ? rules[i] : LEGACY[types[i]];
+      return r ? { ...r, pct: num(r.pct), key: r.key ?? r.kind + i } : general;
+    };
+    const R = V.map((_, i) => rule(i));
+    const out = new Array(n).fill(0), eligible = new Array(n).fill(false);
+    const eff = R.map((r) => r.pct);
+    const units = []; // { members:[i], votes, w (za količnike), cap }
+    const groups = new Map();
+    R.forEach((r, i) => { if (!groups.has(r.key)) groups.set(r.key, { r, members: [] }); groups.get(r.key).members.push(i); });
     let fixed = 0;
-    const croOver = cro.filter((i) => pct(i) >= threshold);
-    if (croOver.length) croOver.forEach((i) => units.push({ members: [i], votes: V[i] }));
-    else if (cro.length) {
-      const best = cro.reduce((a, b) => (V[b] > V[a] ? b : a));
-      if (pct(best) >= R.croat && V[best] > 0) { out[best] = 1; fixed = 1; eligible[best] = true; }
+    for (const { r, members } of groups.values()) {
+      if (r.kind === 'own' || r.kind === 'bonus') {
+        const f = r.kind === 'bonus' ? 1 + num(r.bonus) / 100 : 1;
+        members.filter((i) => V[i] > 0 && pct(i) >= r.pct).forEach((i) => units.push({ members: [i], votes: V[i], w: V[i] * f }));
+      } else if (r.kind === 'pool') {
+        members.filter((i) => V[i] > 0 && pct(i) >= threshold).forEach((i) => units.push({ members: [i], votes: V[i], w: V[i] }));
+        const pooled = members.filter((i) => V[i] > 0 && pct(i) < threshold && pct(i) >= r.pct);
+        if (pooled.length) { const pv = sum(pooled.map((i) => V[i])); units.push({ members: pooled, votes: pv, w: pv, cap: Math.max(0, Math.floor(num(r.cap))) }); }
+      } else if (r.kind === 'guar') {
+        const over = members.filter((i) => V[i] > 0 && pct(i) >= threshold);
+        if (over.length) over.forEach((i) => units.push({ members: [i], votes: V[i], w: V[i] }));
+        else {
+          const best = members.reduce((a, b) => (V[b] > V[a] ? b : a));
+          const g = Math.max(0, Math.floor(num(r.seats) || 1));
+          if (V[best] > 0 && pct(best) >= r.pct) { out[best] = g; fixed += g; eligible[best] = true; }
+        }
+      }
     }
     units.forEach((u) => u.members.forEach((i) => (eligible[i] = true)));
-    // 4) raspodjela među jedinicama, uz ograničenje broja mandata zbirnih lista
+    // raspodjela među jedinicama, uz ograničenje broja mandata zbirnih lista
     let active = units.slice(), avail = Math.max(0, seats - fixed), tie = false, guard = 0;
     const unitSeats = new Map();
     while (guard++ < 50) {
-      const r = divisorAlloc(active.map((u) => u.votes), avail, method);
-      const over = active.findIndex((u, k) => u.cap && r.seats[k] > u.cap);
+      const r = divisorAlloc(active.map((u) => u.w), avail, method);
+      const over = active.findIndex((u, k) => u.cap !== undefined && r.seats[k] > u.cap);
       if (over < 0) { active.forEach((u, k) => unitSeats.set(u, r.seats[k])); tie = r.tie; break; }
       unitSeats.set(active[over], active[over].cap);
       avail -= active[over].cap;
       active = active.filter((_, k) => k !== over);
     }
-    // 5) mandati zbirne liste dijele se među njenim listama istom metodom
+    // mandati zbirne liste dijele se među njenim listama istom metodom
     units.forEach((u) => {
       const s = unitSeats.get(u) || 0;
       if (u.members.length === 1) out[u.members[0]] += s;
@@ -107,14 +154,26 @@
   //  - lista koja u posebnoj jedinici ne učestvuje ili ne osvoji mandat, tim glasovima se dodaju glasovi sa ostalih
   //    biračkih mjesta za opštu raspodjelu, i obrnuto.
   // special: { seats, votes:[po listama], voted }, voted: ukupno glasalo (ako nije dato, koriste se važeći glasovi)
-  function allocateSpecial({ votes, seats, method = 'dhondt', threshold = 3, special, voted }) {
+  // Posebna izborna jedinica: dio mandata (special.seats) bira se odvojeno; glasovi lista su ukupni,
+  // a special.votes su njihov dio iz posebne jedinice.
+  //  transfer = true (Crna Gora 2006. i 2009, čl. 94a): cenzus u opštoj raspodjeli računa se na ukupne glasove,
+  //    a lista koja u jednoj jedinici ne učestvuje ili ne osvoji mandat, tim glasovima dodaje glasove iz druge;
+  //  transfer = false: dvije odvojene raspodjele (opšta po pravilima cenzusa na glasovima van posebne jedinice,
+  //    posebna sa svojim cenzusom), mandati se saberu.
+  function allocateSpecial({ votes, seats, method = 'dhondt', threshold = 3, special, voted, rules }) {
     const n = votes.length, V = votes.map(num), SP = V.map((_, i) => num(special.votes[i]));
     const O = V.map((v, i) => Math.max(0, v - SP[i]));
-    const baseG = num(voted) > 0 ? num(voted) : sum(V);
+    const thrS = special.threshold === undefined || special.threshold === '' ? threshold : num(special.threshold);
     const baseS = num(special.voted) > 0 ? num(special.voted) : sum(SP);
     const kS = Math.min(Math.max(0, Math.floor(num(special.seats))), seats);
+    const sEl = SP.map((v) => v > 0 && v >= (thrS / 100) * baseS);
+    if (special.transfer === false) {
+      const g = allocate({ votes: O, seats: seats - kS, method, threshold, rules });
+      const rs = divisorAlloc(SP.map((x, i) => (sEl[i] ? x : 0)), kS, method);
+      return { seats: V.map((_, i) => g.seats[i] + rs.seats[i]), eligible: V.map((_, i) => g.eligible[i] || sEl[i]), tie: g.tie || rs.tie, general: g.seats, special: rs.seats };
+    }
+    const baseG = num(voted) > 0 ? num(voted) : sum(V);
     const gEl = V.map((v) => v > 0 && v >= (threshold / 100) * baseG);
-    const sEl = SP.map((v) => v > 0 && v >= (threshold / 100) * baseS);
     let gSeats = gEl.map((x) => (x ? 1 : 0)), sSeats = sEl.map((x) => (x ? 1 : 0)), tie = false;
     for (let it = 0; it < 6; it++) {
       const sv = SP.map((x, i) => (sEl[i] ? x + (!gEl[i] || gSeats[i] === 0 ? O[i] : 0) : 0));
@@ -204,7 +263,7 @@
     return { total, typeA, typeB, rows };
   }
 
-  const api = { sum, shares, lsq, enp, allocate, allocateSpecial, pnsParty, effectiveUnits, nationalisation, volatility };
+  const api = { sum, shares, lsq, enp, lh, slIndex, raeF, golosov, advantage, allocate, allocateSpecial, pnsParty, effectiveUnits, nationalisation, volatility };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.Indices = api;
 })(this);

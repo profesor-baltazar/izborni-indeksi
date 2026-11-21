@@ -12,7 +12,9 @@ close(I.enp(V), 3.964396, 1e-6, 'ENEP');
 close(I.enp(S), 3.708875, 1e-6, 'ENPP');
 close(I.lsq(V, S), 1.7064, 1e-3, 'LSq'); // Gallagherov fajl daje 1,7043 jer zaokružuje procente na 2 decimale
 
-const args = (x) => ({ votes: x.lists.map((l) => l.votes), seats: 81, threshold: 3, types: x.lists.map((l) => l.type) });
+// pravila cenzusa iz podataka izbora (kao u aplikaciji)
+const rulesOf = (x) => x.lists.map((l) => { const r = x.rules.find((q) => q.id === l.rule); return !r || r.id === 'opsti' ? null : { key: r.id, ...r }; });
+const args = (x) => ({ votes: x.lists.map((l) => l.votes), seats: 81, threshold: 3, rules: rulesOf(x) });
 const r = I.allocate(args(e));
 assert.deepStrictEqual(r.seats, S, "D'Hondt CG 2020");
 
@@ -47,5 +49,41 @@ for (const id of ['cg2006', 'cg2009']) {
   const a = I.allocateSpecial({ votes: x.lists.map((l) => l.votes), seats: 81, threshold: 3,
     special: { seats: x.special.seats, votes: x.lists.map((l) => x.special.votes[l.id]) } });
   assert.deepStrictEqual(a.seats, x.lists.map((l) => l.seats), 'Posebna jedinica ' + id);
+}
+// Dodatni indeksi: jednostavni primjeri + 2020 (nezavisno izračunato u Pythonu)
+close(I.lh([50, 30, 20], [60, 30, 10]), 10, 1e-9, 'LH primjer');
+close(I.slIndex([50, 50], [75, 25]), 25, 1e-9, 'SL primjer');            // (25²/50 + 25²/50)
+close(I.raeF([60, 40]), 0.48, 1e-12, 'Rae F primjer');
+close(I.golosov([50, 50]), 2, 1e-12, 'Golosov dvije jednake');
+close(I.golosov([100]), 1, 1e-12, 'Golosov jedna');
+close(I.lh(V, S), 2.8565717875663723, 1e-9, 'LH 2020');
+close(I.slIndex(V, S), 0.8724386514840975, 1e-9, 'SL 2020');
+close(I.raeF(V), 0.7477547650043894, 1e-12, 'F glasovi 2020'); close(I.raeF(S), 0.7303764670019814, 1e-12, 'F mandati 2020');
+close(I.golosov(V), 3.7404036071389055, 1e-9, 'Golosov glasovi 2020'); close(I.golosov(S), 3.445795070270455, 1e-9, 'Golosov mandati 2020');
+close(I.advantage(V, S)[7], 1.0565239663940147, 1e-9, 'Odnos prednosti DPS 2020');
+// Zvanični broj važećih glasova (provjera unosa): zbir glasova lista mora biti jednak
+for (const x of window.SEED_ELECTIONS) {
+  assert.strictEqual(x.lists.reduce((a, l) => a + l.votes, 0), x.validTotal, 'Važeći glasovi ' + x.id);
+  assert.strictEqual(x.lists.reduce((a, l) => a + l.seats, 0), 81, 'Mandati ' + x.id);
+}
+// Pravila cenzusa, opšti slučajevi
+{
+  const v = [500, 300, 150, 30, 20];
+  // bez pravila: cenzus 5% -> 30 i 20 ne ulaze
+  assert.deepStrictEqual(I.allocate({ votes: v, seats: 10, threshold: 5 }).seats, [6, 3, 1, 0, 0], 'opšti cenzus');
+  // izuzeće od cenzusa (0%) za posljednju listu
+  const ex = I.allocate({ votes: v, seats: 10, threshold: 5, rules: [null, null, null, null, { key: 'm', kind: 'own', pct: 0 }] });
+  assert.strictEqual(ex.eligible[4], true, 'izuzeće 0%');
+  // viši cenzus za koalicije (8%): lista sa 15% ulazi, lista sa 3% ne
+  const co = I.allocate({ votes: v, seats: 10, threshold: 5, rules: [null, null, { key: 'k', kind: 'own', pct: 8 }, { key: 'k', kind: 'own', pct: 8 }, null] });
+  assert.deepStrictEqual([co.eligible[2], co.eligible[3]], [true, false], 'cenzus za koalicije');
+  // uvećani količnici: D'Hondt sa 35% uvećanja jednak je raspodjeli na glasove x 1,35
+  const bo = I.allocate({ votes: [1000, 600, 100], seats: 20, threshold: 0, rules: [null, null, { key: 'b', kind: 'bonus', pct: 0, bonus: 35 }] });
+  const ref = I.allocate({ votes: [1000, 600, 135], seats: 20, threshold: 0 });
+  assert.deepStrictEqual(bo.seats, ref.seats, 'uvećani količnici');
+  // posebna jedinica bez prenosa = dvije odvojene raspodjele
+  const sp = I.allocateSpecial({ votes: [600, 400], seats: 10, threshold: 3, special: { seats: 2, votes: [100, 300], transfer: false } });
+  assert.deepStrictEqual(sp.general, [7, 1], 'opšti dio'); assert.deepStrictEqual(sp.special, [0, 2], 'posebni dio');
+  assert.deepStrictEqual(sp.seats, [7, 3], 'zbir');
 }
 console.log('Svi testovi prošli.');
