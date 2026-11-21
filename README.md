@@ -8,7 +8,8 @@ Pokreni instalacioni `.exe` fajl i prati korake. Ako Windows prikaže upozorenje
 
 ## Moduli
 
-- **Rezultati i indeksi:** disproporcionalnost (Gallagher LSq, Loosemore–Hanby, Sainte-Laguë), efektivni broj stranaka (ENEP, ENPP, Golosov), frakcionalizacija (Rae F) i odnos prednosti za svaku listu.
+- **Rezultati:** unos lista, glasova, mandata i broja žena (nije obavezno), boje lista, provjera unosa i grafikoni sastava (polukrug skupštine sa kružićem za svaki mandat, pita udjela glasova ili mandata).
+- **Indeksi:** disproporcionalnost (Gallagher LSq, Loosemore–Hanby, Sainte-Laguë), efektivni broj stranaka (ENEP, ENPP, Golosov), frakcionalizacija (Rae F), udio žena u parlamentu i tabela po listama sa udjelom glasova, udjelom mandata i odnosom prednosti, uz grafikon glasova i mandata.
 - **Raspodjela mandata:** D'Hondt, Sainte-Laguë ili Hare–Niemeyer. Za svake izbore zadaješ pravila cenzusa (npr. poseban cenzus za koalicije, izuzeće ili zbirnu listu za manjine, garantovani mandat, uvećane količnike), a za svaku listu biraš koje pravilo važi. Može se dodati i posebna izborna jedinica sa svojim brojem mandata.
 - **Nacionalizacija stranaka:** koliko je podrška stranke ravnomjerno raspoređena po opštinama (Bochsler).
 - **Volatilnost:** koliki se dio glasova pomjerio između stranaka od jednih do drugih izbora.
@@ -25,6 +26,13 @@ Uz svaki modul je naveden izvor formule.
 - Bochslerov originalni Excel alat za nacionalizaciju (`.xls`) uvoziš direktno u modulu **Nacionalizacija stranaka**; aplikacija ga sama prepoznaje.
 - Ako upišeš zvanični broj važećih glasova, aplikacija upozorava kada se zbir glasova lista ne poklapa s njim, kao i kada zbir mandata nije jednak broju mandata.
 - Za volatilnost unesi bar dvoje izbora. Liste istog imena povezuju se same. Koalicije i stranke koje su promijenile ime povežeš klikom na ime prethodnika. Veze se pamte i koriste i u pregledu kroz vrijeme.
+
+## Grafikoni i boje
+
+- Boju liste biraš klikom na kvadratić na početku reda u tabeli; boja važi i za istu stranku u drugim izborima (isti naziv ili veza iz modula Volatilnost).
+- Redosljed stranaka u polukrugu mijenjaš strelicama pored grafikona; „Označi žene“ prikazuje mandate žena kao prstenove.
+- U Poređenju biraš linije, vertikalne stubiće ili horizontalne trake, a boju svake serije kvadratićem ispod grafikona.
+- **Sačuvaj kao PNG / SVG** čuva grafikon kao sliku sa bijelom pozadinom.
 
 ## Izvoz
 

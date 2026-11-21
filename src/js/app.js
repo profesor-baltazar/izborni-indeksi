@@ -41,6 +41,71 @@
   const confirmBox = (title, text, okLabel = t('Potvrdi'), danger = false) => modal(
     `<h3>${esc(title)}</h3><p>${text}</p><div class="actions"><button class="btn" data-close="">${t('Otkaži')}</button><button class="btn ${danger ? 'danger' : 'primary'}" data-close="ok">${esc(okLabel)}</button></div>`
   ).then((v) => v === 'ok');
+  // ---------- boje i grafikoni ----------
+  const LIST_PALETTE = ['#1f6fd1', '#d83b3b', '#2e9e5b', '#f2a900', '#7b4fc9', '#e8732a', '#1aa5b8', '#c2408a', '#6b8e23', '#8c564b', '#4d6a8a', '#b8860b', '#9a9a9a'];
+  const SERIES_PALETTE = ['#1f6fd1', '#d83b3b', '#2e9e5b', '#7b4fc9', '#e8732a', '#1aa5b8', '#c2408a', '#b8860b', '#4d6a8a', '#6b8e23', '#8c564b', '#9a9a9a'];
+  const normName = (x) => String(x || '').trim().toLowerCase();
+  // Boja liste: njena; inače boja iste stranke iz drugih izbora (veze iz modula Volatilnost ili isti naziv u istoj državi); inače iz palete.
+  function listColor(e, l, i) {
+    if (l.color) return l.color;
+    const byId = new Map(); S.state.elections.forEach((x) => x.lists.forEach((y) => byId.set(y.id, [x, y])));
+    const seen = new Set([l.id]); let frontier = [[e, l]];
+    for (let depth = 0; depth < 8 && frontier.length; depth++) {
+      const next = [];
+      frontier.forEach(([ee, ll]) => {
+        Object.values(S.state.links).forEach((pairs) => pairs.forEach(([a, b]) => {
+          const other = a === ll.id ? b : b === ll.id ? a : null;
+          if (other && !seen.has(other) && byId.has(other)) { seen.add(other); next.push(byId.get(other)); }
+        }));
+        S.state.elections.filter((x) => x.country === ee.country && x !== ee).forEach((x) => x.lists.forEach((y) => {
+          if (!seen.has(y.id) && normName(y.name) && normName(y.name) === normName(ll.name)) { seen.add(y.id); next.push([x, y]); }
+        }));
+      });
+      const hit = next.find(([, y]) => y.color);
+      if (hit) return hit[1].color;
+      frontier = next;
+    }
+    return LIST_PALETTE[i % LIST_PALETTE.length];
+  }
+  const chartPref = (k, def) => ((S.state.charts || {})[k] || def);
+  const chartTools = (target, k, opts, cur) => `<div class="chart-tools no-print">
+      <label class="field inline">${t('Vrsta grafikona')}<select data-chart="${k}">${opts.map(([v, n]) => `<option value="${v}" ${v === cur ? 'selected' : ''}>${t(n)}</option>`).join('')}</select></label>
+      <span class="spacer"></span>
+      <button class="btn small ghost" data-act="chart-png" data-target="${target}">${t('Sačuvaj kao PNG')}</button>
+      <button class="btn small ghost" data-act="chart-svg" data-target="${target}">${t('Sačuvaj kao SVG')}</button>
+    </div>`;
+  const RES_CHARTS = [['arc', 'Polukrug skupštine (mandati)'], ['pie-v', 'Pita – udio glasova'], ['pie-s', 'Pita – udio mandata']];
+  const IDX_CHARTS = [['bars-h', 'Glasovi i mandati – horizontalne trake'], ['bars-v', 'Glasovi i mandati – vertikalni stubići']];
+  function arcOrder(e) {
+    const ids = e.lists.map((l) => l.id);
+    const o = (e.arcOrder || []).filter((id) => ids.includes(id));
+    ids.forEach((id) => { if (!o.includes(id)) o.push(id); });
+    return o;
+  }
+  function resultsChart(e, type) {
+    const r = calcResults(e);
+    const col = (l) => listColor(e, l, e.lists.indexOf(l));
+    if (type === 'arc') {
+      const ord = arcOrder(e).map((id) => e.lists.find((l) => l.id === id)).filter((l) => parseNum(l.seats) > 0);
+      if (!ord.length) return `<div class="muted" style="padding:12px">${t('Unesi mandate lista da bi se prikazao polukrug.')}</div>`;
+      const total = ord.reduce((a, l) => a + parseNum(l.seats), 0);
+      const markW = !!chartPref('arcWomen', false) && ord.some((l) => parseNum(l.women) > 0);
+      return Charts.arc({ parties: ord.map((l) => ({ n: parseNum(l.seats), w: markW ? Math.min(parseNum(l.women), parseNum(l.seats)) : 0, color: col(l), label: l.name })), total, womenLabel: markW ? t('žene') : '', majority: t('{n} za većinu', { n: Math.floor(total / 2) + 1 }), labels: { title: elTitle(e) } });
+    }
+    const items = e.lists.map((l, i) => ({ l, v: r.tv > 0 ? (r.V[i] / r.tv) * 100 : 0, s: r.ts > 0 ? (r.M[i] / r.ts) * 100 : 0 }));
+    if (type === 'bars-v' || type === 'bars-h') {
+      const shown = items.filter((x) => x.v >= 1 || x.s > 0).sort((a, b) => b.v - a.v);
+      return Charts.bars({ cats: shown.map((x) => x.l.name), horizontal: type === 'bars-h', fmt, dec: 1, unit: '%',
+        series: [{ label: t('Glasovi (%)'), color: '#8a8a8a', values: shown.map((x) => x.v), opacity: 0.55, perCat: shown.map((x) => col(x.l)) },
+          { label: t('Mandati (%)'), color: '#444', values: shown.map((x) => x.s), perCat: shown.map((x) => col(x.l)) }] });
+    }
+    const key = type === 'pie-v' ? 'v' : 's';
+    const pi = items.filter((x) => x[key] > 0).sort((a, b) => b[key] - a[key]);
+    const big = pi.filter((x) => x[key] >= 2), small = pi.filter((x) => x[key] < 2);
+    const list = big.map((x) => ({ label: x.l.name, value: x[key], color: col(x.l) }));
+    if (small.length) list.push({ label: t('Ostale liste ({n})', { n: small.length }), value: small.reduce((a, x) => a + x[key], 0), color: '#bdbdbd' });
+    return Charts.pie({ items: list, fmt, title: key === 'v' ? t('Udio glasova') : t('Udio mandata') });
+  }
   // naziv izbora za prikaz: naziv + godina
   const elTitle = (e) => (e ? [e.name, e.year].filter((x) => x !== '' && x !== undefined && x !== null).join(' ') : '');
   // izbori jedne države, hronološki (bez godine na kraju, redom unosa)
@@ -92,13 +157,15 @@
   // ---------- izvori formula ----------
   const CITES = {
     me: {
-      results: `<b>Izvori formula.</b> Indeks najmanjih kvadrata (LSq): Gallagher, M. (1991). Proportionality, disproportionality and electoral systems. <i>Electoral Studies</i> 10(1): 33–51.
+      results: `<b>Unos.</b> Glasovi i mandati svake liste upisuju se onako kako su objavljeni u zvaničnim rezultatima; ako se upiše i zvanični broj važećih glasova, aplikacija provjerava da li se zbir glasova lista poklapa s njim. Indeksi se računaju u modulu „Indeksi“.`,
+      indices: `<b>Izvori formula.</b> Indeks najmanjih kvadrata (LSq): Gallagher, M. (1991). Proportionality, disproportionality and electoral systems. <i>Electoral Studies</i> 10(1): 33–51.
         Efektivni broj stranaka (ENEP, ENPP): Laakso, M. i Taagepera, R. (1979). “Effective” number of parties: a measure with application to West Europe. <i>Comparative Political Studies</i> 12(1): 3–27.
         Loosemore–Hanby indeks: Loosemore, J. i Hanby, V. J. (1971). The theoretical limits of maximum distortion: some analytic expressions for electoral systems. <i>British Journal of Political Science</i> 1(4): 467–477.
         Sainte-Laguë indeks: Sainte-Laguë, A. (1910). La représentation proportionnelle et la méthode des moindres carrés. <i>Annales scientifiques de l'École Normale Supérieure</i> 27: 529–542.
         Frakcionalizacija (F): Rae, D. W. (1967). <i>The Political Consequences of Electoral Laws</i>. New Haven: Yale University Press.
         Golosovljev efektivni broj stranaka: Golosov, G. V. (2010). The effective number of parties: a new approach. <i>Party Politics</i> 16(2): 171–192.
-        Odnos prednosti (advantage ratio, udio mandata / udio glasova): Taagepera, R. i Shugart, M. S. (1989). <i>Seats and Votes</i>. New Haven: Yale University Press.`,
+        Odnos prednosti (advantage ratio, udio mandata / udio glasova): Taagepera, R. i Shugart, M. S. (1989). <i>Seats and Votes</i>. New Haven: Yale University Press.
+        <b>Udio žena u parlamentu:</b> broj žena koje su na izborima osvojile mandat (sastav skupštine pri konstituisanju, prije eventualnih zamjena), podijeljen ukupnim brojem mandata. Crnogorski zakon koristi izraz „manje zastupljeni pol“; u međunarodnim poređenjima (npr. Interparlamentarna unija) prati se udio žena.`,
       alloc: `<b>Metode.</b> D'Hondt (djelioci 1, 2, 3…), Sainte-Laguë (djelioci 1, 3, 5…) i Hare–Niemeyer (prosta kvota i najveći ostatak).
         <b>Pravila cenzusa</b> se zadaju za svake izbore. Svaka lista ima jedno pravilo: <i>samostalno</i> (lista ulazi u raspodjelu ako ima najmanje zadati procenat; 0% znači bez cenzusa);
         <i>zbirna lista</i> (liste tog pravila koje ne pređu opšti cenzus, a imaju najmanje zadati procenat, učestvuju kao jedna lista sa najviše zadatim brojem mandata, koji se zatim dijele među njima istom metodom);
@@ -123,13 +190,15 @@
         <br><b>Koalicije i podjele:</b> ispod poveži svaku listu sa drugih izbora sa njenim prethodnikom (ili sa više njih, ako je koalicija). Povezane liste se tretiraju kao jedna cjelina i udjeli im se sabiraju.`,
     },
     en: {
-      results: `<b>Formula sources.</b> Least squares index (LSq): Gallagher, M. (1991). Proportionality, disproportionality and electoral systems. <i>Electoral Studies</i> 10(1): 33–51.
+      results: `<b>Data entry.</b> Enter the votes and seats of each list as published in the official results; if the official number of valid votes is entered too, the application checks whether the sum of list votes matches it. The indices are calculated in the “Indices” module.`,
+      indices: `<b>Formula sources.</b> Least squares index (LSq): Gallagher, M. (1991). Proportionality, disproportionality and electoral systems. <i>Electoral Studies</i> 10(1): 33–51.
         Effective number of parties (ENEP, ENPP): Laakso, M. and Taagepera, R. (1979). “Effective” number of parties: a measure with application to West Europe. <i>Comparative Political Studies</i> 12(1): 3–27.
         Loosemore–Hanby index: Loosemore, J. and Hanby, V. J. (1971). The theoretical limits of maximum distortion: some analytic expressions for electoral systems. <i>British Journal of Political Science</i> 1(4): 467–477.
         Sainte-Laguë index: Sainte-Laguë, A. (1910). La représentation proportionnelle et la méthode des moindres carrés. <i>Annales scientifiques de l'École Normale Supérieure</i> 27: 529–542.
         Fractionalisation (F): Rae, D. W. (1967). <i>The Political Consequences of Electoral Laws</i>. New Haven: Yale University Press.
         Golosov's effective number of parties: Golosov, G. V. (2010). The effective number of parties: a new approach. <i>Party Politics</i> 16(2): 171–192.
-        Advantage ratio (seat share / vote share): Taagepera, R. and Shugart, M. S. (1989). <i>Seats and Votes</i>. New Haven: Yale University Press.`,
+        Advantage ratio (seat share / vote share): Taagepera, R. and Shugart, M. S. (1989). <i>Seats and Votes</i>. New Haven: Yale University Press.
+        <b>Share of women in parliament:</b> the number of women who won a seat in the election (composition of parliament at its constitution, before any replacements), divided by the total number of seats, as followed in international comparisons (e.g. the Inter-Parliamentary Union).`,
       alloc: `<b>Methods.</b> D'Hondt (divisors 1, 2, 3…), Sainte-Laguë (divisors 1, 3, 5…) and Hare–Niemeyer (simple quota and largest remainder).
         <b>Threshold rules</b> are set for each election. Each list has one rule: <i>on its own</i> (the list takes part in the allocation if it has at least the given percentage; 0% means no threshold);
         <i>combined list</i> (lists with this rule that do not pass the general threshold but have at least the given percentage take part as one list with at most the given number of seats, which are then divided among them by the same method);
@@ -161,7 +230,10 @@
   function calcResults(e) {
     const V = e.lists.map((l) => parseNum(l.votes)), M = e.lists.map((l) => parseNum(l.seats));
     const tv = I.sum(V), ts = I.sum(M);
-    return { V, M, tv, ts, lsq: I.lsq(V, M), lh: I.lh(V, M), sl: I.slIndex(V, M), enep: I.enp(V), enpp: I.enp(M),
+    // žene: računa se samo ako je broj žena upisan bar za jednu listu
+    const hasW = e.lists.some((l) => String(l.women ?? '').trim() !== '');
+    const tw = hasW ? I.sum(e.lists.map((l) => parseNum(l.women))) : NaN;
+    return { V, M, tv, ts, tw, wom: hasW && ts > 0 ? (tw / ts) * 100 : NaN, lsq: I.lsq(V, M), lh: I.lh(V, M), sl: I.slIndex(V, M), enep: I.enp(V), enpp: I.enp(M),
       golV: I.golosov(V), golM: I.golosov(M), raeV: I.raeF(V), raeM: I.raeF(M), adv: I.advantage(V, M) };
   }
   // Provjera unosa: zbir glasova prema zvaničnom broju važećih glasova i zbir mandata prema broju mandata
@@ -174,6 +246,7 @@
     }
     const seats = parseNum(e.seats);
     if (seats > 0 && r.ts > 0 && r.ts !== seats) out.push(t('Zbir mandata ({a}) nije jednak broju mandata u skupštini ({b}).', { a: fmtInt(r.ts), b: fmtInt(seats) }));
+    e.lists.forEach((l) => { if (parseNum(l.women) > parseNum(l.seats)) out.push(t('Lista „{name}“ ima više žena ({a}) nego mandata ({b}).', { name: l.name, a: fmtInt(parseNum(l.women)), b: fmtInt(parseNum(l.seats)) })); });
     return out;
   }
   const hasSpecial = (e) => !!(e.special && parseNum(e.special.seats) > 0);
@@ -227,6 +300,7 @@
     ['golM', 'Golosov (m.)', 2, 'Golosovljev efektivni broj stranaka, po mandatima', '#993556'],
     ['raeV', 'Rae F (gl.)', 3, 'Raeov indeks frakcionalizacije, po glasovima', '#0F6E56'],
     ['raeM', 'Rae F (m.)', 3, 'Raeov indeks frakcionalizacije, po mandatima', '#854F0B'],
+    ['wom', 'Žene %', 1, 'Udio žena u parlamentu (%)', '#c2408a'],
     ['spns', 'sPNS', 3, 'Standardizovani indeks nacionalizacije stranačkog sistema (Bochsler)', '#534AB7'],
     ['pnsw', 'PNSw', 3, 'Ponderisani indeks nacionalizacije stranačkog sistema (Bochsler)', '#185FA5'],
     ['tv', 'TV', 2, 'Ukupna volatilnost (Pedersen), prema prethodnim izabranim izborima', '#A32D2D'],
@@ -240,6 +314,7 @@
     ['Broj stranaka i fragmentacija', [['enep', 'Efektivni broj izbornih stranaka'], ['enpp', 'Efektivni broj parlamentarnih stranaka'],
       ['golV', 'Golosovljev efektivni broj stranaka – glasovi'], ['golM', 'Golosovljev efektivni broj stranaka – mandati'],
       ['raeV', 'Raeov indeks frakcionalizacije – glasovi'], ['raeM', 'Raeov indeks frakcionalizacije – mandati']]],
+    ['Zastupljenost', [['wom', 'Udio žena u parlamentu']]],
     ['Nacionalizacija', [['spns', 'Standardizovani indeks nacionalizacije'], ['pnsw', 'Ponderisani indeks nacionalizacije']]],
     ['Volatilnost', [['tv', 'Ukupna volatilnost (Pedersen)'], ['ta', 'Volatilnost tipa A'], ['tb', 'Volatilnost tipa B']]],
   ];
@@ -286,7 +361,7 @@
   }
   function rowValues(e, prev) {
     const r = calcResults(e), n = calcNat(e), v = prev ? volPair(prev, e) : null;
-    return { e, prev, linked: !!v, lsq: r.lsq, lh: r.lh, sl: r.sl, enep: r.enep, enpp: r.enpp, golV: r.golV, golM: r.golM, raeV: r.raeV, raeM: r.raeM,
+    return { e, prev, linked: !!v, wom: r.wom, lsq: r.lsq, lh: r.lh, sl: r.sl, enep: r.enep, enpp: r.enpp, golV: r.golV, golM: r.golM, raeV: r.raeV, raeM: r.raeM,
       spns: n.ok ? n.systemSpns : NaN, pnsw: n.ok ? n.systemPnsw : NaN, tv: v ? v.total : NaN, ta: v ? v.typeA : NaN, tb: v ? v.typeB : NaN };
   }
   // redovi: po državama (redom izbora), izbori redosljedom iz liste; volatilnost prema prethodnim izabranim izborima iste države
@@ -319,7 +394,7 @@
   function cmpChart(rows, keys) {
     if (!keys.length) return '';
     // grafikon kroz vrijeme ima smisla tek kad bar jedna država ima dvoje ili više izbora
-    if (!rows.some((r) => rows.filter((x) => x.cid === r.cid).length > 1)) return '';
+    if (chartPref('cmp', 'line') === 'line' && !rows.some((r) => rows.filter((x) => x.cid === r.cid).length > 1)) return '';
     const rowKey = (r) => r.yl;
     let cats = [];
     rows.forEach((r) => { const k = rowKey(r); if (!cats.includes(k)) cats.push(k); });
@@ -332,7 +407,16 @@
     }));
     if (!series.length) return `<div class="muted" style="padding:12px">${t('Za izabrane izbore nema vrijednosti ovih indeksa.')}</div>`;
     const multiC = cids.length > 1;
-    series.forEach((x, i) => { x.color = PALETTE[i % PALETTE.length]; x.label = (multiC ? S.country(x.cid).name + ' – ' : '') + t(x.c[1]); });
+    const st = cmpState(); st.colors = st.colors || {};
+    series.forEach((x, i) => { x.key = x.cid + '|' + x.k; x.color = st.colors[x.key] || SERIES_PALETTE[i % SERIES_PALETTE.length]; x.label = (multiC ? S.country(x.cid).name + ' – ' : '') + t(x.c[1]); });
+    const ctype = chartPref('cmp', 'line');
+    if (ctype !== 'line') {
+      const horiz = ctype === 'bars-h';
+      const catsH = horiz ? rows.map((r) => (multiC ? r.c + ' ' : '') + r.yl) : cats;
+      const svg = Charts.bars({ cats: catsH, horizontal: horiz, fmt, dec: Math.max(...series.map((x) => x.c[2])), series: series.map((x) => ({ label: x.label, color: x.color,
+        values: horiz ? rows.map((r) => (r.cid === x.cid ? r[x.k] : NaN)) : cats.map((c, ci) => { const p = x.pts.find((q) => q.x === ci); return p ? p.y : NaN; }) })) });
+      return `<div class="card chart-card" id="cmp-chart">${svg}</div>${seriesColors(series)}`;
+    }
     const labels = cats.map((l) => wrapText(l));
     const lines = Math.max(...labels.map((l) => l.length));
     const W = 960, padL = 56, padR = 16, padT = 16 + Math.ceil(series.length / 4) * 20, padB = 16 + lines * 14, inset = 40, plotH = 210, H = padT + plotH + padB;
@@ -359,8 +443,9 @@
       g += x.pts.map((p) => `<circle cx="${X(p.x)}" cy="${Y(p.y)}" r="4" class="ch-dot" style="stroke:${x.color}"><title>${esc(S.country(x.cid).name)} · ${esc(elTitle(p.r.e))} · ${esc(t(x.c[1]))}: ${fmt(p.y, x.c[2])}</title></circle>`
         + (series.length <= 2 ? `<text x="${X(p.x)}" y="${si === 0 ? Y(p.y) - 9 : Y(p.y) + 18}" text-anchor="middle" class="ch-val" style="fill:${x.color}">${fmt(p.y, x.c[2])}</text>` : '')).join('');
     });
-    return `<div class="card chart-card"><svg class="chart" viewBox="0 0 ${W} ${H}" role="img">${g}</svg></div>`;
+    return `<div class="card chart-card" id="cmp-chart"><svg class="chart" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" role="img">${g}</svg></div>${seriesColors(series)}`;
   }
+  const seriesColors = (series) => `<div class="series-colors no-print">${series.map((x) => `<label title="${t('Klikni da izabereš boju')}"><input type="color" data-sercolor="${esc(x.key)}" value="${x.color}"> ${esc(x.label)}</label>`).join('')}</div>`;
   function calcVol() {
     const v = S.state.vol;
     const A = S.byId(v.a), B = S.byId(v.b);
@@ -458,13 +543,15 @@
   const MODULES = {
     results: {
       render(e) {
-        const rows = e.lists.map((l) => `<tr data-id="${l.id}">
+        const rows = e.lists.map((l, i) => `<tr data-id="${l.id}">
+          <td class="color-cell"><input type="color" data-f="color" value="${listColor(e, l, i)}" title="${t('Boja liste na grafikonima')}"></td>
           <td class="l"><input class="name" data-f="name" title="${esc(l.name)}" value="${esc(l.name)}" placeholder="${t('Naziv liste ili stranke')}"></td>
           <td><input data-f="votes" value="${esc(l.votes)}" inputmode="decimal"></td>
           <td><input class="sm" data-f="seats" value="${esc(l.seats)}" inputmode="numeric"></td>
-          <td data-out="adv-${l.id}"></td>
+          <td><input class="sm" data-f="women" value="${esc(l.women ?? '')}" inputmode="numeric" title="${t('Broj žena koje su osvojile mandat na ovoj listi (nije obavezno)')}"></td>
           <td class="no-print"><button class="icon-btn" data-act="del-list" title="${t('Ukloni listu')}">✕</button></td></tr>`).join('');
-        return `${printHead(e, t('Rezultati i indeksi'))}${electionHead(e, `
+        const type = RES_CHARTS.some(([k]) => k === chartPref('res', 'arc')) ? chartPref('res', 'arc') : 'arc';
+        return `${printHead(e, t('Rezultati'))}${electionHead(e, `
           <button class="btn small" data-act="paste-lists">${t('Zalijepi iz Excela')}</button>
           <button class="btn small" data-act="import-lists">${t('Uvezi XLS/XLSX/CSV')}</button>`)}
           <div class="row" style="margin-bottom:12px">
@@ -472,12 +559,47 @@
             <label class="field">${t('Broj mandata')}<input data-bind="seats" value="${esc(e.seats)}" inputmode="numeric"></label>
           </div>
           <div class="table-wrap"><table class="grid">
-            <thead><tr><th class="l">${t('Lista / stranka')}</th><th>${t('Glasovi')}</th><th>${t('Mandati')}</th><th title="${t('Udio mandata podijeljen udjelom glasova (1 = proporcionalno)')}">${t('Odnos prednosti')}</th><th class="no-print"></th></tr></thead>
+            <thead><tr><th class="color-cell" title="${t('Boja liste na grafikonima')}"></th><th class="l">${t('Lista / stranka')}</th><th>${t('Glasovi')}</th><th>${t('Mandati')}</th><th title="${t('Broj žena koje su osvojile mandat na ovoj listi (nije obavezno)')}">${t('Žene')}</th><th class="no-print"></th></tr></thead>
             <tbody>${rows}</tbody>
-            <tfoot><tr><td class="l">${t('Ukupno')}</td><td data-out="tv"></td><td data-out="ts"></td><td></td><td class="no-print"></td></tr></tfoot>
+            <tfoot><tr><td></td><td class="l">${t('Ukupno')}</td><td data-out="tv"></td><td data-out="ts"></td><td data-out="tw"></td><td class="no-print"></td></tr></tfoot>
           </table></div>
           <div class="row no-print" style="margin-top:8px"><button class="btn small" data-act="add-list">${t('+ Dodaj listu')}</button></div>
           <div data-out-html="valwarn"></div>
+          <h2>${t('Grafikon')}</h2>
+          ${chartTools('res-chart', 'res', RES_CHARTS, type)}
+          <div class="chart-wrap">
+            <div class="card chart-card" id="res-chart" data-out-html="reschart"></div>
+            ${type === 'arc' ? `<div class="arc-order no-print"><label class="check" style="padding:0 0 8px"><input type="checkbox" data-chart-flag="arcWomen" ${chartPref('arcWomen', false) ? 'checked' : ''}> ${t('Označi žene')}</label><div class="side-label">${t('Redosljed u polukrugu (slijeva nadesno)')}</div><div data-out-html="arcorder"></div></div>` : ''}
+          </div>
+          <div class="cite">${cite('results')}</div>`;
+      },
+      paint(e) {
+        const r = calcResults(e);
+        const type = RES_CHARTS.some(([k]) => k === chartPref('res', 'arc')) ? chartPref('res', 'arc') : 'arc';
+        const w = validation(e, r);
+        return {
+          tv: fmtInt(r.tv), ts: fmtInt(r.ts), tw: Number.isFinite(r.tw) ? fmtInt(r.tw) : '',
+          valwarn: w.length ? `<div class="warn">${w.map(esc).join('<br>')}</div>` : '',
+          reschart: resultsChart(e, type),
+          arcorder: arcOrder(e).map((id) => e.lists.find((l) => l.id === id)).filter((l) => parseNum(l.seats) > 0)
+            .map((l, i, arr) => `<div class="arc-row"><span class="dot" style="background:${listColor(e, l, e.lists.indexOf(l))}"></span><span class="clip" title="${esc(l.name)}">${esc(l.name)}</span>
+              <button class="icon-btn" data-act="arc-up" data-id="${l.id}" ${i ? '' : 'disabled'} title="${t('Pomjeri lijevo')}">↑</button><button class="icon-btn" data-act="arc-down" data-id="${l.id}" ${i < arr.length - 1 ? '' : 'disabled'} title="${t('Pomjeri desno')}">↓</button></div>`).join(''),
+        };
+      },
+      table(e) {
+        const r = calcResults(e);
+        return {
+          header: [t('Lista'), t('Glasovi'), t('Mandati'), t('Žene')],
+          rows: e.lists.map((l, i) => [l.name, r.V[i], r.M[i], String(l.women ?? '').trim() === '' ? '' : parseNum(l.women)]),
+          summary: [[t('Ukupno glasova'), r.tv], [t('Važeći glasovi (zvanično)'), parseNum(e.validTotal) || ''], [t('Ukupno mandata'), r.ts], [t('Ukupno žena'), Number.isFinite(r.tw) ? r.tw : '']],
+        };
+      },
+    },
+
+    indices: {
+      render(e) {
+        const type = IDX_CHARTS.some(([k]) => k === chartPref('idx', 'bars-h')) ? chartPref('idx', 'bars-h') : 'bars-h';
+        return `${printHead(e, t('Indeksi'))}${electionHead(e)}
           <h2>${t('Disproporcionalnost')}</h2>
           <div class="metrics">
             <div class="metric"><div class="k">${t('Gallagher (LSq)')}</div><div class="v" data-out="lsq"></div><div class="h">${t('0 = savršena proporcionalnost')}</div></div>
@@ -491,25 +613,48 @@
             <div class="metric alt"><div class="k">${t('Golosov (glasovi / mandati)')}</div><div class="v" data-out="gol"></div><div class="h">${t('efektivni broj stranaka')}</div></div>
             <div class="metric alt"><div class="k">${t('Rae F (glasovi / mandati)')}</div><div class="v" data-out="rae"></div><div class="h">${t('0 = jedna stranka, → 1 = rascjepkano')}</div></div>
           </div>
-          <div class="cite">${cite('results')}</div>`;
+          <h2>${t('Zastupljenost')}</h2>
+          <div class="metrics">
+            <div class="metric"><div class="k">${t('Udio žena u parlamentu')}</div><div class="v" data-out="wom"></div><div class="h" data-out="womh"></div></div>
+          </div>
+          <h2>${t('Glasovi i mandati po listama')}</h2>
+          <div class="table-wrap"><table class="grid">
+            <thead><tr><th class="color-cell"></th><th class="l">${t('Lista / stranka')}</th><th>${t('Glasovi (%)')}</th><th>${t('Mandati (%)')}</th>
+              <th title="${t('Udio mandata minus udio glasova, u procentnim poenima')}">${t('Razlika (p.p.)')}</th>
+              <th title="${t('Udio mandata podijeljen udjelom glasova (1 = proporcionalno)')}">${t('Odnos prednosti')}</th></tr></thead>
+            <tbody data-out-html="idxrows"></tbody>
+          </table></div>
+          <div class="muted small" style="margin-top:6px">${t('Odnos prednosti: 1 = proporcionalno, više od 1 = lista ima veći udio mandata nego glasova, manje od 1 = manji.')}</div>
+          <h2>${t('Grafikon')}</h2>
+          ${chartTools('idx-chart', 'idx', IDX_CHARTS, type)}
+          <div class="card chart-card" id="idx-chart" data-out-html="idxchart"></div>
+          <div class="cite">${cite('indices')}</div>`;
       },
       paint(e) {
         const r = calcResults(e);
-        const o = { tv: fmtInt(r.tv), ts: fmtInt(r.ts), lsq: fmt(r.lsq), lh: fmt(r.lh), sl: fmt(r.sl), enep: fmt(r.enep), enpp: fmt(r.enpp),
-          gol: `${fmt(r.golV)} / ${fmt(r.golM)}`, rae: `${fmt(r.raeV, 3)} / ${fmt(r.raeM, 3)}` };
-        e.lists.forEach((l, i) => { o['adv-' + l.id] = r.ts > 0 ? fmt(r.adv[i]) : '–'; });
-        const w = validation(e, r);
-        o.valwarn = w.length ? `<div class="warn">${w.map(esc).join('<br>')}</div>` : '';
-        return o;
+        const type = IDX_CHARTS.some(([k]) => k === chartPref('idx', 'bars-h')) ? chartPref('idx', 'bars-h') : 'bars-h';
+        const order = e.lists.map((l, i) => i).sort((a, b) => r.V[b] - r.V[a]);
+        const pv = (i) => (r.tv > 0 ? (r.V[i] / r.tv) * 100 : NaN), ps = (i) => (r.ts > 0 ? (r.M[i] / r.ts) * 100 : NaN);
+        return {
+          lsq: fmt(r.lsq), lh: fmt(r.lh), sl: fmt(r.sl), enep: fmt(r.enep), enpp: fmt(r.enpp),
+          gol: `${fmt(r.golV)} / ${fmt(r.golM)}`, rae: `${fmt(r.raeV, 3)} / ${fmt(r.raeM, 3)}`,
+          wom: Number.isFinite(r.wom) ? fmt(r.wom, 1) + '%' : '–',
+          womh: Number.isFinite(r.wom) ? t('{a} od {b} mandata', { a: fmtInt(r.tw), b: fmtInt(r.ts) }) : t('upiši broj žena u kolonu „Žene“ u Rezultatima'),
+          idxrows: order.map((i) => { const l = e.lists[i], d = ps(i) - pv(i);
+            return `<tr><td class="color-cell"><span class="dot big" style="background:${listColor(e, l, i)}"></span></td><td class="l clip" title="${esc(l.name)}">${esc(l.name)}</td>
+              <td>${fmt(pv(i), 2)}</td><td>${fmt(ps(i), 2)}</td><td class="${d > 0.005 ? 'pos' : d < -0.005 ? 'neg' : ''}">${Number.isFinite(d) ? (d > 0 ? '+' : '') + fmt(d, 2) : '–'}</td><td>${r.ts > 0 ? fmt(r.adv[i]) : '–'}</td></tr>`; }).join(''),
+          idxchart: resultsChart(e, type),
+        };
       },
       table(e) {
         const r = calcResults(e);
+        const pv = (i) => (r.tv > 0 ? (r.V[i] / r.tv) * 100 : ''), ps = (i) => (r.ts > 0 ? (r.M[i] / r.ts) * 100 : '');
         return {
-          header: [t('Lista'), t('Glasovi'), t('Mandati'), t('Odnos prednosti')],
-          rows: e.lists.map((l, i) => [l.name, r.V[i], r.M[i], Number.isFinite(r.adv[i]) ? r.adv[i] : '']),
+          header: [t('Lista'), t('Glasovi (%)'), t('Mandati (%)'), t('Razlika (p.p.)'), t('Odnos prednosti')],
+          rows: e.lists.map((l, i) => [l.name, pv(i), ps(i), r.tv > 0 && r.ts > 0 ? ps(i) - pv(i) : '', Number.isFinite(r.adv[i]) && r.ts > 0 ? r.adv[i] : '']),
           summary: [['LSq (Gallagher)', r.lsq], ['Loosemore–Hanby', r.lh], [t('Sainte-Laguë indeks'), r.sl], ['ENEP', r.enep], ['ENPP', r.enpp],
             [t('Golosov (glasovi)'), r.golV], [t('Golosov (mandati)'), r.golM], [t('Rae F (glasovi)'), r.raeV], [t('Rae F (mandati)'), r.raeM],
-            [t('Ukupno glasova'), r.tv], [t('Važeći glasovi (zvanično)'), parseNum(e.validTotal) || ''], [t('Ukupno mandata'), r.ts]],
+            [t('Udio žena u parlamentu (%)'), Number.isFinite(r.wom) ? r.wom : '']],
         };
       },
     },
@@ -661,7 +806,7 @@
           ${hasVol ? `<td class="no-print l">${r.prev ? `<button class="btn small ghost" data-act="cmp-links" data-a="${r.prev.id}" data-b="${r.e.id}">${r.linked ? t('Uredi veze') : t('Poveži liste')}</button>` : ''}</td>` : ''}</tr>`;
         }).join('');
         const unlinked = hasVol && rows.some((r) => r.prev && !r.linked);
-        return `${head}${picker}${cmpChart(rows, st.idx)}
+        return `${head}${picker}${chartTools('cmp-chart', 'cmp', [['line', 'Linije kroz vrijeme'], ['bars-v', 'Vertikalni stubići'], ['bars-h', 'Horizontalne trake']], chartPref('cmp', 'line'))}${cmpChart(rows, st.idx)}
           <div class="table-wrap" style="margin-top:14px"><table class="grid cmp">
             <thead><tr>${th('country', t('Država'), 'l')}${th('year', t('Godina'), 'l')}${st.idx.map((k) => th(k, name(k), '', full(k))).join('')}${hasVol ? '<th class="no-print"></th>' : ''}</tr></thead>
             <tbody>${body}</tbody>
@@ -802,6 +947,10 @@
   main.addEventListener('change', (ev) => {
     const el = ev.target;
     if (el.dataset.vol) { S.state.vol[el.dataset.vol] = el.value; S.save(); render(); }
+    else if (el.dataset.chartFlag) { (S.state.charts = S.state.charts || {})[el.dataset.chartFlag] = el.checked; S.save(); paint(); }
+    else if (el.dataset.chart) { (S.state.charts = S.state.charts || {})[el.dataset.chart] = el.value; S.save(); render(); }
+    else if (el.dataset.sercolor) { const st = cmpState(); (st.colors = st.colors || {})[el.dataset.sercolor] = el.value; S.save(); render(); }
+    else if (el.dataset.f === 'color') { S.save(); render(); }
     else if (el.dataset.f === 'rule') { S.save(); render(); }
     else if (el.tagName === 'SELECT' && el.dataset.bind) { S.save(); paint(); }
   });
@@ -904,6 +1053,22 @@
       case 'del-special':
         if (!(await confirmBox(t('Ukloni posebnu jedinicu'), t('Uklanjaju se broj mandata i glasovi u posebnoj jedinici za ove izbore.'), t('Ukloni')))) break;
         e.special = null; S.save(); render(); break;
+      case 'arc-up': case 'arc-down': {
+        const o = arcOrder(e), cur = S.state.elections; const vis = o.filter((id) => parseNum(e.lists.find((l) => l.id === id).seats) > 0);
+        const i = vis.indexOf(b.dataset.id), j = b.dataset.act === 'arc-up' ? i - 1 : i + 1;
+        if (i < 0 || j < 0 || j >= vis.length) break;
+        const a1 = o.indexOf(vis[i]), a2 = o.indexOf(vis[j]); [o[a1], o[a2]] = [o[a2], o[a1]];
+        e.arcOrder = o; S.save(); paint(); break;
+      }
+      case 'chart-png': case 'chart-svg': {
+        const svg = document.querySelector(`#${b.dataset.target} svg`);
+        if (!svg) { toast(t('Nema grafikona za čuvanje')); break; }
+        const png = b.dataset.act === 'chart-png';
+        const bytes = png ? await Charts.toPng(svg) : Charts.toSvg(svg);
+        const p = await P.saveFile(`${fileBase()}_${t('grafikon')}.${png ? 'png' : 'svg'}`, bytes);
+        if (p) toast(t('Sačuvano: {p}', { p }));
+        break;
+      }
       case 'cmp-links': S.state.vol.a = b.dataset.a; S.state.vol.b = b.dataset.b; S.state.module = 'vol'; S.save(); render(); break;
       case 'clear-links': S.state.links[S.linkKey(S.state.vol.a, S.state.vol.b)] = []; S.save(); render(); break;
     }
@@ -1106,7 +1271,8 @@
     };
     const e = S.current();
     if (e) {
-      addSheet(t('Rezultati'), MODULES.results.table(e), t('{name} — rezultati i indeksi', { name: elTitle(e) }));
+      addSheet(t('Rezultati'), MODULES.results.table(e), t('{name} — rezultati', { name: elTitle(e) }));
+      addSheet(t('Indeksi'), MODULES.indices.table(e), t('{name} — indeksi', { name: elTitle(e) }));
       addSheet(t('Raspodjela'), MODULES.alloc.table(e), t('{name} — raspodjela mandata', { name: elTitle(e) }));
       if (e.units.length >= 2) addSheet(t('Nacionalizacija'), MODULES.nat.table(e), t('{name} — nacionalizacija stranaka (Bochsler 2010)', { name: elTitle(e) }));
     }
@@ -1116,7 +1282,7 @@
     if (tt) addSheet(t('Poređenje'), tt, t('Poređenje'));
     const src = wb.addWorksheet(t('Izvori'));
     src.addRow([t('Izvori formula')]).font = { bold: true, size: 13, color: { argb: blue } };
-    ['results', 'alloc', 'nat', 'vol', 'compare'].forEach((k) => src.addRow([CITE_TEXT(k)]));
+    ['indices', 'alloc', 'nat', 'vol', 'compare'].forEach((k) => src.addRow([CITE_TEXT(k)]));
     src.getColumn(1).width = 140;
     src.getColumn(1).alignment = { wrapText: true, vertical: 'top' };
     return new Uint8Array(await wb.xlsx.writeBuffer());
