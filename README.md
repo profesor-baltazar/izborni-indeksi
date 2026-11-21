@@ -9,13 +9,13 @@ Pokreni instalacioni `.exe` fajl i prati korake. Ako Windows prikaže upozorenje
 ## Moduli
 
 - **Rezultati:** unos lista, glasova, mandata i broja žena (nije obavezno), boje lista, provjera unosa i grafikoni sastava (polukrug skupštine sa kružićem za svaki mandat, pita udjela glasova ili mandata).
-- **Indeksi:** disproporcionalnost (Gallagher LSq, Loosemore–Hanby, Sainte-Laguë), efektivni broj stranaka (ENEP, ENPP, Golosov), frakcionalizacija (Rae F), udio žena u parlamentu i tabela po listama sa udjelom glasova, udjelom mandata i odnosom prednosti, uz grafikon glasova i mandata.
-- **Raspodjela mandata:** D'Hondt, Sainte-Laguë ili Hare–Niemeyer. Za svake izbore zadaješ pravila cenzusa (npr. poseban cenzus za koalicije, izuzeće ili zbirnu listu za manjine, garantovani mandat, uvećane količnike), a za svaku listu biraš koje pravilo važi. Može se dodati i posebna izborna jedinica sa svojim brojem mandata.
+- **Indeksi:** disproporcionalnost (Gallagher LSq, Loosemore–Hanby, Sainte-Laguë), efektivni broj stranaka (ENEP, ENPP, Golosov), frakcionalizacija (Rae F), izgubljeni glasovi, broj lista sa mandatima, najveća stranka i bonus pobjednika, efektivni prag, izlaznost i nevažeći listići, udio žena u parlamentu i tabela po listama sa udjelom glasova, udjelom mandata i odnosom prednosti, uz grafikon glasova i mandata.
+- **Raspodjela mandata:** D'Hondt, Sainte-Laguë ili Hare–Niemeyer. Za svake izbore zadaješ pravila cenzusa (npr. poseban cenzus za koalicije, izuzeće ili zbirnu listu za manjine, garantovani mandat, uvećane količnike), a za svaku listu biraš koje pravilo važi. Može se dodati i posebna izborna jedinica sa svojim brojem mandata. Tabela „Poređenje metoda“ pokazuje raspodjelu po sve tri metode, sa LSq za svaku.
 - **Nacionalizacija stranaka:** koliko je podrška stranke ravnomjerno raspoređena po opštinama (Bochsler).
 - **Volatilnost:** koliki se dio glasova pomjerio između stranaka od jednih do drugih izbora.
 - **Poređenje:** biraš države, izbore i indekse. Dobijaš grafikon kroz vrijeme i tabelu po godinama, sa prosjekom; klikom na zaglavlje kolone tabela se sortira. Dugme „Posljednji izbori svake države“ pravi tabelu sa po jednim redom za svaku državu. Kad pređeš mišem preko skraćenice (LSq, ENEP…), vidiš puno ime indeksa.
 
-Uz svaki modul je naveden izvor formule.
+Uz svaki modul je naveden izvor formule, a dugme **?** pored indeksa objašnjava šta indeks mjeri i kako se čita.
 
 ## Unos podataka
 
@@ -41,6 +41,11 @@ Dugmad na dnu ekrana:
 - **CSV:** tabela trenutnog modula.
 - **Excel:** svi moduli u jednom fajlu.
 - **PDF / štampa:** u prozoru za štampu izaberi „Microsoft Print to PDF“.
+
+## Razmjena podataka
+
+- **Izvezi** (u zaglavlju izbora) ili ⤓ pored države čuva jedne izbore ili cijelu državu u fajl koji možeš poslati drugima; **Uvezi državu ili izbore** ih dodaje postojećim podacima, bez brisanja.
+- **Uvezi iz ParlGov baze:** preuzmi `view_election.csv` sa parlgov.org (Data → Elections), izaberi države i aplikacija pravi izbore. Glasovi su u procentima; zakonski cenzus upiši sam.
 
 ## Rezervna kopija
 

@@ -41,6 +41,48 @@
   const confirmBox = (title, text, okLabel = t('Potvrdi'), danger = false) => modal(
     `<h3>${esc(title)}</h3><p>${text}</p><div class="actions"><button class="btn" data-close="">${t('Otkaži')}</button><button class="btn ${danger ? 'danger' : 'primary'}" data-close="ok">${esc(okLabel)}</button></div>`
   ).then((v) => v === 'ok');
+  // ---------- objašnjenja indeksa ("?") ----------
+  const HELP = {
+    me: {
+      lsq: ['Gallagherov indeks najmanjih kvadrata (LSq)', 'Mjeri koliko se raspodjela mandata razlikuje od raspodjele glasova. Računa se kao kvadratni korijen polovine zbira kvadrata razlika udjela glasova i mandata svih lista, pa velika odstupanja imaju veću težinu od malih.', '0 znači savršenu proporcionalnost. Proporcionalni sistemi obično imaju 1–5, mješoviti 5–10, a većinski često preko 10.'],
+      lh: ['Loosemore–Hanby indeks (D)', 'Polovina zbira apsolutnih razlika udjela glasova i mandata. Može se čitati kao procenat mandata koji je „pripao pogrešnim“ strankama u odnosu na glasove.', '0 je savršena proporcionalnost. Kod mnogo malih stranaka ispod cenzusa raste brže od LSq.'],
+      sl: ['Sainte-Laguë indeks', 'Zbir kvadrata razlika udjela mandata i glasova, podijeljenih udjelom glasova. Odstupanje male stranke teže je od istog odstupanja velike.', '0 je savršena proporcionalnost; vrijednosti nisu ograničene odozgo.'],
+      enep: ['Efektivni broj izbornih stranaka (ENEP)', 'Koliko „jednako velikih“ stranaka bi dalo istu rascjepkanost glasova. Računa se kao 1 podijeljeno zbirom kvadrata udjela glasova (Laakso–Taagepera).', 'Dvostranački sistem je blizu 2, umjereni višestranački 3–5, rascjepkani preko 5.'],
+      enpp: ['Efektivni broj parlamentarnih stranaka (ENPP)', 'Isto kao ENEP, ali iz udjela mandata. Pokazuje koliko je rascjepkan parlament.', 'ENPP je obično manji od ENEP-a, jer izborni sistem smanjuje broj stranaka; razlika pokazuje koliko.'],
+      gol: ['Golosovljev efektivni broj stranaka', 'Varijanta efektivnog broja stranaka koja daje veću težinu najvećoj stranci, pa ne precjenjuje broj stranaka kad jedna dominira.', 'Kad jedna stranka ima veliku većinu, Golosov je bliži 1 nego ENEP/ENPP.'],
+      rae: ['Raeov indeks frakcionalizacije (F)', 'Vjerovatnoća da dva nasumično izabrana birača (ili poslanika) pripadaju različitim strankama. F = 1 − zbir kvadrata udjela.', '0 = jedna stranka ima sve; što je bliže 1, to je sistem rascjepkaniji.'],
+      wom: ['Udio žena u parlamentu', 'Broj žena koje su na izborima osvojile mandat (sastav pri konstituisanju), podijeljen ukupnim brojem mandata.', 'Prosjek u svijetu je oko 27% (Interparlamentarna unija); 40–60% se smatra rodno uravnoteženim.'],
+      wasted: ['Izgubljeni glasovi', 'Procenat glasova datih listama koje nisu osvojile nijedan mandat.', 'Što je veći, to je više birača ostalo bez predstavnika; raste sa visinom cenzusa i brojem malih lista.'],
+      nseat: ['Broj lista sa mandatima', 'Koliko je lista osvojilo bar jedan mandat.', 'Jednostavna mjera rascjepkanosti parlamenta; za finiju sliku vidi ENPP.'],
+      big: ['Najveća stranka', 'Udio glasova i udio mandata liste sa najviše glasova.', 'Pokazuje dominaciju jedne stranke; preko 50% mandata znači samostalnu većinu.'],
+      bonus: ['Bonus pobjednika', 'Udio mandata najveće stranke minus njen udio glasova, u procentnim poenima.', 'Pozitivna vrijednost znači da je izborni sistem nagradio pobjednika; u proporcionalnim sistemima obično 0–5 p.p., u većinskim i više od 10.'],
+      effthr: ['Efektivni prag', 'Procjena praga glasova potrebnog za ulazak u parlament: veća vrijednost od zakonskog cenzusa i 75% ÷ (broj mandata + 1) (Taagepera; Lijphart). Pretpostavlja jednu izbornu jedinicu.', 'Kod velikih jedinica (npr. 81 mandat) odlučuje zakonski cenzus; kod malih jedinica stvarni prag je mnogo viši.'],
+      turnout: ['Izlaznost', 'Broj birača koji su glasali, podijeljen brojem upisanih birača.', 'Zavisi i od tačnosti biračkog spiska; u Evropi je obično 50–80%.'],
+      invalid: ['Nevažeći listići', 'Udio nevažećih listića među svim upotrijebljenim listićima (glasali minus važeći, podijeljeno sa glasali).', 'Obično 1–3%; više vrijednosti mogu ukazivati na komplikovan listić ili protestno glasanje.'],
+      adv: ['Odnos prednosti', 'Udio mandata liste podijeljen njenim udjelom glasova (Taagepera i Shugart).', '1 = proporcionalno; više od 1 = lista je nadzastupljena; manje od 1 = podzastupljena; 0 = bez mandata.'],
+    },
+    en: {
+      lsq: ['Gallagher least squares index (LSq)', 'Measures how much the distribution of seats differs from the distribution of votes: the square root of half the sum of squared differences between vote and seat shares, so large deviations weigh more than small ones.', '0 means perfect proportionality. Proportional systems usually score 1–5, mixed systems 5–10 and majoritarian systems often above 10.'],
+      lh: ['Loosemore–Hanby index (D)', 'Half the sum of the absolute differences between vote and seat shares. It can be read as the percentage of seats that went to the “wrong” parties relative to votes.', '0 is perfect proportionality. With many small parties below the threshold it grows faster than LSq.'],
+      sl: ['Sainte-Laguë index', 'Sum of squared differences between seat and vote shares, divided by the vote share. A deviation for a small party weighs more than the same deviation for a large one.', '0 is perfect proportionality; values have no upper limit.'],
+      enep: ['Effective number of electoral parties (ENEP)', 'How many “equally sized” parties would produce the same fragmentation of votes: 1 divided by the sum of squared vote shares (Laakso–Taagepera).', 'A two-party system is close to 2, moderate multi-party systems 3–5, fragmented ones above 5.'],
+      enpp: ['Effective number of parliamentary parties (ENPP)', 'The same as ENEP, computed from seat shares. Shows how fragmented parliament is.', 'ENPP is usually lower than ENEP because the electoral system reduces the number of parties; the difference shows by how much.'],
+      gol: ['Golosov effective number of parties', 'A variant of the effective number of parties that gives more weight to the largest party, so it does not overstate the number of parties when one dominates.', 'When one party has a large majority, Golosov is closer to 1 than ENEP/ENPP.'],
+      rae: ['Rae fractionalisation index (F)', 'The probability that two randomly chosen voters (or MPs) belong to different parties. F = 1 − sum of squared shares.', '0 = one party has everything; the closer to 1, the more fragmented the system.'],
+      wom: ['Share of women in parliament', 'The number of women who won a seat in the election (composition at the constitution of parliament), divided by the total number of seats.', 'The world average is about 27% (Inter-Parliamentary Union); 40–60% is considered gender balanced.'],
+      wasted: ['Wasted votes', 'The percentage of votes cast for lists that won no seat.', 'The higher it is, the more voters are left without a representative; it grows with the threshold and the number of small lists.'],
+      nseat: ['Number of lists with seats', 'How many lists won at least one seat.', 'A simple measure of parliamentary fragmentation; see ENPP for a finer picture.'],
+      big: ['Largest party', 'Vote share and seat share of the list with the most votes.', 'Shows the dominance of one party; more than 50% of seats means a single-party majority.'],
+      bonus: ['Winner’s bonus', 'Seat share of the largest party minus its vote share, in percentage points.', 'A positive value means the electoral system rewarded the winner; usually 0–5 p.p. in proportional systems, often over 10 in majoritarian ones.'],
+      effthr: ['Effective threshold', 'An estimate of the vote share needed to enter parliament: the larger of the legal threshold and 75% ÷ (seats + 1) (Taagepera; Lijphart). Assumes a single district.', 'In large districts (e.g. 81 seats) the legal threshold decides; in small districts the real threshold is much higher.'],
+      turnout: ['Turnout', 'The number of voters who voted, divided by the number of registered voters.', 'Also depends on the accuracy of the voter register; usually 50–80% in Europe.'],
+      invalid: ['Invalid ballots', 'The share of invalid ballots among all ballots cast (voted minus valid, divided by voted).', 'Usually 1–3%; higher values may point to a complicated ballot or protest voting.'],
+      adv: ['Advantage ratio', 'A list’s seat share divided by its vote share (Taagepera and Shugart).', '1 = proportional; above 1 = over-represented; below 1 = under-represented; 0 = no seats.'],
+    },
+  };
+  const helpBtn = (k) => `<button class="help-btn no-print" data-act="help" data-k="${k}" title="${t('Šta ovo znači?')}">?</button>`;
+  const metric = (k, label, out, hint, cls = '') => `<div class="metric ${cls}"><div class="k">${label} ${helpBtn(k)}</div><div class="v" data-out="${out}"></div><div class="h"${hint === null ? ` data-out="${out}h"` : ''}>${hint ?? ''}</div></div>`;
+
   // ---------- boje i grafikoni ----------
   const LIST_PALETTE = ['#1f6fd1', '#d83b3b', '#2e9e5b', '#f2a900', '#7b4fc9', '#e8732a', '#1aa5b8', '#c2408a', '#6b8e23', '#8c564b', '#4d6a8a', '#b8860b', '#9a9a9a'];
   const SERIES_PALETTE = ['#1f6fd1', '#d83b3b', '#2e9e5b', '#7b4fc9', '#e8732a', '#1aa5b8', '#c2408a', '#b8860b', '#4d6a8a', '#6b8e23', '#8c564b', '#9a9a9a'];
@@ -165,6 +207,7 @@
         Frakcionalizacija (F): Rae, D. W. (1967). <i>The Political Consequences of Electoral Laws</i>. New Haven: Yale University Press.
         Golosovljev efektivni broj stranaka: Golosov, G. V. (2010). The effective number of parties: a new approach. <i>Party Politics</i> 16(2): 171–192.
         Odnos prednosti (advantage ratio, udio mandata / udio glasova): Taagepera, R. i Shugart, M. S. (1989). <i>Seats and Votes</i>. New Haven: Yale University Press.
+        Efektivni prag: Taagepera, R. (2002). Nationwide threshold of representation. <i>Electoral Studies</i> 21(3): 383–401; Lijphart, A. (1994). <i>Electoral Systems and Party Systems</i>. Oxford: Oxford University Press.
         <b>Udio žena u parlamentu:</b> broj žena koje su na izborima osvojile mandat (sastav skupštine pri konstituisanju, prije eventualnih zamjena), podijeljen ukupnim brojem mandata. Crnogorski zakon koristi izraz „manje zastupljeni pol“; u međunarodnim poređenjima (npr. Interparlamentarna unija) prati se udio žena.`,
       alloc: `<b>Metode.</b> D'Hondt (djelioci 1, 2, 3…), Sainte-Laguë (djelioci 1, 3, 5…) i Hare–Niemeyer (prosta kvota i najveći ostatak).
         <b>Pravila cenzusa</b> se zadaju za svake izbore. Svaka lista ima jedno pravilo: <i>samostalno</i> (lista ulazi u raspodjelu ako ima najmanje zadati procenat; 0% znači bez cenzusa);
@@ -198,6 +241,7 @@
         Fractionalisation (F): Rae, D. W. (1967). <i>The Political Consequences of Electoral Laws</i>. New Haven: Yale University Press.
         Golosov's effective number of parties: Golosov, G. V. (2010). The effective number of parties: a new approach. <i>Party Politics</i> 16(2): 171–192.
         Advantage ratio (seat share / vote share): Taagepera, R. and Shugart, M. S. (1989). <i>Seats and Votes</i>. New Haven: Yale University Press.
+        Effective threshold: Taagepera, R. (2002). Nationwide threshold of representation. <i>Electoral Studies</i> 21(3): 383–401; Lijphart, A. (1994). <i>Electoral Systems and Party Systems</i>. Oxford: Oxford University Press.
         <b>Share of women in parliament:</b> the number of women who won a seat in the election (composition of parliament at its constitution, before any replacements), divided by the total number of seats, as followed in international comparisons (e.g. the Inter-Parliamentary Union).`,
       alloc: `<b>Methods.</b> D'Hondt (divisors 1, 2, 3…), Sainte-Laguë (divisors 1, 3, 5…) and Hare–Niemeyer (simple quota and largest remainder).
         <b>Threshold rules</b> are set for each election. Each list has one rule: <i>on its own</i> (the list takes part in the allocation if it has at least the given percentage; 0% means no threshold);
@@ -233,7 +277,19 @@
     // žene: računa se samo ako je broj žena upisan bar za jednu listu
     const hasW = e.lists.some((l) => String(l.women ?? '').trim() !== '');
     const tw = hasW ? I.sum(e.lists.map((l) => parseNum(l.women))) : NaN;
-    return { V, M, tv, ts, tw, wom: hasW && ts > 0 ? (tw / ts) * 100 : NaN, lsq: I.lsq(V, M), lh: I.lh(V, M), sl: I.slIndex(V, M), enep: I.enp(V), enpp: I.enp(M),
+    // dodatni pokazatelji
+    const wasted = tv > 0 && ts > 0 ? (I.sum(V.filter((v, i) => !(M[i] > 0))) / tv) * 100 : NaN;
+    const nSeat = ts > 0 ? M.filter((m) => m > 0).length : NaN;
+    const big = V.length ? V.indexOf(Math.max(...V)) : -1;
+    const bigV = big >= 0 && tv > 0 ? (V[big] / tv) * 100 : NaN, bigS = big >= 0 && ts > 0 ? (M[big] / ts) * 100 : NaN;
+    const Mag = parseNum(e.seats) || ts;
+    const effThr = Mag > 0 ? Math.max(parseNum(e.threshold) || 0, 75 / (Mag + 1)) : NaN;
+    const reg = parseNum(e.registered), vot = parseNum(e.voted);
+    const valid = parseNum(e.validTotal) > 0 ? parseNum(e.validTotal) : e.shares ? NaN : tv;
+    const turnout = reg > 0 && vot > 0 ? (vot / reg) * 100 : NaN;
+    const invN = String(e.invalid ?? '').trim() !== '' ? parseNum(e.invalid) : vot > 0 && valid > 0 && valid <= vot ? vot - valid : NaN;
+    const invalid = vot > 0 && Number.isFinite(invN) ? (invN / vot) * 100 : NaN;
+    return { invN, V, M, tv, ts, tw, wom: hasW && ts > 0 ? (tw / ts) * 100 : NaN, wasted, nSeat, big, bigV, bigS, bonus: bigS - bigV, effThr, turnout, invalid, lsq: I.lsq(V, M), lh: I.lh(V, M), sl: I.slIndex(V, M), enep: I.enp(V), enpp: I.enp(M),
       golV: I.golosov(V), golM: I.golosov(M), raeV: I.raeF(V), raeM: I.raeF(M), adv: I.advantage(V, M) };
   }
   // Provjera unosa: zbir glasova prema zvaničnom broju važećih glasova i zbir mandata prema broju mandata
@@ -246,6 +302,9 @@
     }
     const seats = parseNum(e.seats);
     if (seats > 0 && r.ts > 0 && r.ts !== seats) out.push(t('Zbir mandata ({a}) nije jednak broju mandata u skupštini ({b}).', { a: fmtInt(r.ts), b: fmtInt(seats) }));
+    if (parseNum(e.voted) > 0 && parseNum(e.registered) > 0 && parseNum(e.voted) > parseNum(e.registered)) out.push(t('Broj glasalih ({a}) veći je od broja upisanih birača ({b}).', { a: fmtInt(parseNum(e.voted)), b: fmtInt(parseNum(e.registered)) }));
+    const vv = parseNum(e.validTotal) > 0 ? parseNum(e.validTotal) : r.tv;
+    if (!e.shares && parseNum(e.voted) > 0 && vv > parseNum(e.voted)) out.push(t('Važećih glasova ({a}) ima više nego glasalih ({b}).', { a: fmtInt(vv), b: fmtInt(parseNum(e.voted)) }));
     e.lists.forEach((l) => { if (parseNum(l.women) > parseNum(l.seats)) out.push(t('Lista „{name}“ ima više žena ({a}) nego mandata ({b}).', { name: l.name, a: fmtInt(parseNum(l.women)), b: fmtInt(parseNum(l.seats)) })); });
     return out;
   }
@@ -259,18 +318,28 @@
       return { key: r.id, kind: r.kind, pct: parseNum(r.pct), cap: parseNum(r.cap), seats: parseNum(r.seats), bonus: parseNum(r.bonus) };
     });
   }
-  function calcAlloc(e) {
+  function calcAlloc(e, method = e.method) {
     const V = e.lists.map((l) => parseNum(l.votes));
     const rules = listRules(e);
     let r;
     if (hasSpecial(e)) {
       const sp = e.special;
-      r = I.allocateSpecial({ votes: V, seats: parseNum(e.seats), method: e.method, threshold: parseNum(e.threshold), rules,
+      r = I.allocateSpecial({ votes: V, seats: parseNum(e.seats), method, threshold: parseNum(e.threshold), rules,
         special: { seats: parseNum(sp.seats), votes: e.lists.map((l) => parseNum(sp.votes?.[l.id])), threshold: String(sp.threshold ?? '').trim() === '' ? undefined : parseNum(sp.threshold), transfer: sp.transfer !== false } });
     } else {
-      r = I.allocate({ votes: V, seats: parseNum(e.seats), method: e.method, threshold: parseNum(e.threshold), rules });
+      r = I.allocate({ votes: V, seats: parseNum(e.seats), method, threshold: parseNum(e.threshold), rules });
     }
     return { V, tv: I.sum(V), ...r, lsq: I.lsq(V, r.seats) };
+  }
+  // ista izborna pravila, različite metode
+  function methodsTable(e) {
+    const ms = Object.keys(METHODS), res = ms.map((m) => calcAlloc(e, m));
+    const actual = e.lists.map((l) => parseNum(l.seats)), V = e.lists.map((l) => parseNum(l.votes));
+    const head = `<thead><tr><th class="l">${t('Lista')}</th>${ms.map((m) => `<th class="${m === e.method ? 'cur' : ''}">${esc(METHODS[m])}</th>`).join('')}<th>${t('Stvarno')}</th></tr></thead>`;
+    const show = e.lists.map((l, i) => i).filter((i) => actual[i] > 0 || res.some((r) => r.seats[i] > 0)).sort((a, b) => V[b] - V[a]);
+    const body = show.map((i) => `<tr><td class="l clip" title="${esc(e.lists[i].name)}">${esc(e.lists[i].name)}</td>${res.map((r, k) => `<td class="${ms[k] === e.method ? 'cur' : ''}${r.seats[i] !== actual[i] ? ' diff' : ''}">${r.seats[i]}</td>`).join('')}<td>${actual[i]}</td></tr>`).join('');
+    const foot = `<tfoot><tr><td class="l">LSq</td>${res.map((r, k) => `<td class="${ms[k] === e.method ? 'cur' : ''}">${fmt(r.lsq)}</td>`).join('')}<td>${fmt(I.lsq(V, actual))}</td></tr></tfoot>`;
+    return head + `<tbody>${body}</tbody>` + foot;
   }
   function unitValid(u, e) {
     const v = parseNum(u.valid);
@@ -301,6 +370,14 @@
     ['raeV', 'Rae F (gl.)', 3, 'Raeov indeks frakcionalizacije, po glasovima', '#0F6E56'],
     ['raeM', 'Rae F (m.)', 3, 'Raeov indeks frakcionalizacije, po mandatima', '#854F0B'],
     ['wom', 'Žene %', 1, 'Udio žena u parlamentu (%)', '#c2408a'],
+    ['wasted', 'Izgubljeni %', 1, 'Izgubljeni glasovi (%)', '#8c564b'],
+    ['nseat', 'Liste s mand.', 0, 'Broj lista sa mandatima', '#4d6a8a'],
+    ['bigV', 'Najveća (gl. %)', 1, 'Najveća stranka – udio glasova (%)', '#1f6fd1'],
+    ['bigS', 'Najveća (m. %)', 1, 'Najveća stranka – udio mandata (%)', '#0f4fa0'],
+    ['bonus', 'Bonus', 1, 'Bonus pobjednika (p.p.)', '#e8732a'],
+    ['effthr', 'Ef. prag %', 2, 'Efektivni prag (%)', '#6b8e23'],
+    ['turnout', 'Izlaznost %', 1, 'Izlaznost (%)', '#1aa5b8'],
+    ['invalid', 'Nevažeći %', 2, 'Nevažeći listići (%)', '#9a9a9a'],
     ['spns', 'sPNS', 3, 'Standardizovani indeks nacionalizacije stranačkog sistema (Bochsler)', '#534AB7'],
     ['pnsw', 'PNSw', 3, 'Ponderisani indeks nacionalizacije stranačkog sistema (Bochsler)', '#185FA5'],
     ['tv', 'TV', 2, 'Ukupna volatilnost (Pedersen), prema prethodnim izabranim izborima', '#A32D2D'],
@@ -314,7 +391,8 @@
     ['Broj stranaka i fragmentacija', [['enep', 'Efektivni broj izbornih stranaka'], ['enpp', 'Efektivni broj parlamentarnih stranaka'],
       ['golV', 'Golosovljev efektivni broj stranaka – glasovi'], ['golM', 'Golosovljev efektivni broj stranaka – mandati'],
       ['raeV', 'Raeov indeks frakcionalizacije – glasovi'], ['raeM', 'Raeov indeks frakcionalizacije – mandati']]],
-    ['Zastupljenost', [['wom', 'Udio žena u parlamentu']]],
+    ['Izborni sistem i pobjednik', [['wasted', 'Izgubljeni glasovi'], ['nseat', 'Broj lista sa mandatima'], ['bigV', 'Najveća stranka – udio glasova'], ['bigS', 'Najveća stranka – udio mandata'], ['bonus', 'Bonus pobjednika'], ['effthr', 'Efektivni prag']]],
+    ['Izlaznost i zastupljenost', [['turnout', 'Izlaznost'], ['invalid', 'Nevažeći listići'], ['wom', 'Udio žena u parlamentu']]],
     ['Nacionalizacija', [['spns', 'Standardizovani indeks nacionalizacije'], ['pnsw', 'Ponderisani indeks nacionalizacije']]],
     ['Volatilnost', [['tv', 'Ukupna volatilnost (Pedersen)'], ['ta', 'Volatilnost tipa A'], ['tb', 'Volatilnost tipa B']]],
   ];
@@ -361,7 +439,7 @@
   }
   function rowValues(e, prev) {
     const r = calcResults(e), n = calcNat(e), v = prev ? volPair(prev, e) : null;
-    return { e, prev, linked: !!v, wom: r.wom, lsq: r.lsq, lh: r.lh, sl: r.sl, enep: r.enep, enpp: r.enpp, golV: r.golV, golM: r.golM, raeV: r.raeV, raeM: r.raeM,
+    return { e, prev, linked: !!v, wom: r.wom, wasted: r.wasted, nseat: r.nSeat, bigV: r.bigV, bigS: r.bigS, bonus: r.bonus, effthr: r.effThr, turnout: r.turnout, invalid: r.invalid, lsq: r.lsq, lh: r.lh, sl: r.sl, enep: r.enep, enpp: r.enpp, golV: r.golV, golM: r.golM, raeV: r.raeV, raeM: r.raeM,
       spns: n.ok ? n.systemSpns : NaN, pnsw: n.ok ? n.systemPnsw : NaN, tv: v ? v.total : NaN, ta: v ? v.typeA : NaN, tb: v ? v.typeB : NaN };
   }
   // redovi: po državama (redom izbora), izbori redosljedom iz liste; volatilnost prema prethodnim izabranim izborima iste države
@@ -465,7 +543,7 @@
       const open = !S.state.collapsed.includes(c.id);
       return `<div class="country ${open ? '' : 'closed'}" data-cid="${c.id}">
         <div class="country-row" data-act="toggle-country"><span class="caret">${open ? '▾' : '▸'}</span><span class="cname">${esc(c.name)}</span>
-          <span class="country-tools"><button class="icon-btn" data-act="rename-country" title="${t('Preimenuj državu')}">✎</button><button class="icon-btn" data-act="del-country" title="${t('Obriši državu')}">✕</button></span></div>
+          <span class="country-tools"><button class="icon-btn" data-act="export-country" title="${t('Izvezi državu (JSON)')}">⤓</button><button class="icon-btn" data-act="rename-country" title="${t('Preimenuj državu')}">✎</button><button class="icon-btn" data-act="del-country" title="${t('Obriši državu')}">✕</button></span></div>
         ${open ? `<div class="country-els">${els.map((e) => `<a data-el="${e.id}" class="${e.id === S.state.current ? 'on' : ''}"><span>${esc(elTitle(e))}</span></a>`).join('')}
           <button class="add-el" data-act="new-election-in" data-cid="${c.id}">${t('+ Novi izbori')}</button></div>` : ''}
       </div>`;
@@ -480,6 +558,7 @@
       <input class="title-input" data-bind="name" value="${esc(e.name)}" title="${t('Klikni da promijeniš naziv izbora')}">
       <label class="year-field" title="${t('Godina izbora')}"><span>${t('Godina')}</span><input data-bind="year" value="${esc(e.year ?? '')}" inputmode="numeric" maxlength="4"></label>
       ${extra}
+      <button class="btn small" data-act="export-election" title="${t('Sačuvaj ove izbore u fajl koji možeš poslati drugima')}">${t('Izvezi')}</button>
       <button class="btn small" data-act="dup">${t('Dupliraj')}</button>
       <button class="btn small danger" data-act="del-election">${t('Obriši izbore')}</button>
     </div>`;
@@ -557,7 +636,11 @@
           <div class="row" style="margin-bottom:12px">
             <label class="field">${t('Važeći glasovi (zvanično)')}<input data-bind="validTotal" value="${esc(e.validTotal ?? '')}" inputmode="numeric" title="${t('Unesi zvanični broj važećih glasova da bi aplikacija provjerila zbir glasova lista')}"></label>
             <label class="field">${t('Broj mandata')}<input data-bind="seats" value="${esc(e.seats)}" inputmode="numeric"></label>
+            <label class="field">${t('Upisani birači')}<input data-bind="registered" value="${esc(e.registered ?? '')}" inputmode="numeric" title="${t('Za izlaznost (nije obavezno)')}"></label>
+            <label class="field">${t('Glasalo')}<input data-bind="voted" value="${esc(e.voted ?? '')}" inputmode="numeric" title="${t('Za izlaznost i udio nevažećih listića (nije obavezno)')}"></label>
+            <label class="field">${t('Nevažeći listići')}<input data-bind="invalid" value="${esc(e.invalid ?? '')}" inputmode="numeric" title="${t('Zvanični broj nevažećih listića; ako je prazno, računa se kao glasalo minus važeći')}"></label>
           </div>
+          ${e.shares ? `<div class="muted small" style="margin:-4px 0 8px">${t('Glasovi su upisani kao procenti (uvezeno iz ParlGov baze).')}</div>` : ''}
           <div class="table-wrap"><table class="grid">
             <thead><tr><th class="color-cell" title="${t('Boja liste na grafikonima')}"></th><th class="l">${t('Lista / stranka')}</th><th>${t('Glasovi')}</th><th>${t('Mandati')}</th><th title="${t('Broj žena koje su osvojile mandat na ovoj listi (nije obavezno)')}">${t('Žene')}</th><th class="no-print"></th></tr></thead>
             <tbody>${rows}</tbody>
@@ -591,7 +674,7 @@
         return {
           header: [t('Lista'), t('Glasovi'), t('Mandati'), t('Žene')],
           rows: e.lists.map((l, i) => [l.name, r.V[i], r.M[i], String(l.women ?? '').trim() === '' ? '' : parseNum(l.women)]),
-          summary: [[t('Ukupno glasova'), r.tv], [t('Važeći glasovi (zvanično)'), parseNum(e.validTotal) || ''], [t('Ukupno mandata'), r.ts], [t('Ukupno žena'), Number.isFinite(r.tw) ? r.tw : '']],
+          summary: [[t('Ukupno glasova'), r.tv], [t('Važeći glasovi (zvanično)'), parseNum(e.validTotal) || ''], [t('Upisani birači'), parseNum(e.registered) || ''], [t('Glasalo'), parseNum(e.voted) || ''], [t('Nevažeći listići'), String(e.invalid ?? '').trim() === '' ? '' : parseNum(e.invalid)], [t('Ukupno mandata'), r.ts], [t('Ukupno žena'), Number.isFinite(r.tw) ? r.tw : '']],
         };
       },
     },
@@ -602,26 +685,36 @@
         return `${printHead(e, t('Indeksi'))}${electionHead(e)}
           <h2>${t('Disproporcionalnost')}</h2>
           <div class="metrics">
-            <div class="metric"><div class="k">${t('Gallagher (LSq)')}</div><div class="v" data-out="lsq"></div><div class="h">${t('0 = savršena proporcionalnost')}</div></div>
-            <div class="metric"><div class="k">${t('Loosemore–Hanby (D)')}</div><div class="v" data-out="lh"></div><div class="h">${t('½ zbira apsolutnih razlika')}</div></div>
-            <div class="metric"><div class="k">${t('Sainte-Laguë indeks')}</div><div class="v" data-out="sl"></div><div class="h">${t('relativna odstupanja')}</div></div>
+            ${metric('lsq', t('Gallagher (LSq)'), 'lsq', t('0 = savršena proporcionalnost'))}
+            ${metric('lh', t('Loosemore–Hanby (D)'), 'lh', t('½ zbira apsolutnih razlika'))}
+            ${metric('sl', t('Sainte-Laguë indeks'), 'sl', t('relativna odstupanja'))}
           </div>
           <h2>${t('Fragmentacija i broj stranaka')}</h2>
           <div class="metrics">
-            <div class="metric alt"><div class="k">${t('Efektivni broj izbornih stranaka (ENEP)')}</div><div class="v" data-out="enep"></div><div class="h">${t('na osnovu glasova')}</div></div>
-            <div class="metric alt"><div class="k">${t('Efektivni broj parlamentarnih stranaka (ENPP)')}</div><div class="v" data-out="enpp"></div><div class="h">${t('na osnovu mandata')}</div></div>
-            <div class="metric alt"><div class="k">${t('Golosov (glasovi / mandati)')}</div><div class="v" data-out="gol"></div><div class="h">${t('efektivni broj stranaka')}</div></div>
-            <div class="metric alt"><div class="k">${t('Rae F (glasovi / mandati)')}</div><div class="v" data-out="rae"></div><div class="h">${t('0 = jedna stranka, → 1 = rascjepkano')}</div></div>
+            ${metric('enep', t('Efektivni broj izbornih stranaka (ENEP)'), 'enep', t('na osnovu glasova'), 'alt')}
+            ${metric('enpp', t('Efektivni broj parlamentarnih stranaka (ENPP)'), 'enpp', t('na osnovu mandata'), 'alt')}
+            ${metric('gol', t('Golosov (glasovi / mandati)'), 'gol', t('efektivni broj stranaka'), 'alt')}
+            ${metric('rae', t('Rae F (glasovi / mandati)'), 'rae', t('0 = jedna stranka, → 1 = rascjepkano'), 'alt')}
           </div>
-          <h2>${t('Zastupljenost')}</h2>
+          <h2>${t('Izborni sistem i pobjednik')}</h2>
           <div class="metrics">
-            <div class="metric"><div class="k">${t('Udio žena u parlamentu')}</div><div class="v" data-out="wom"></div><div class="h" data-out="womh"></div></div>
+            ${metric('wasted', t('Izgubljeni glasovi'), 'wasted', t('glasovi za liste bez mandata'))}
+            ${metric('nseat', t('Broj lista sa mandatima'), 'nseat', null)}
+            ${metric('big', t('Najveća stranka (glasovi / mandati)'), 'big', null)}
+            ${metric('bonus', t('Bonus pobjednika'), 'bonus', t('mandati minus glasovi najveće stranke'))}
+            ${metric('effthr', t('Efektivni prag'), 'effthr', null)}
+          </div>
+          <h2>${t('Izlaznost i zastupljenost')}</h2>
+          <div class="metrics">
+            ${metric('turnout', t('Izlaznost'), 'turnout', null, 'alt')}
+            ${metric('invalid', t('Nevažeći listići'), 'invalid', null, 'alt')}
+            ${metric('wom', t('Udio žena u parlamentu'), 'wom', null, 'alt')}
           </div>
           <h2>${t('Glasovi i mandati po listama')}</h2>
           <div class="table-wrap"><table class="grid">
             <thead><tr><th class="color-cell"></th><th class="l">${t('Lista / stranka')}</th><th>${t('Glasovi (%)')}</th><th>${t('Mandati (%)')}</th>
               <th title="${t('Udio mandata minus udio glasova, u procentnim poenima')}">${t('Razlika (p.p.)')}</th>
-              <th title="${t('Udio mandata podijeljen udjelom glasova (1 = proporcionalno)')}">${t('Odnos prednosti')}</th></tr></thead>
+              <th title="${t('Udio mandata podijeljen udjelom glasova (1 = proporcionalno)')}">${t('Odnos prednosti')} ${helpBtn('adv')}</th></tr></thead>
             <tbody data-out-html="idxrows"></tbody>
           </table></div>
           <div class="muted small" style="margin-top:6px">${t('Odnos prednosti: 1 = proporcionalno, više od 1 = lista ima veći udio mandata nego glasova, manje od 1 = manji.')}</div>
@@ -640,6 +733,16 @@
           gol: `${fmt(r.golV)} / ${fmt(r.golM)}`, rae: `${fmt(r.raeV, 3)} / ${fmt(r.raeM, 3)}`,
           wom: Number.isFinite(r.wom) ? fmt(r.wom, 1) + '%' : '–',
           womh: Number.isFinite(r.wom) ? t('{a} od {b} mandata', { a: fmtInt(r.tw), b: fmtInt(r.ts) }) : t('upiši broj žena u kolonu „Žene“ u Rezultatima'),
+          wasted: Number.isFinite(r.wasted) ? fmt(r.wasted, 1) + '%' : '–',
+          nseat: Number.isFinite(r.nSeat) ? String(r.nSeat) : '–', nseath: t('od {n} lista', { n: e.lists.length }),
+          big: Number.isFinite(r.bigV) ? `${fmt(r.bigV, 1)}% / ${fmt(r.bigS, 1)}%` : '–', bigh: r.big >= 0 ? e.lists[r.big].name : '',
+          bonus: Number.isFinite(r.bonus) ? (r.bonus > 0 ? '+' : '') + fmt(r.bonus, 1) + ' p.p.' : '–',
+          effthr: Number.isFinite(r.effThr) ? fmt(r.effThr, 2) + '%' : '–',
+          effthrh: Number.isFinite(r.effThr) ? t('zakonski cenzus {a}%, 75% ÷ (M+1) = {b}%', { a: fmt(parseNum(e.threshold), 1), b: fmt(75 / ((parseNum(e.seats) || r.ts) + 1), 2) }) : '',
+          turnout: Number.isFinite(r.turnout) ? fmt(r.turnout, 1) + '%' : '–',
+          turnouth: Number.isFinite(r.turnout) ? t('{a} od {b} upisanih', { a: fmtInt(parseNum(e.voted)), b: fmtInt(parseNum(e.registered)) }) : t('upiši upisane birače i broj glasalih u Rezultatima'),
+          invalid: Number.isFinite(r.invalid) ? fmt(r.invalid, 2) + '%' : '–',
+          invalidh: Number.isFinite(r.invalid) ? t('{a} nevažećih', { a: fmtInt(r.invN) }) : t('potrebni su broj glasalih i važeći glasovi'),
           idxrows: order.map((i) => { const l = e.lists[i], d = ps(i) - pv(i);
             return `<tr><td class="color-cell"><span class="dot big" style="background:${listColor(e, l, i)}"></span></td><td class="l clip" title="${esc(l.name)}">${esc(l.name)}</td>
               <td>${fmt(pv(i), 2)}</td><td>${fmt(ps(i), 2)}</td><td class="${d > 0.005 ? 'pos' : d < -0.005 ? 'neg' : ''}">${Number.isFinite(d) ? (d > 0 ? '+' : '') + fmt(d, 2) : '–'}</td><td>${r.ts > 0 ? fmt(r.adv[i]) : '–'}</td></tr>`; }).join(''),
@@ -654,7 +757,11 @@
           rows: e.lists.map((l, i) => [l.name, pv(i), ps(i), r.tv > 0 && r.ts > 0 ? ps(i) - pv(i) : '', Number.isFinite(r.adv[i]) && r.ts > 0 ? r.adv[i] : '']),
           summary: [['LSq (Gallagher)', r.lsq], ['Loosemore–Hanby', r.lh], [t('Sainte-Laguë indeks'), r.sl], ['ENEP', r.enep], ['ENPP', r.enpp],
             [t('Golosov (glasovi)'), r.golV], [t('Golosov (mandati)'), r.golM], [t('Rae F (glasovi)'), r.raeV], [t('Rae F (mandati)'), r.raeM],
-            [t('Udio žena u parlamentu (%)'), Number.isFinite(r.wom) ? r.wom : '']],
+            [t('Udio žena u parlamentu (%)'), Number.isFinite(r.wom) ? r.wom : ''],
+            [t('Izgubljeni glasovi (%)'), Number.isFinite(r.wasted) ? r.wasted : ''], [t('Broj lista sa mandatima'), Number.isFinite(r.nSeat) ? r.nSeat : ''],
+            [t('Najveća stranka – glasovi (%)'), Number.isFinite(r.bigV) ? r.bigV : ''], [t('Najveća stranka – mandati (%)'), Number.isFinite(r.bigS) ? r.bigS : ''],
+            [t('Bonus pobjednika (p.p.)'), Number.isFinite(r.bonus) ? r.bonus : ''], [t('Efektivni prag (%)'), Number.isFinite(r.effThr) ? r.effThr : ''],
+            [t('Izlaznost (%)'), Number.isFinite(r.turnout) ? r.turnout : ''], [t('Nevažeći listići (%)'), Number.isFinite(r.invalid) ? r.invalid : '']],
         };
       },
     },
@@ -682,6 +789,9 @@
           ${rulesEditor(e)}
           ${specialEditor(e)}
           <div class="metrics"><div class="metric"><div class="k">${t('LSq za ovu raspodjelu')}</div><div class="v" data-out="lsq"></div><div class="h">${t('Gallagherov indeks disproporcionalnosti')}</div></div></div>
+          <h2>${t('Poređenje metoda')}</h2>
+          <div class="muted small" style="margin-bottom:6px">${t('Kako bi se mandati podijelili različitim metodama, uz ista pravila cenzusa.')}</div>
+          <div class="table-wrap"><table class="grid methods" data-out-html="methods"></table></div>
           <div class="cite">${cite('alloc')}</div>`;
       },
       paint(e) {
@@ -698,6 +808,7 @@
         if (r.tie) w.push(t('Posljednji mandat je neriješen (isti količnik/ostatak). Zakon obično propisuje kako se takav slučaj rješava; provjeri ručno.'));
         if (hasSpecial(e) && e.special.transfer !== false && e.lists.some((l) => l.rule && l.rule !== 'opsti')) w.push(t('Uz prenos glasova u posebnoj jedinici primjenjuje se samo opšti cenzus; pravila cenzusa lista se ne koriste.'));
         o.allocwarn = w.length ? `<div class="warn">${w.map(esc).join('<br>')}</div>` : '';
+        o.methods = methodsTable(e);
         return o;
       },
       table(e) {
@@ -1069,6 +1180,13 @@
         if (p) toast(t('Sačuvano: {p}', { p }));
         break;
       }
+      case 'help': {
+        const h = (HELP[L.lang] || HELP.me)[b.dataset.k]; if (!h) break;
+        await modal(`<h3>${esc(h[0])}</h3><p>${esc(h[1])}</p><p class="muted"><b>${t('Kako se čita')}:</b> ${esc(h[2])}</p><div class="actions"><button class="btn primary" data-close="ok">${t('U redu')}</button></div>`);
+        break;
+      }
+      case 'export-country': { const c = S.country(b.closest('[data-cid]').dataset.cid); await savePackage([c.id], null, c.name); break; }
+      case 'export-election': await savePackage(null, [e.id], S.country(e.country)?.name + ' ' + elTitle(e)); break;
       case 'cmp-links': S.state.vol.a = b.dataset.a; S.state.vol.b = b.dataset.b; S.state.module = 'vol'; S.save(); render(); break;
       case 'clear-links': S.state.links[S.linkKey(S.state.vol.a, S.state.vol.b)] = []; S.save(); render(); break;
     }
@@ -1310,6 +1428,129 @@
       s.links = s.links || {}; s.vol = s.vol || { a: null, b: null, basis: 'votes' }; s.module = s.module || 'results';
       S.replaceAll(s); render(); toast(t('Podaci vraćeni'));
     } catch (err) { toast(err.message || String(err), 5000); }
+  });
+
+  // ---------- paket: jedna država ili jedni izbori (JSON) ----------
+  async function savePackage(countryIds, electionIds, label) {
+    const els = S.state.elections.filter((x) => (countryIds ? countryIds.includes(x.country) : electionIds.includes(x.id)));
+    const cids = [...new Set(els.map((x) => x.country))];
+    const ids = new Set(els.map((x) => x.id));
+    const links = {}; Object.entries(S.state.links).forEach(([k, v]) => { const [a, b2] = k.split('|'); if (ids.has(a) && ids.has(b2)) links[k] = v; });
+    const pkg = { format: 'electoral-indices-package', version: 1, created: new Date().toISOString(),
+      countries: cids.map((cid) => ({ name: S.country(cid)?.name || '', elections: els.filter((x) => x.country === cid) })), links };
+    const name = String(label || 'paket').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'dj').replace(/Đ/g, 'Dj').replace(/[^\w\-]+/g, '_');
+    const p = await P.saveFile(`${name}.json`, new TextEncoder().encode(JSON.stringify(pkg, null, 1)));
+    if (p) toast(t('Sačuvano: {p}', { p }));
+  }
+  // uvoz: nove oznake (id) za izbore, liste i jedinice, da se ne miješaju sa postojećim podacima
+  function importPackage(pkg) {
+    const map = {}, nid = (old, p) => (map[old] = S.uid(p));
+    let nEl = 0, nNew = 0;
+    pkg.countries.forEach((pc) => {
+      let c = S.state.countries.find((x) => normName(x.name) === normName(pc.name));
+      if (!c) { c = S.newCountry(pc.name || t('Ostalo')); nNew++; }
+      (pc.elections || []).forEach((src) => {
+        const e = JSON.parse(JSON.stringify(src));
+        e.id = nid(src.id, 'e'); e.country = c.id;
+        e.lists.forEach((l) => { l.id = nid(l.id, 'l'); });
+        const lm = (id) => map[id] || id;
+        (e.units || []).forEach((u) => { u.id = S.uid('u'); const v = {}; Object.entries(u.votes || {}).forEach(([k, x]) => { v[lm(k)] = x; }); u.votes = v; });
+        if (e.special && e.special.votes) { const v = {}; Object.entries(e.special.votes).forEach(([k, x]) => { v[lm(k)] = x; }); e.special.votes = v; }
+        if (Array.isArray(e.arcOrder)) e.arcOrder = e.arcOrder.map(lm);
+        S.state.elections.push(e); nEl++;
+      });
+    });
+    Object.entries(pkg.links || {}).forEach(([k, v]) => {
+      const [a, b2] = k.split('|'); if (!map[a] || !map[b2]) return;
+      S.state.links[S.linkKey(map[a], map[b2])] = v.map(([x, y]) => [map[x] || x, map[y] || y]);
+    });
+    return { nEl, nNew };
+  }
+  $('#import-pkg-btn').addEventListener('click', async () => {
+    const f = await pickFile('.json'); if (!f) return;
+    try {
+      const pkg = JSON.parse(await f.text());
+      if (pkg.format !== 'electoral-indices-package' || !Array.isArray(pkg.countries)) throw new Error(t('Ovo nije fajl sa državom ili izborima iz ove aplikacije. Za rezervnu kopiju koristi „Vrati iz kopije“.'));
+      const n = pkg.countries.reduce((a, c) => a + (c.elections || []).length, 0);
+      const names = pkg.countries.map((c) => esc(c.name)).join(', ');
+      if (!(await confirmBox(t('Uvoz države ili izbora'), t('Dodati {n} izbora ({c}) postojećim podacima? Ništa od postojećeg se ne briše; ako država istog naziva postoji, izbori se dodaju u nju.', { n, c: names }), t('Uvezi')))) return;
+      const r = importPackage(pkg); S.save(); render();
+      toast(t('Uvezeno izbora: {n}', { n: r.nEl }), 4000);
+    } catch (err) { toast(err.message || String(err), 6000); }
+  });
+
+  // ---------- uvoz iz ParlGov baze (view_election.csv) ----------
+  function parseCsv(text) {
+    const rows = []; let row = [], cur = '', q = false;
+    for (let i = 0; i < text.length; i++) {
+      const ch = text[i];
+      if (q) { if (ch === '"') { if (text[i + 1] === '"') { cur += '"'; i++; } else q = false; } else cur += ch; }
+      else if (ch === '"') q = true;
+      else if (ch === ',') { row.push(cur); cur = ''; }
+      else if (ch === '\n' || ch === '\r') { if (ch === '\r' && text[i + 1] === '\n') i++; row.push(cur); rows.push(row); row = []; cur = ''; }
+      else cur += ch;
+    }
+    if (cur !== '' || row.length) { row.push(cur); rows.push(row); }
+    return rows.filter((r) => r.some((x) => x !== ''));
+  }
+  function readParlGov(text) {
+    const rows = parseCsv(text.replace(/^\uFEFF/, ''));
+    const h = rows[0].map((x) => x.trim());
+    const need = ['country_name', 'election_type', 'election_date', 'vote_share', 'seats', 'seats_total', 'party_name', 'election_id'];
+    if (!need.every((k) => h.includes(k))) return null;
+    const col = (r, k) => (r[h.indexOf(k)] ?? '').trim();
+    const countries = new Map();
+    rows.slice(1).forEach((r) => {
+      if (col(r, 'election_type') !== 'parliament') return;
+      const cn = col(r, 'country_name'); if (!cn) return;
+      if (!countries.has(cn)) countries.set(cn, new Map());
+      const els = countries.get(cn), id = col(r, 'election_id');
+      if (!els.has(id)) els.set(id, { id, date: col(r, 'election_date'), total: col(r, 'seats_total'), rows: [] });
+      els.get(id).rows.push({ name: col(r, 'party_name'), en: h.includes('party_name_english') ? col(r, 'party_name_english') : '', short: h.includes('party_name_short') ? col(r, 'party_name_short') : '', vs: col(r, 'vote_share'), seats: col(r, 'seats') });
+    });
+    return countries;
+  }
+  $('#import-parlgov-btn').addEventListener('click', async () => {
+    const f = await pickFile('.csv'); if (!f) return;
+    let data;
+    try { data = readParlGov(await f.text()); } catch (err) { data = null; }
+    if (!data || !data.size) return toast(t('Fajl nije ParlGov tabela izbora (view_election.csv).'), 6000);
+    const list = [...data.entries()].sort((a, b) => a[0].localeCompare(b[0]));
+    const items = list.map(([cn, els]) => { const ys = [...els.values()].map((x) => x.date.slice(0, 4)).sort(); return `<label class="pg-c"><input type="checkbox" value="${esc(cn)}"> ${esc(cn)} <span class="muted">(${els.size}; ${ys[0]}–${ys[ys.length - 1]})</span></label>`; }).join('');
+    const sel = await modal(`<h3>${t('Uvoz iz ParlGov baze')}</h3>
+      <p class="muted small">${t('Izaberi države. Uvoze se samo parlamentarni izbori; glasovi su u procentima, kako ih vodi ParlGov.')} ${t('ParlGov ne sadrži zakonski cenzus, pa ga upiši u Raspodjeli mandata ako ti treba za efektivni prag ili raspodjelu.')} (parlgov.org)</p>
+      <div class="row" style="gap:12px;margin:6px 0 8px"><label class="field" style="width:150px">${t('Od godine')}<input id="pg-from" inputmode="numeric" maxlength="4" placeholder="1990"></label>
+        <input id="pg-filter" class="title-input" style="flex:1;font-size:13px;border-color:var(--border)" placeholder="${t('Traži državu…')}"></div>
+      <div class="pg-list">${items}</div>
+      <div class="actions"><button class="btn" data-close="">${t('Otkaži')}</button><button class="btn primary" id="pg-ok">${t('Uvezi')}</button></div>`,
+    (m, close) => {
+      m.querySelector('#pg-filter').addEventListener('input', (ev) => { const q = ev.target.value.trim().toLowerCase(); m.querySelectorAll('.pg-c').forEach((x) => { x.style.display = x.textContent.toLowerCase().includes(q) ? '' : 'none'; }); });
+      m.querySelector('#pg-ok').addEventListener('click', () => close({ countries: [...m.querySelectorAll('.pg-c input:checked')].map((x) => x.value), from: parseInt(m.querySelector('#pg-from').value, 10) || 0 }));
+    });
+    if (!sel || !sel.countries.length) return;
+    let nEl = 0, skipped = 0; const mixed = [];
+    sel.countries.forEach((cn) => {
+      let c = S.state.countries.find((x) => normName(x.name) === normName(cn)) || S.newCountry(cn);
+      [...data.get(cn).values()].sort((a, b) => a.date.localeCompare(b.date)).forEach((pe) => {
+        const year = Number(pe.date.slice(0, 4)); if (year < sel.from) return;
+        if (S.state.elections.some((x) => x.parlgov === pe.id)) { skipped++; return; }
+        const lists = pe.rows.map((r) => {
+          const base = r.en && r.en !== r.name ? r.en : r.name;
+          return { id: S.uid('l'), name: r.short && !['none', 'one-seat', 'no-seat'].includes(r.short) ? `${base} (${r.short})` : base, votes: r.vs === '' ? '' : Number(r.vs), seats: r.seats === '' ? 0 : Number(r.seats), rule: 'opsti' };
+        });
+        // savezi: ParlGov ponekad vodi glasove za savez, a mandate za njegove članice
+        if (pe.rows.some((r) => r.vs !== '' && r.seats === '') && pe.rows.some((r) => r.vs === '' && Number(r.seats) > 0)) mixed.push(`${cn} ${pe.date}`);
+        const e = { id: S.uid('e'), country: c.id, name: t('Parlamentarni izbori'), year, date: pe.date, parlgov: pe.id, shares: true,
+          seats: Number(pe.total) || lists.reduce((a, l) => a + l.seats, 0), threshold: '', method: 'dhondt', validTotal: '',
+          rules: [{ id: 'opsti', name: 'Opšti', kind: 'own' }], lists, units: [] };
+        S.state.elections.push(e); nEl++;
+      });
+    });
+    S.save(); render();
+    let msg = t('Uvezeno izbora: {n}', { n: nEl }) + (skipped ? t(' (već postojećih preskočeno: {n})', { n: skipped }) : '');
+    if (mixed.length) {
+      await modal(`<h3>${t('Uvoz završen')}</h3><p>${esc(msg)}.</p><p>${t('U ovim izborima ParlGov vodi glasove za savez, a mandate za stranke u savezu. Indeksi za njih nisu tačni dok ne spojiš te redove u Rezultatima (glasove saveza i mandate njegovih članica u jedan red):')}</p><p class="small">${mixed.map(esc).join('<br>')}</p><div class="actions"><button class="btn primary" data-close="ok">${t('U redu')}</button></div>`);
+    } else toast(msg, 5000);
   });
 
   // ---------- jezik ----------

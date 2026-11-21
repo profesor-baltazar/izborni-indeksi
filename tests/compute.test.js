@@ -86,4 +86,15 @@ for (const x of window.SEED_ELECTIONS) {
   assert.deepStrictEqual(sp.general, [7, 1], 'opšti dio'); assert.deepStrictEqual(sp.special, [0, 2], 'posebni dio');
   assert.deepStrictEqual(sp.seats, [7, 3], 'zbir');
 }
+// Opštinski rezultati (nacionalizacija): zbir po jedinicama = zvanični važeći glasovi; u svakoj jedinici važeći = zbir glasova lista
+for (const x of window.SEED_ELECTIONS) {
+  assert.ok(x.units.length >= 22, 'Jedinice ' + x.id);
+  assert.strictEqual(x.units.reduce((a, u) => a + u.valid, 0), x.validTotal, 'Zbir jedinica ' + x.id);
+  for (const u of x.units) assert.strictEqual(Object.values(u.votes).reduce((a, v) => a + v, 0), u.valid, 'Jedinica ' + x.id + ' ' + u.name);
+  for (const l of x.lists) assert.strictEqual(x.units.reduce((a, u) => a + (u.votes[l.id] || 0), 0), l.votes, 'Lista po jedinicama ' + x.id + ' ' + l.name);
+  const n = I.nationalisation(x.units.map((u) => ({ valid: u.valid, votes: x.lists.map((l) => u.votes[l.id] || 0) })), x.lists.length);
+  assert.ok(n.systemPnsw > 0 && n.systemPnsw < 1 && n.systemSpns > 0 && n.systemSpns < 1, 'PNS ' + x.id);
+  // izlaznost: glasali ≥ važeći + nevažeći − 2 (zvanične odluke same imaju razliku do 2 listića)
+  assert.ok(Math.abs(x.voted - x.validTotal - x.invalid) <= 2, 'Izlaznost ' + x.id);
+}
 console.log('Svi testovi prošli.');

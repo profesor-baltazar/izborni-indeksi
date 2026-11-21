@@ -254,3 +254,13 @@ table.grid.cmp tfoot td { font-weight: 600; border-top: 2px solid var(--border);
 .dot.big { display: inline-block; width: 12px; height: 12px; border-radius: 50%; vertical-align: middle; }
 td.pos { color: #1b7f3b; } td.neg { color: #b3261e; }
 [data-theme="dark"] td.pos { color: #6fd08c; } [data-theme="dark"] td.neg { color: #ff8a80; }
+
+.help-btn { display: inline-flex; align-items: center; justify-content: center; width: 17px; height: 17px; border-radius: 50%; border: 1px solid var(--border); background: var(--surface); color: var(--muted); font-size: 11px; font-weight: 700; line-height: 1; cursor: pointer; padding: 0; margin-left: 4px; vertical-align: 1px; }
+.help-btn:hover { color: var(--accent); border-color: var(--accent); }
+.modal p { line-height: 1.55; }
+
+table.grid.methods td.cur, table.grid.methods th.cur { background: color-mix(in srgb, var(--accent) 10%, transparent); font-weight: 600; }
+table.grid.methods td.diff { color: var(--accent); }
+
+.pg-list { max-height: 320px; overflow: auto; border: 1px solid var(--border); border-radius: 8px; padding: 6px 10px; columns: 2; }
+.pg-c { display: block; font-size: 13px; padding: 2px 0; break-inside: avoid; cursor: pointer; }
