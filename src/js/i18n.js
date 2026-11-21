@@ -218,6 +218,10 @@
     'Ažuriraj i ponovo pokreni': 'Update and restart',
     'Kasnije': 'Later',
     'Preuzimam ažuriranje…': 'Downloading the update…',
+    'Provjeri ažuriranja': 'Check for updates',
+    'Provjeravam…': 'Checking…',
+    'Imaš najnoviju verziju.': 'You have the latest version.',
+    'Provjera ažuriranja nije uspjela': 'Update check failed',
     // 1.1: izbor izbora i indeksa u pregledu, puna imena indeksa
     'Izaberi bar jedan indeks za grafikon.': 'Select at least one index for the chart.',
     'Za izabrane izbore nema vrijednosti ovih indeksa.': 'There are no values of these indices for the selected elections.',

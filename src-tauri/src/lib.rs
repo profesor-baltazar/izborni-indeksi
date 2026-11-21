@@ -64,7 +64,7 @@ struct UpdateInfo {
 #[tauri::command]
 async fn check_update(app: tauri::AppHandle) -> Result<Option<UpdateInfo>, String> {
     if !UPDATER_ON.load(Ordering::Relaxed) {
-        return Ok(None);
+        return Err(tr("Ova verzija nije napravljena sa podešenim ažuriranjem.", "This build was made without update settings."));
     }
     use tauri_plugin_updater::UpdaterExt;
     let update = app.updater().map_err(|e| e.to_string())?.check().await.map_err(|e| e.to_string())?;

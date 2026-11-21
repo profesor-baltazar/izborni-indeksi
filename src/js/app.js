@@ -1567,13 +1567,10 @@
   })();
 
   // ---------- ažuriranje ----------
-  // Provjera pri pokretanju; bez interneta ili u lokalno izgrađenoj verziji jednostavno ne prikazuje ništa.
-  (async () => {
-    const invoke = window.__TAURI__?.core?.invoke;
-    if (!invoke) return;
-    let info = null;
-    try { info = await invoke('check_update'); } catch (e) { return; }
-    if (!info) return;
+  // Provjera pri pokretanju je tiha; dugme "Provjeri ažuriranja" prikazuje i rezultat i grešku.
+  const tauriInvoke = window.__TAURI__?.core?.invoke;
+  function showUpdateBar(info) {
+    document.querySelector('.update-bar')?.remove();
     const bar = document.createElement('div');
     bar.className = 'update-bar no-print';
     bar.innerHTML = `<span data-u="msg">${esc(t('Dostupna je nova verzija {v}.', { v: info.version }))}</span>
@@ -1584,10 +1581,33 @@
     bar.querySelector('[data-u="go"]').addEventListener('click', async (ev) => {
       ev.target.disabled = true;
       bar.querySelector('[data-u="msg"]').textContent = t('Preuzimam ažuriranje…');
-      try { await invoke('install_update'); }
+      try { await tauriInvoke('install_update'); }
       catch (err) { ev.target.disabled = false; bar.querySelector('[data-u="msg"]').textContent = String(err); }
     });
-  })();
+  }
+  if (tauriInvoke) {
+    (async () => {
+      try { const info = await tauriInvoke('check_update'); if (info) showUpdateBar(info); } catch (e) { /* tiho */ }
+    })();
+    const btn = $('#update-btn');
+    btn.hidden = false;
+    btn.addEventListener('click', async () => {
+      btn.disabled = true;
+      const label = btn.textContent;
+      btn.textContent = t('Provjeravam…');
+      try {
+        const info = await tauriInvoke('check_update');
+        if (info) showUpdateBar(info);
+        else toast(t('Imaš najnoviju verziju.'));
+      } catch (err) {
+        await modal(`<h3>${esc(t('Provjera ažuriranja nije uspjela'))}</h3>
+          <p class="muted" style="user-select:text;word-break:break-word">${esc(String(err))}</p>
+          <div class="actions"><button class="btn primary" data-close="ok">${t('U redu')}</button></div>`);
+      } finally {
+        btn.disabled = false; btn.textContent = label;
+      }
+    });
+  }
 
   L.apply();
   render();
