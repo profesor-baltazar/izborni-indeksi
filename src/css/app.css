@@ -264,3 +264,11 @@ table.grid.methods td.diff { color: var(--accent); }
 
 .pg-list { max-height: 320px; overflow: auto; border: 1px solid var(--border); border-radius: 8px; padding: 6px 10px; columns: 2; }
 .pg-c { display: block; font-size: 13px; padding: 2px 0; break-inside: avoid; cursor: pointer; }
+
+/* zastupljenost žena */
+.quota-box { display: flex; align-items: center; gap: 8px 16px; flex-wrap: wrap; padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); margin-bottom: 12px; font-size: 13px; }
+.quota-box input, input.xs { width: 64px; text-align: right; border: 1px solid var(--border); border-radius: 6px; padding: 3px 6px; background: var(--input-bg); color: inherit; }
+input.xs { width: 48px; }
+table.grid input.wpos { width: 100%; min-width: 320px; text-align: left; }
+table.grid input.xs { width: 48px; }
+table.grid.wom td.clip { max-width: 240px; }

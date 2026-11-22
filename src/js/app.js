@@ -51,6 +51,13 @@
       enpp: ['Efektivni broj parlamentarnih stranaka (ENPP)', 'Isto kao ENEP, ali iz udjela mandata. Pokazuje koliko je rascjepkan parlament.', 'ENPP je obično manji od ENEP-a, jer izborni sistem smanjuje broj stranaka; razlika pokazuje koliko.'],
       gol: ['Golosovljev efektivni broj stranaka', 'Varijanta efektivnog broja stranaka koja daje veću težinu najvećoj stranci, pa ne precjenjuje broj stranaka kad jedna dominira.', 'Kad jedna stranka ima veliku većinu, Golosov je bliži 1 nego ENEP/ENPP.'],
       rae: ['Raeov indeks frakcionalizacije (F)', 'Vjerovatnoća da dva nasumično izabrana birača (ili poslanika) pripadaju različitim strankama. F = 1 − zbir kvadrata udjela.', '0 = jedna stranka ima sve; što je bliže 1, to je sistem rascjepkaniji.'],
+      wcand: ['Udio žena među kandidatima', 'Broj žena kandidatkinja na svim listama, podijeljen ukupnim brojem kandidata (računaju se liste za koje su upisani i broj kandidata i broj žena).', 'Uporedi ga sa udjelom žena među izabranima: ako je mnogo veći, žene su na listama, ali uglavnom na mjestima s kojih se ne ulazi u parlament.'],
+      wgap: ['Razlika: izabrane žene minus kandidatkinje', 'Udio žena među izabranima minus udio žena među kandidatima, u procentnim poenima.', '0 znači da su žene u parlamentu zastupljene kao i na listama; negativna vrijednost da ih je u parlamentu srazmjerno manje.'],
+      wsucc: ['Stopa uspjeha', 'Koliki je procenat kandidatkinja (odnosno kandidata) izabran: izabrane žene podijeljene brojem žena na listama, i isto za muškarce. Računa se samo za liste za koje su upisani kandidati, žene na listi i izabrane žene.', 'Odnos uspjeha je stopa žena podijeljena stopom muškaraca: 1 = jednake šanse, ispod 1 = žene su u prosjeku na lošijim mjestima na listama.'],
+      wmin: ['Liste na zakonskom minimumu', 'Broj lista koje imaju tačno onoliko žena koliko kvota traži (minimum = veći od procenta kvote i od K žena u svakoj punoj grupi od N mjesta), i ukupan broj žena iznad minimuma na svim listama.', 'Mnogo lista na minimumu znači da je kvota ispunjena formalno, bez dodatne inicijative stranaka.'],
+      wlead: ['Liste koje predvodi žena', 'Broj lista na čijem je prvom mjestu žena, od lista za koje je upisano mjesto prve žene.', ''],
+      wend: ['Žene na kraju saziva', 'Broj žena u skupštini na kraju saziva (ili sada, dok saziv traje), nakon ostavki i zamjena, podijeljen brojem mandata.', 'Razlika prema udjelu pri konstituisanju pokazuje kako su ostavke i zamjene promijenile zastupljenost žena.'],
+      wpos: ['Raspored žena na listama', 'Sa liste kandidata prebroj i upiši: mjesto prve žene; koliko je žena na 1, 2, … N-tom mjestu u grupama od po N mjesta (prvih N, sljedećih N… do kraja liste); i koliko je žena u svakoj desetki mjesta (1–10, 11–20…).', 'Raspored u grupi pokazuje da li stranke žene stavljaju samo na posljednje mjesto koje zakon dozvoljava; desetke pokazuju koliko su žene visoko na listi. Zbir u svakoj tabeli treba da bude jednak broju žena na listi.'],
       wom: ['Udio žena u parlamentu', 'Broj žena koje su na izborima osvojile mandat (sastav pri konstituisanju), podijeljen ukupnim brojem mandata.', 'Prosjek u svijetu je oko 27% (Interparlamentarna unija); 40–60% se smatra rodno uravnoteženim.'],
       wasted: ['Izgubljeni glasovi', 'Procenat glasova datih listama koje nisu osvojile nijedan mandat.', 'Što je veći, to je više birača ostalo bez predstavnika; raste sa visinom cenzusa i brojem malih lista.'],
       nseat: ['Broj lista sa mandatima', 'Koliko je lista osvojilo bar jedan mandat.', 'Jednostavna mjera rascjepkanosti parlamenta; za finiju sliku vidi ENPP.'],
@@ -69,6 +76,13 @@
       enpp: ['Effective number of parliamentary parties (ENPP)', 'The same as ENEP, computed from seat shares. Shows how fragmented parliament is.', 'ENPP is usually lower than ENEP because the electoral system reduces the number of parties; the difference shows by how much.'],
       gol: ['Golosov effective number of parties', 'A variant of the effective number of parties that gives more weight to the largest party, so it does not overstate the number of parties when one dominates.', 'When one party has a large majority, Golosov is closer to 1 than ENEP/ENPP.'],
       rae: ['Rae fractionalisation index (F)', 'The probability that two randomly chosen voters (or MPs) belong to different parties. F = 1 − sum of squared shares.', '0 = one party has everything; the closer to 1, the more fragmented the system.'],
+      wcand: ['Share of women among candidates', 'The number of women candidates on all lists, divided by the total number of candidates (lists with both the number of candidates and the number of women entered).', 'Compare it with the share of women among the elected: if it is much higher, women are on the lists, but mostly in places from which nobody gets elected.'],
+      wgap: ['Gap: elected women minus women candidates', 'The share of women among the elected minus the share of women among candidates, in percentage points.', '0 means women are represented in parliament as on the lists; a negative value means proportionally fewer of them in parliament.'],
+      wsucc: ['Success rate', 'The percentage of women (or men) candidates who were elected: elected women divided by women on the lists, and the same for men. Calculated only for lists with candidates, women on the list and elected women entered.', 'The success ratio is the women\'s rate divided by the men\'s rate: 1 = equal chances, below 1 = women are, on average, placed lower on the lists.'],
+      wmin: ['Lists at the legal minimum', 'The number of lists with exactly as many women as the quota requires (minimum = the larger of the quota percentage and K women in every full group of N places), and the total number of women above the minimum on all lists.', 'Many lists at the minimum mean the quota is met formally, without additional effort by the parties.'],
+      wlead: ['Lists headed by a woman', 'The number of lists with a woman in first place, out of the lists for which the position of the first woman is entered.', ''],
+      wend: ['Women at the end of the term', 'The number of women in parliament at the end of the term (or now, while the term lasts), after resignations and replacements, divided by the number of seats.', 'The difference from the share at the constitution shows how resignations and replacements changed the representation of women.'],
+      wpos: ['Placement of women on the lists', 'Count from the candidate list and enter: the position of the first woman; how many women are in the 1st, 2nd, … Nth place of each group of N places (first N, next N… to the end of the list); and how many women are in each ten places (1–10, 11–20…).', 'The placement within groups shows whether parties put women only in the last place the law allows; the tens show how high women are on the list. The sum in each table should equal the number of women on the list.'],
       wom: ['Share of women in parliament', 'The number of women who won a seat in the election (composition at the constitution of parliament), divided by the total number of seats.', 'The world average is about 27% (Inter-Parliamentary Union); 40–60% is considered gender balanced.'],
       wasted: ['Wasted votes', 'The percentage of votes cast for lists that won no seat.', 'The higher it is, the more voters are left without a representative; it grows with the threshold and the number of small lists.'],
       nseat: ['Number of lists with seats', 'How many lists won at least one seat.', 'A simple measure of parliamentary fragmentation; see ENPP for a finer picture.'],
@@ -118,6 +132,15 @@
     </div>`;
   const RES_CHARTS = [['arc', 'Polukrug skupštine (mandati)'], ['pie-v', 'Pita – udio glasova'], ['pie-s', 'Pita – udio mandata']];
   const IDX_CHARTS = [['bars-h', 'Glasovi i mandati – horizontalne trake'], ['bars-v', 'Glasovi i mandati – vertikalni stubići']];
+  const WOM_CHARTS = [['bars-h', 'Horizontalne trake'], ['bars-v', 'Vertikalni stubići']];
+  function womenChart(e, w, type) {
+    const shown = w.rows.filter((r) => r.seats > 0 && Number.isFinite(r.share) && Number.isFinite(r.elShare)).sort((a, b) => b.seats - a.seats);
+    if (!shown.length) return `<div class="muted" style="padding:12px">${t('Upiši kandidate, žene na listi i izabrane žene za liste sa mandatima.')}</div>`;
+    const col = (r) => listColor(e, r.l, e.lists.indexOf(r.l));
+    return Charts.bars({ cats: shown.map((r) => r.l.name), horizontal: type === 'bars-h', fmt, dec: 1, unit: '%', title: t('Udio žena na listi (svjetlija traka) i među izabranima (tamnija traka), %'),
+      series: [{ label: t('Na listi (%)'), color: '#8a8a8a', values: shown.map((r) => r.share), opacity: 0.55, perCat: shown.map(col) },
+        { label: t('Izabrane (%)'), color: '#444', values: shown.map((r) => r.elShare), perCat: shown.map(col) }] });
+  }
   function arcOrder(e) {
     const ids = e.lists.map((l) => l.id);
     const o = (e.arcOrder || []).filter((id) => ids.includes(id));
@@ -207,8 +230,10 @@
         Frakcionalizacija (F): Rae, D. W. (1967). <i>The Political Consequences of Electoral Laws</i>. New Haven: Yale University Press.
         Golosovljev efektivni broj stranaka: Golosov, G. V. (2010). The effective number of parties: a new approach. <i>Party Politics</i> 16(2): 171–192.
         Odnos prednosti (advantage ratio, udio mandata / udio glasova): Taagepera, R. i Shugart, M. S. (1989). <i>Seats and Votes</i>. New Haven: Yale University Press.
-        Efektivni prag: Taagepera, R. (2002). Nationwide threshold of representation. <i>Electoral Studies</i> 21(3): 383–401; Lijphart, A. (1994). <i>Electoral Systems and Party Systems</i>. Oxford: Oxford University Press.
-        <b>Udio žena u parlamentu:</b> broj žena koje su na izborima osvojile mandat (sastav skupštine pri konstituisanju, prije eventualnih zamjena), podijeljen ukupnim brojem mandata. Crnogorski zakon koristi izraz „manje zastupljeni pol“; u međunarodnim poređenjima (npr. Interparlamentarna unija) prati se udio žena.`,
+        Efektivni prag: Taagepera, R. (2002). Nationwide threshold of representation. <i>Electoral Studies</i> 21(3): 383–401; Lijphart, A. (1994). <i>Electoral Systems and Party Systems</i>. Oxford: Oxford University Press.`,
+      women: `<b>Zastupljenost žena.</b> Udio žena u parlamentu je broj žena koje su na izborima osvojile mandat (sastav skupštine pri konstituisanju, prije eventualnih zamjena), podijeljen ukupnim brojem mandata, kako se prati u međunarodnim poređenjima (npr. Interparlamentarna unija); broj na kraju saziva upisuje se posebno.
+        Minimum po kvoti je veći od dva broja: zadatog procenta od broja kandidata na listi (zaokruženo naviše) i broja koji traži pravilo rasporeda (K žena u svakoj punoj grupi od N mjesta). Stopa uspjeha je broj izabranih podijeljen brojem kandidata istog pola, a odnos uspjeha stopa žena podijeljena stopom muškaraca.
+        Raspored po desetkama mjesta, raspored po mjestu u grupi i pozicija prve kandidatkinje upisuju se prebrojavanjem sa liste kandidata, po uzoru na izvještaje o građanskom nadgledanju izbora.`,
       alloc: `<b>Metode.</b> D'Hondt (djelioci 1, 2, 3…), Sainte-Laguë (djelioci 1, 3, 5…) i Hare–Niemeyer (prosta kvota i najveći ostatak).
         <b>Pravila cenzusa</b> se zadaju za svake izbore. Svaka lista ima jedno pravilo: <i>samostalno</i> (lista ulazi u raspodjelu ako ima najmanje zadati procenat; 0% znači bez cenzusa);
         <i>zbirna lista</i> (liste tog pravila koje ne pređu opšti cenzus, a imaju najmanje zadati procenat, učestvuju kao jedna lista sa najviše zadatim brojem mandata, koji se zatim dijele među njima istom metodom);
@@ -222,7 +247,7 @@
         Ova aplikacija je nezavisna implementacija Bochslerove formule; na podacima za Crnu Goru 2020. i 2023. daje iste vrijednosti kao njegov originalni Excel alat.`,
       vol: `<b>Izvori formula.</b> Ukupna volatilnost: Pedersen, M. N. (1979). The dynamics of European party systems: changing patterns of electoral volatility. <i>European Journal of Political Research</i> 7(1): 1–26.
         Podjela na tip A i tip B: Powell, E. N. i Tucker, J. A. (2014). Revisiting electoral volatility in post-communist countries: new data, new results and new approaches. <i>British Journal of Political Science</i> 44(1): 123–147.`,
-      compare: `<b>Poređenje.</b> Isti indeksi kao u modulima „Rezultati i indeksi“ (LSq, Loosemore–Hanby, Sainte-Laguë, ENEP, ENPP, Golosov, Rae F), „Nacionalizacija stranaka“ (sPNS i PNSw sistema, samo za izbore sa bar dvije teritorijalne jedinice) i „Volatilnost“ (Pedersen; tip A i B po Powellu i Tuckeru).
+      compare: `<b>Poređenje.</b> Isti indeksi kao u modulima „Rezultati i indeksi“ (LSq, Loosemore–Hanby, Sainte-Laguë, ENEP, ENPP, Golosov, Rae F), „Nacionalizacija stranaka“ (sPNS i PNSw sistema, samo za izbore sa bar dvije teritorijalne jedinice), „Volatilnost“ (Pedersen; tip A i B po Powellu i Tuckeru) i „Zastupljenost žena“.
         Volatilnost se računa prema prethodnim izabranim izborima iste države (hronološki, po godini), na osnovu glasova i veza između lista sačuvanih u modulu „Volatilnost“. Izvori formula navedeni su u tim modulima.`,
       explain: `<b>Kako se računa.</b> Volatilnost pokazuje koliki se dio biračkog tijela „preselio“ između stranaka od jednih do drugih izbora.
         Za svaku stranku uzmeš udio glasova u procentima na prvim i na drugim izborima, izračunaš razliku, sabereš apsolutne vrijednosti svih razlika i podijeliš sa 2:
@@ -241,8 +266,10 @@
         Fractionalisation (F): Rae, D. W. (1967). <i>The Political Consequences of Electoral Laws</i>. New Haven: Yale University Press.
         Golosov's effective number of parties: Golosov, G. V. (2010). The effective number of parties: a new approach. <i>Party Politics</i> 16(2): 171–192.
         Advantage ratio (seat share / vote share): Taagepera, R. and Shugart, M. S. (1989). <i>Seats and Votes</i>. New Haven: Yale University Press.
-        Effective threshold: Taagepera, R. (2002). Nationwide threshold of representation. <i>Electoral Studies</i> 21(3): 383–401; Lijphart, A. (1994). <i>Electoral Systems and Party Systems</i>. Oxford: Oxford University Press.
-        <b>Share of women in parliament:</b> the number of women who won a seat in the election (composition of parliament at its constitution, before any replacements), divided by the total number of seats, as followed in international comparisons (e.g. the Inter-Parliamentary Union).`,
+        Effective threshold: Taagepera, R. (2002). Nationwide threshold of representation. <i>Electoral Studies</i> 21(3): 383–401; Lijphart, A. (1994). <i>Electoral Systems and Party Systems</i>. Oxford: Oxford University Press.`,
+      women: `<b>Representation of women.</b> The share of women in parliament is the number of women who won a seat in the election (composition of parliament at its constitution, before any replacements), divided by the total number of seats, as followed in international comparisons (e.g. the Inter-Parliamentary Union); the number at the end of the term is entered separately.
+        The quota minimum is the larger of two numbers: the given percentage of the number of candidates on the list (rounded up) and the number required by the placement rule (K women in every full group of N places). The success rate is the number of elected divided by the number of candidates of the same sex, and the success ratio is the women's rate divided by the men's rate.
+        The placement by tens of places, the placement by position within the group and the position of the first woman are entered by counting from the candidate list, following the approach of citizen election observation reports.`,
       alloc: `<b>Methods.</b> D'Hondt (divisors 1, 2, 3…), Sainte-Laguë (divisors 1, 3, 5…) and Hare–Niemeyer (simple quota and largest remainder).
         <b>Threshold rules</b> are set for each election. Each list has one rule: <i>on its own</i> (the list takes part in the allocation if it has at least the given percentage; 0% means no threshold);
         <i>combined list</i> (lists with this rule that do not pass the general threshold but have at least the given percentage take part as one list with at most the given number of seats, which are then divided among them by the same method);
@@ -256,7 +283,7 @@
         This application is an independent implementation of Bochsler's formula; on the data for Montenegro 2020 and 2023 it gives the same values as his original Excel tool.`,
       vol: `<b>Formula sources.</b> Total volatility: Pedersen, M. N. (1979). The dynamics of European party systems: changing patterns of electoral volatility. <i>European Journal of Political Research</i> 7(1): 1–26.
         Split into type A and type B: Powell, E. N. and Tucker, J. A. (2014). Revisiting electoral volatility in post-communist countries: new data, new results and new approaches. <i>British Journal of Political Science</i> 44(1): 123–147.`,
-      compare: `<b>Comparison.</b> The same indices as in the modules “Results and indices” (LSq, Loosemore–Hanby, Sainte-Laguë, ENEP, ENPP, Golosov, Rae F), “Party nationalisation” (system sPNS and PNSw, only for elections with at least two territorial units) and “Volatility” (Pedersen; types A and B after Powell and Tucker).
+      compare: `<b>Comparison.</b> The same indices as in the modules “Results and indices” (LSq, Loosemore–Hanby, Sainte-Laguë, ENEP, ENPP, Golosov, Rae F), “Party nationalisation” (system sPNS and PNSw, only for elections with at least two territorial units), “Volatility” (Pedersen; types A and B after Powell and Tucker) and “Representation of women”.
         Volatility is calculated against the previous selected election of the same country (chronologically, by year), from votes and the links between lists saved in the “Volatility” module. Formula sources are given in those modules.`,
       explain: `<b>How it is calculated.</b> Volatility shows what share of the electorate “moved” between parties from one election to the next.
         For each party, take its vote share in percent at the first and at the second election, compute the difference, add up the absolute values of all differences and divide by 2:
@@ -305,7 +332,73 @@
     if (parseNum(e.voted) > 0 && parseNum(e.registered) > 0 && parseNum(e.voted) > parseNum(e.registered)) out.push(t('Broj glasalih ({a}) veći je od broja upisanih birača ({b}).', { a: fmtInt(parseNum(e.voted)), b: fmtInt(parseNum(e.registered)) }));
     const vv = parseNum(e.validTotal) > 0 ? parseNum(e.validTotal) : r.tv;
     if (!e.shares && parseNum(e.voted) > 0 && vv > parseNum(e.voted)) out.push(t('Važećih glasova ({a}) ima više nego glasalih ({b}).', { a: fmtInt(vv), b: fmtInt(parseNum(e.voted)) }));
-    e.lists.forEach((l) => { if (parseNum(l.women) > parseNum(l.seats)) out.push(t('Lista „{name}“ ima više žena ({a}) nego mandata ({b}).', { name: l.name, a: fmtInt(parseNum(l.women)), b: fmtInt(parseNum(l.seats)) })); });
+    return out;
+  }
+  // ---------- zastupljenost žena ----------
+  const filled = (v) => String(v ?? '').trim() !== '';
+  const groupSize = (e) => { const g = parseNum(e.wgroup) || parseNum(e.quota?.n); return g >= 2 && g <= 20 ? Math.round(g) : 4; };
+  // broj desetki mjesta: po najdužoj listi (ili broju mandata, ako kandidati nisu upisani)
+  const decCount = (e) => { const m = Math.max(0, ...e.lists.map((l) => parseNum(l.cand))); return Math.min(30, Math.max(1, Math.ceil((m || parseNum(e.seats) || 0) / 10))); };
+  const decLabel = (e, d) => { const m = Math.max(0, ...e.lists.map((l) => parseNum(l.cand))) || parseNum(e.seats) || (d + 1) * 10, hi = Math.min(d * 10 + 10, m); return d * 10 + 1 >= hi ? String(d * 10 + 1) : `${d * 10 + 1}–${hi}`; };
+  function calcWomen(e) {
+    const q = e.quota || {};
+    const pct = filled(q.pct) ? parseNum(q.pct) : NaN, K = parseNum(q.k), N = parseNum(q.n);
+    const G = groupSize(e), D = decCount(e);
+    const res = calcResults(e);
+    const arr = (o, n) => Array.from({ length: n }, (_, j) => (o && filled(o[j]) ? parseNum(o[j]) : NaN));
+    const rows = e.lists.map((l) => {
+      const cand = filled(l.cand) ? parseNum(l.cand) : NaN;
+      const wc = filled(l.wcand) ? parseNum(l.wcand) : NaN;
+      const seats = parseNum(l.seats);
+      const wel = filled(l.women) ? parseNum(l.women) : NaN, wend = filled(l.womenEnd) ? parseNum(l.womenEnd) : NaN;
+      const share = cand > 0 && Number.isFinite(wc) ? (wc / cand) * 100 : NaN;
+      // minimum po kvoti: veći od procenta i pravila rasporeda (K u svakoj punoj grupi od N mjesta)
+      const minPct = pct > 0 && cand > 0 ? Math.ceil((pct / 100) * cand - 1e-9) : NaN;
+      const minRule = K > 0 && N > 0 && cand > 0 ? K * Math.floor(cand / N) : NaN;
+      const min = Number.isFinite(minPct) || Number.isFinite(minRule) ? Math.max(Number.isFinite(minPct) ? minPct : 0, Number.isFinite(minRule) ? minRule : 0) : NaN;
+      const over = Number.isFinite(min) && Number.isFinite(wc) ? wc - min : NaN;
+      const grp = arr(l.wgrp, G), dec = arr(l.wdec, D);
+      const hasGrp = grp.some(Number.isFinite), hasDec = dec.some(Number.isFinite);
+      const places = (d) => (cand > 0 ? Math.max(0, Math.min(10, cand - d * 10)) : NaN);
+      return { l, cand, wc, seats, wel, wend, share, min, over, grp, dec, hasGrp, hasDec,
+        grpSum: I.sum(grp.map((x) => (Number.isFinite(x) ? x : 0))), decSum: I.sum(dec.map((x) => (Number.isFinite(x) ? x : 0))),
+        decPct: dec.map((x, d) => (Number.isFinite(x) && places(d) > 0 ? (x / places(d)) * 100 : NaN)), places,
+        first: filled(l.wfirst) ? parseNum(l.wfirst) : NaN,
+        elShare: seats > 0 && Number.isFinite(wel) ? (wel / seats) * 100 : NaN };
+    });
+    const withC = rows.filter((r) => r.cand > 0 && Number.isFinite(r.wc));
+    const TC = I.sum(withC.map((r) => r.cand)), TW = I.sum(withC.map((r) => r.wc));
+    const candShare = TC > 0 ? (TW / TC) * 100 : NaN;
+    const sr = withC.filter((r) => Number.isFinite(r.wel));
+    const sWel = I.sum(sr.map((r) => r.wel)), sWc = I.sum(sr.map((r) => r.wc)), sMel = I.sum(sr.map((r) => r.seats - r.wel)), sMc = I.sum(sr.map((r) => r.cand - r.wc));
+    const succW = sr.length && sWc > 0 ? (sWel / sWc) * 100 : NaN, succM = sr.length && sMc > 0 ? (sMel / sMc) * 100 : NaN;
+    const hasEnd = e.lists.some((l) => filled(l.womenEnd));
+    const twEnd = hasEnd ? I.sum(rows.map((r) => (Number.isFinite(r.wend) ? r.wend : 0))) : NaN;
+    const wEnd = hasEnd && res.ts > 0 ? (twEnd / res.ts) * 100 : NaN;
+    const qr = rows.filter((r) => Number.isFinite(r.over));
+    const gr = rows.filter((r) => r.hasGrp), dr = rows.filter((r) => r.hasDec), fr = rows.filter((r) => Number.isFinite(r.first));
+    const grpTot = Array.from({ length: G }, (_, j) => I.sum(gr.map((r) => (Number.isFinite(r.grp[j]) ? r.grp[j] : 0))));
+    // ukupno po desetki: žene / mjesta, za liste sa upisanim brojem kandidata
+    const decTot = Array.from({ length: D }, (_, d) => { const rr = dr.filter((r) => r.cand > 0 && r.places(d) > 0 && Number.isFinite(r.dec[d])); const pl = I.sum(rr.map((r) => r.places(d))); return pl > 0 ? (I.sum(rr.map((r) => r.dec[d])) / pl) * 100 : NaN; });
+    return { rows, pct, K, N, G, D, gr, dr, grpTot, decTot, TC, TW, candShare, tw: res.tw, ts: res.ts, wom: res.wom, gap: res.wom - candShare,
+      succW, succM, ratio: succW / succM, twEnd, wEnd, endChg: wEnd - res.wom,
+      nQ: qr.length, nMin: qr.filter((r) => r.over === 0).length, nBelow: qr.filter((r) => r.over < 0).length, overSum: I.sum(qr.map((r) => r.over)),
+      nLead: fr.filter((r) => r.first === 1).length, nPos: fr.length, lead: fr.length ? (fr.filter((r) => r.first === 1).length / fr.length) * 100 : NaN };
+  }
+  function womenWarnings(e, w) {
+    const out = [];
+    w.rows.forEach((r) => {
+      const n = r.l.name;
+      if (Number.isFinite(r.wel) && r.wel > r.seats) out.push(t('Lista „{name}“ ima više izabranih žena ({a}) nego mandata ({b}).', { name: n, a: fmtInt(r.wel), b: fmtInt(r.seats) }));
+      if (Number.isFinite(r.wend) && r.wend > r.seats) out.push(t('Lista „{name}“ ima više žena na kraju saziva ({a}) nego mandata ({b}).', { name: n, a: fmtInt(r.wend), b: fmtInt(r.seats) }));
+      if (r.cand > 0 && Number.isFinite(r.wc) && r.wc > r.cand) out.push(t('Lista „{name}“ ima više žena ({a}) nego kandidata ({b}).', { name: n, a: fmtInt(r.wc), b: fmtInt(r.cand) }));
+      if (r.cand > 0 && r.seats > r.cand) out.push(t('Lista „{name}“ ima više mandata ({a}) nego kandidata ({b}).', { name: n, a: fmtInt(r.seats), b: fmtInt(r.cand) }));
+      if (r.hasGrp && Number.isFinite(r.wc) && r.grpSum !== r.wc) out.push(t('Lista „{name}“: zbir žena po mjestu u grupi ({a}) razlikuje se od broja žena na listi ({b}).', { name: n, a: fmtInt(r.grpSum), b: fmtInt(r.wc) }));
+      if (r.hasDec && Number.isFinite(r.wc) && r.decSum !== r.wc) out.push(t('Lista „{name}“: zbir žena po desetkama ({a}) razlikuje se od broja žena na listi ({b}).', { name: n, a: fmtInt(r.decSum), b: fmtInt(r.wc) }));
+      if (r.cand > 0 && r.dec.some((x, d) => x > r.places(d))) out.push(t('Lista „{name}“: u nekoj desetki ima više žena nego mjesta.', { name: n }));
+      if (r.cand > 0 && r.first > r.cand) out.push(t('Lista „{name}“: mjesto prve žene veće je od broja kandidata.', { name: n }));
+      if (r.over < 0) out.push(t('Lista „{name}“ ima manje žena ({a}) od minimuma po kvoti ({b}).', { name: n, a: fmtInt(r.wc), b: fmtInt(r.min) }));
+    });
     return out;
   }
   const hasSpecial = (e) => !!(e.special && parseNum(e.special.seats) > 0);
@@ -370,6 +463,14 @@
     ['raeV', 'Rae F (gl.)', 3, 'Raeov indeks frakcionalizacije, po glasovima', '#0F6E56'],
     ['raeM', 'Rae F (m.)', 3, 'Raeov indeks frakcionalizacije, po mandatima', '#854F0B'],
     ['wom', 'Žene %', 1, 'Udio žena u parlamentu (%)', '#c2408a'],
+    ['wend', 'Žene kraj %', 1, 'Udio žena na kraju saziva (%)', '#8e2a63'],
+    ['wcand', 'Kandidatkinje %', 1, 'Udio žena među kandidatima (%)', '#e07bb0'],
+    ['wgap', 'Razlika ž.', 1, 'Udio izabranih žena minus udio kandidatkinja (p.p.)', '#b0306a'],
+    ['wsw', 'Uspjeh ž. %', 2, 'Stopa uspjeha žena (%)', '#d9468f'],
+    ['wsm', 'Uspjeh m. %', 2, 'Stopa uspjeha muškaraca (%)', '#3f6fb0'],
+    ['wratio', 'Odnos uspjeha', 2, 'Odnos uspjeha žena i muškaraca', '#7a3e9d'],
+    ['wmin', 'Na minimumu', 0, 'Broj lista na zakonskom minimumu žena', '#a0522d'],
+    ['wlead', 'Predvodi žena %', 1, 'Udio lista koje predvodi žena (%)', '#c0587e'],
     ['wasted', 'Izgubljeni %', 1, 'Izgubljeni glasovi (%)', '#8c564b'],
     ['nseat', 'Liste s mand.', 0, 'Broj lista sa mandatima', '#4d6a8a'],
     ['bigV', 'Najveća (gl. %)', 1, 'Najveća stranka – udio glasova (%)', '#1f6fd1'],
@@ -392,7 +493,9 @@
       ['golV', 'Golosovljev efektivni broj stranaka – glasovi'], ['golM', 'Golosovljev efektivni broj stranaka – mandati'],
       ['raeV', 'Raeov indeks frakcionalizacije – glasovi'], ['raeM', 'Raeov indeks frakcionalizacije – mandati']]],
     ['Izborni sistem i pobjednik', [['wasted', 'Izgubljeni glasovi'], ['nseat', 'Broj lista sa mandatima'], ['bigV', 'Najveća stranka – udio glasova'], ['bigS', 'Najveća stranka – udio mandata'], ['bonus', 'Bonus pobjednika'], ['effthr', 'Efektivni prag']]],
-    ['Izlaznost i zastupljenost', [['turnout', 'Izlaznost'], ['invalid', 'Nevažeći listići'], ['wom', 'Udio žena u parlamentu']]],
+    ['Izlaznost', [['turnout', 'Izlaznost'], ['invalid', 'Nevažeći listići']]],
+    ['Zastupljenost žena', [['wcand', 'Udio žena među kandidatima'], ['wom', 'Udio žena u parlamentu'], ['wend', 'Udio žena na kraju saziva'], ['wgap', 'Razlika: izabrane žene minus kandidatkinje'],
+      ['wsw', 'Stopa uspjeha žena'], ['wsm', 'Stopa uspjeha muškaraca'], ['wratio', 'Odnos uspjeha žena i muškaraca'], ['wmin', 'Liste na zakonskom minimumu'], ['wlead', 'Liste koje predvodi žena']]],
     ['Nacionalizacija', [['spns', 'Standardizovani indeks nacionalizacije'], ['pnsw', 'Ponderisani indeks nacionalizacije']]],
     ['Volatilnost', [['tv', 'Ukupna volatilnost (Pedersen)'], ['ta', 'Volatilnost tipa A'], ['tb', 'Volatilnost tipa B']]],
   ];
@@ -438,8 +541,8 @@
     return st;
   }
   function rowValues(e, prev) {
-    const r = calcResults(e), n = calcNat(e), v = prev ? volPair(prev, e) : null;
-    return { e, prev, linked: !!v, wom: r.wom, wasted: r.wasted, nseat: r.nSeat, bigV: r.bigV, bigS: r.bigS, bonus: r.bonus, effthr: r.effThr, turnout: r.turnout, invalid: r.invalid, lsq: r.lsq, lh: r.lh, sl: r.sl, enep: r.enep, enpp: r.enpp, golV: r.golV, golM: r.golM, raeV: r.raeV, raeM: r.raeM,
+    const r = calcResults(e), n = calcNat(e), v = prev ? volPair(prev, e) : null, w = calcWomen(e);
+    return { e, prev, linked: !!v, wom: r.wom, wend: w.wEnd, wcand: w.candShare, wgap: w.gap, wsw: w.succW, wsm: w.succM, wratio: w.ratio, wmin: w.nQ ? w.nMin : NaN, wlead: w.lead, wasted: r.wasted, nseat: r.nSeat, bigV: r.bigV, bigS: r.bigS, bonus: r.bonus, effthr: r.effThr, turnout: r.turnout, invalid: r.invalid, lsq: r.lsq, lh: r.lh, sl: r.sl, enep: r.enep, enpp: r.enpp, golV: r.golV, golM: r.golM, raeV: r.raeV, raeM: r.raeM,
       spns: n.ok ? n.systemSpns : NaN, pnsw: n.ok ? n.systemPnsw : NaN, tv: v ? v.total : NaN, ta: v ? v.typeA : NaN, tb: v ? v.typeB : NaN };
   }
   // redovi: po državama (redom izbora), izbori redosljedom iz liste; volatilnost prema prethodnim izabranim izborima iste države
@@ -627,7 +730,6 @@
           <td class="l"><input class="name" data-f="name" title="${esc(l.name)}" value="${esc(l.name)}" placeholder="${t('Naziv liste ili stranke')}"></td>
           <td><input data-f="votes" value="${esc(l.votes)}" inputmode="decimal"></td>
           <td><input class="sm" data-f="seats" value="${esc(l.seats)}" inputmode="numeric"></td>
-          <td><input class="sm" data-f="women" value="${esc(l.women ?? '')}" inputmode="numeric" title="${t('Broj žena koje su osvojile mandat na ovoj listi (nije obavezno)')}"></td>
           <td class="no-print"><button class="icon-btn" data-act="del-list" title="${t('Ukloni listu')}">✕</button></td></tr>`).join('');
         const type = RES_CHARTS.some(([k]) => k === chartPref('res', 'arc')) ? chartPref('res', 'arc') : 'arc';
         return `${printHead(e, t('Rezultati'))}${electionHead(e, `
@@ -642,9 +744,9 @@
           </div>
           ${e.shares ? `<div class="muted small" style="margin:-4px 0 8px">${t('Glasovi su upisani kao procenti (uvezeno iz ParlGov baze).')}</div>` : ''}
           <div class="table-wrap"><table class="grid">
-            <thead><tr><th class="color-cell" title="${t('Boja liste na grafikonima')}"></th><th class="l">${t('Lista / stranka')}</th><th>${t('Glasovi')}</th><th>${t('Mandati')}</th><th title="${t('Broj žena koje su osvojile mandat na ovoj listi (nije obavezno)')}">${t('Žene')}</th><th class="no-print"></th></tr></thead>
+            <thead><tr><th class="color-cell" title="${t('Boja liste na grafikonima')}"></th><th class="l">${t('Lista / stranka')}</th><th>${t('Glasovi')}</th><th>${t('Mandati')}</th><th class="no-print"></th></tr></thead>
             <tbody>${rows}</tbody>
-            <tfoot><tr><td></td><td class="l">${t('Ukupno')}</td><td data-out="tv"></td><td data-out="ts"></td><td data-out="tw"></td><td class="no-print"></td></tr></tfoot>
+            <tfoot><tr><td></td><td class="l">${t('Ukupno')}</td><td data-out="tv"></td><td data-out="ts"></td><td class="no-print"></td></tr></tfoot>
           </table></div>
           <div class="row no-print" style="margin-top:8px"><button class="btn small" data-act="add-list">${t('+ Dodaj listu')}</button></div>
           <div data-out-html="valwarn"></div>
@@ -661,7 +763,7 @@
         const type = RES_CHARTS.some(([k]) => k === chartPref('res', 'arc')) ? chartPref('res', 'arc') : 'arc';
         const w = validation(e, r);
         return {
-          tv: fmtInt(r.tv), ts: fmtInt(r.ts), tw: Number.isFinite(r.tw) ? fmtInt(r.tw) : '',
+          tv: fmtInt(r.tv), ts: fmtInt(r.ts),
           valwarn: w.length ? `<div class="warn">${w.map(esc).join('<br>')}</div>` : '',
           reschart: resultsChart(e, type),
           arcorder: arcOrder(e).map((id) => e.lists.find((l) => l.id === id)).filter((l) => parseNum(l.seats) > 0)
@@ -672,9 +774,9 @@
       table(e) {
         const r = calcResults(e);
         return {
-          header: [t('Lista'), t('Glasovi'), t('Mandati'), t('Žene')],
-          rows: e.lists.map((l, i) => [l.name, r.V[i], r.M[i], String(l.women ?? '').trim() === '' ? '' : parseNum(l.women)]),
-          summary: [[t('Ukupno glasova'), r.tv], [t('Važeći glasovi (zvanično)'), parseNum(e.validTotal) || ''], [t('Upisani birači'), parseNum(e.registered) || ''], [t('Glasalo'), parseNum(e.voted) || ''], [t('Nevažeći listići'), String(e.invalid ?? '').trim() === '' ? '' : parseNum(e.invalid)], [t('Ukupno mandata'), r.ts], [t('Ukupno žena'), Number.isFinite(r.tw) ? r.tw : '']],
+          header: [t('Lista'), t('Glasovi'), t('Mandati')],
+          rows: e.lists.map((l, i) => [l.name, r.V[i], r.M[i]]),
+          summary: [[t('Ukupno glasova'), r.tv], [t('Važeći glasovi (zvanično)'), parseNum(e.validTotal) || ''], [t('Upisani birači'), parseNum(e.registered) || ''], [t('Glasalo'), parseNum(e.voted) || ''], [t('Nevažeći listići'), String(e.invalid ?? '').trim() === '' ? '' : parseNum(e.invalid)], [t('Ukupno mandata'), r.ts]],
         };
       },
     },
@@ -704,11 +806,10 @@
             ${metric('bonus', t('Bonus pobjednika'), 'bonus', t('mandati minus glasovi najveće stranke'))}
             ${metric('effthr', t('Efektivni prag'), 'effthr', null)}
           </div>
-          <h2>${t('Izlaznost i zastupljenost')}</h2>
+          <h2>${t('Izlaznost')}</h2>
           <div class="metrics">
             ${metric('turnout', t('Izlaznost'), 'turnout', null, 'alt')}
             ${metric('invalid', t('Nevažeći listići'), 'invalid', null, 'alt')}
-            ${metric('wom', t('Udio žena u parlamentu'), 'wom', null, 'alt')}
           </div>
           <h2>${t('Glasovi i mandati po listama')}</h2>
           <div class="table-wrap"><table class="grid">
@@ -731,8 +832,6 @@
         return {
           lsq: fmt(r.lsq), lh: fmt(r.lh), sl: fmt(r.sl), enep: fmt(r.enep), enpp: fmt(r.enpp),
           gol: `${fmt(r.golV)} / ${fmt(r.golM)}`, rae: `${fmt(r.raeV, 3)} / ${fmt(r.raeM, 3)}`,
-          wom: Number.isFinite(r.wom) ? fmt(r.wom, 1) + '%' : '–',
-          womh: Number.isFinite(r.wom) ? t('{a} od {b} mandata', { a: fmtInt(r.tw), b: fmtInt(r.ts) }) : t('upiši broj žena u kolonu „Žene“ u Rezultatima'),
           wasted: Number.isFinite(r.wasted) ? fmt(r.wasted, 1) + '%' : '–',
           nseat: Number.isFinite(r.nSeat) ? String(r.nSeat) : '–', nseath: t('od {n} lista', { n: e.lists.length }),
           big: Number.isFinite(r.bigV) ? `${fmt(r.bigV, 1)}% / ${fmt(r.bigS, 1)}%` : '–', bigh: r.big >= 0 ? e.lists[r.big].name : '',
@@ -757,7 +856,6 @@
           rows: e.lists.map((l, i) => [l.name, pv(i), ps(i), r.tv > 0 && r.ts > 0 ? ps(i) - pv(i) : '', Number.isFinite(r.adv[i]) && r.ts > 0 ? r.adv[i] : '']),
           summary: [['LSq (Gallagher)', r.lsq], ['Loosemore–Hanby', r.lh], [t('Sainte-Laguë indeks'), r.sl], ['ENEP', r.enep], ['ENPP', r.enpp],
             [t('Golosov (glasovi)'), r.golV], [t('Golosov (mandati)'), r.golM], [t('Rae F (glasovi)'), r.raeV], [t('Rae F (mandati)'), r.raeM],
-            [t('Udio žena u parlamentu (%)'), Number.isFinite(r.wom) ? r.wom : ''],
             [t('Izgubljeni glasovi (%)'), Number.isFinite(r.wasted) ? r.wasted : ''], [t('Broj lista sa mandatima'), Number.isFinite(r.nSeat) ? r.nSeat : ''],
             [t('Najveća stranka – glasovi (%)'), Number.isFinite(r.bigV) ? r.bigV : ''], [t('Najveća stranka – mandati (%)'), Number.isFinite(r.bigS) ? r.bigS : ''],
             [t('Bonus pobjednika (p.p.)'), Number.isFinite(r.bonus) ? r.bonus : ''], [t('Efektivni prag (%)'), Number.isFinite(r.effThr) ? r.effThr : ''],
@@ -883,6 +981,141 @@
           summary: r.ok ? [[t('sPNS sistema (standardizovan)'), r.systemSpns], [t('PNSw sistema (ponderisan)'), r.systemPnsw], [t('Efektivni broj jedinica (E)'), r.E], [t('Broj jedinica'), r.unitCount], [t('N2 državni'), r.n2national], [t('N2 jedinice (ponderisan)'), r.n2district]] : [[t('Napomena'), t('Potrebne su bar 2 teritorijalne jedinice')]],
           units: { header: [t('Jedinica'), t('Važeći glasovi'), ...e.lists.map((l) => l.name)], rows: e.units.map((u) => [u.name, parseNum(u.valid), ...e.lists.map((l) => parseNum(u.votes[l.id]))]) },
         };
+      },
+    },
+
+    women: {
+      render(e) {
+        const q = e.quota || {};
+        const ro = (l) => `<td class="l clip" title="${esc(l.name)}">${esc(l.name)}</td>`;
+        const rows = e.lists.map((l) => `<tr data-id="${l.id}">${ro(l)}
+          <td><input class="sm" data-f="cand" value="${esc(l.cand ?? '')}" inputmode="numeric"></td>
+          <td><input class="sm" data-f="wcand" value="${esc(l.wcand ?? '')}" inputmode="numeric"></td>
+          <td data-out="wsh-${l.id}"></td><td data-out="wmn-${l.id}"></td><td data-out="wov-${l.id}"></td>
+          <td>${fmtInt(parseNum(l.seats))}</td>
+          <td><input class="sm" data-f="women" value="${esc(l.women ?? '')}" inputmode="numeric"></td><td data-out="wel-${l.id}"></td>
+          <td><input class="sm" data-f="womenEnd" value="${esc(l.womenEnd ?? '')}" inputmode="numeric"></td></tr>`).join('');
+        const G = groupSize(e), D = decCount(e);
+        main.dataset.wg = G; main.dataset.wd = D;
+        const ni = (attr, v) => `<td><input class="xs" ${attr} value="${esc(v ?? '')}" inputmode="numeric"></td>`;
+        const grow = e.lists.map((l) => `<tr data-id="${l.id}">${ro(l)}${ni('data-f="wfirst"', l.wfirst)}
+          ${Array.from({ length: G }, (_, j) => ni(`data-wg="${j}"`, l.wgrp?.[j])).join('')}<td data-out="wgs-${l.id}"></td></tr>`).join('');
+        const drow = e.lists.map((l) => `<tr data-id="${l.id}">${ro(l)}
+          ${Array.from({ length: D }, (_, d) => ni(`data-wd="${d}"`, l.wdec?.[d])).join('')}<td data-out="wds-${l.id}"></td></tr>`).join('');
+        const type = WOM_CHARTS.some(([k]) => k === chartPref('wom', 'bars-h')) ? chartPref('wom', 'bars-h') : 'bars-h';
+        return `${printHead(e, t('Zastupljenost žena'))}${electionHead(e)}
+          <div class="quota-box">
+            <b>${t('Kvota za manje zastupljeni pol')}</b> ${helpBtn('wmin')}
+            <label>${t('najmanje')} <input class="sm" data-q="pct" value="${esc(q.pct ?? '')}" inputmode="decimal"> ${t('% kandidata na listi')}</label>
+            <label>${t('najmanje')} <input class="xs" data-q="k" value="${esc(q.k ?? '')}" inputmode="numeric"> ${t('na svakih')} <input class="xs" data-q="n" value="${esc(q.n ?? '')}" inputmode="numeric"> ${t('mjesta')}</label>
+            <span class="muted small">${t('prazno = bez kvote')}</span>
+          </div>
+          <div class="metrics">
+            ${metric('wcand', t('Žene među kandidatima'), 'wcand', null, 'alt')}
+            ${metric('wom', t('Žene među izabranima'), 'wom', null, 'alt')}
+            ${metric('wgap', t('Razlika lista – parlament'), 'wgap', t('procentnih poena'), 'alt')}
+            ${metric('wend', t('Žene na kraju saziva'), 'wend', null, 'alt')}
+          </div>
+          <div class="metrics">
+            ${metric('wsucc', t('Stopa uspjeha žena / muškaraca'), 'wsucc', null)}
+            ${metric('wsucc', t('Odnos uspjeha žene / muškarci'), 'wratio', t('1 = jednake šanse'))}
+            ${metric('wmin', t('Liste na minimumu'), 'wmin', null)}
+            ${metric('wlead', t('Liste koje predvodi žena'), 'wlead', null)}
+          </div>
+          <h2>${t('Liste')}</h2>
+          <div class="table-wrap"><table class="grid wom">
+            <thead><tr><th class="l">${t('Lista')}</th><th>${t('Kandidata')}</th><th>${t('Žena na listi')}</th><th>${t('% žena')}</th>
+              <th title="${t('Najmanji broj žena po kvoti: veći od procenta kvote i od K žena u svakoj punoj grupi od N mjesta')}">${t('Minimum')}</th><th>${t('Iznad minimuma')}</th><th>${t('Mandati')}</th>
+              <th title="${t('Broj žena koje su osvojile mandat (sastav pri konstituisanju)')}">${t('Izabrane žene')}</th><th>${t('% izabranih')}</th>
+              <th title="${t('Broj žena na kraju saziva, nakon ostavki i zamjena (ili sada)')}">${t('Žene na kraju saziva')}</th></tr></thead>
+            <tbody>${rows}</tbody>
+            <tfoot><tr><td class="l">${t('Ukupno')}</td><td data-out="wtc"></td><td data-out="wtw"></td><td data-out="wts"></td><td></td><td data-out="wto"></td><td data-out="wtm"></td><td data-out="wte"></td><td data-out="wtes"></td><td data-out="wtend"></td></tr></tfoot>
+          </table></div>
+          <div data-out-html="wwarn"></div>
+          <h2>${t('Raspored žena na listama')} ${helpBtn('wpos')}</h2>
+          <div class="muted small" style="margin-bottom:6px">${t('Prebroj sa liste kandidata i upiši brojeve. Nije obavezno.')}</div>
+          <h3>${t('Prva žena i raspored po mjestu u grupi od {n} mjesta', { n: G })}</h3>
+          <div class="row" style="margin-bottom:6px"><label class="field inline" title="${t('Ako je prazno, koristi se N iz pravila rasporeda, a bez njega 4')}">${t('Veličina grupe')}<input class="xs" data-bind="wgroup" value="${esc(e.wgroup ?? '')}" placeholder="${G}" inputmode="numeric"></label></div>
+          <div class="table-wrap"><table class="grid wom">
+            <thead><tr><th class="l">${t('Lista')}</th><th title="${t('Redni broj mjesta prve žene na listi')}">${t('Prva žena (mjesto)')}</th>
+              ${Array.from({ length: G }, (_, j) => `<th title="${t('Broj žena na {i}. mjestu svake grupe od {n} mjesta', { i: j + 1, n: G })}">${t('{i}. od {n}', { i: j + 1, n: G })}</th>`).join('')}<th>${t('Ukupno')}</th></tr></thead>
+            <tbody>${grow}</tbody>
+            <tfoot><tr><td class="l">${t('Ukupno')}</td><td></td>${Array.from({ length: G }, (_, j) => `<td data-out="wgt-${j}"></td>`).join('')}<td data-out="wgtt"></td></tr>
+              <tr><td class="l">%</td><td></td>${Array.from({ length: G }, (_, j) => `<td data-out="wgp-${j}"></td>`).join('')}<td></td></tr></tfoot>
+          </table></div>
+          <h3>${t('Žene po desetkama mjesta na listi')}</h3>
+          <div class="table-wrap"><table class="grid wom">
+            <thead><tr><th class="l">${t('Lista')}</th>${Array.from({ length: D }, (_, d) => `<th>${decLabel(e, d)}</th>`).join('')}<th>${t('Ukupno')}</th></tr></thead>
+            <tbody>${drow}</tbody>
+            <tfoot><tr><td class="l" title="${t('Broj žena u desetki podijeljen brojem mjesta u njoj, za sve liste sa upisanim brojem kandidata')}">${t('Udio žena (%)')}</td>${Array.from({ length: D }, (_, d) => `<td data-out="wdp-${d}"></td>`).join('')}<td></td></tr></tfoot>
+          </table></div>
+          <h2>${t('Grafikon')}</h2>
+          ${chartTools('wom-chart', 'wom', WOM_CHARTS, type)}
+          <div class="card chart-card" id="wom-chart" data-out-html="womchart"></div>
+          <div class="cite">${cite('women')}</div>`;
+      },
+      paint(e) {
+        const w = calcWomen(e), o = {};
+        const pc = (x, d = 1) => (Number.isFinite(x) ? fmt(x, d) : '–');
+        w.rows.forEach((r) => {
+          const id = r.l.id;
+          o['wsh-' + id] = pc(r.share);
+          o['wmn-' + id] = Number.isFinite(r.min) ? fmtInt(r.min) : '–';
+          o['wov-' + id] = Number.isFinite(r.over) ? (r.over > 0 ? '+' : '') + fmtInt(r.over) + (r.over === 0 ? ' · ' + t('min.') : '') : '–';
+          o['wel-' + id] = pc(r.elShare);
+          o['wgs-' + id] = r.hasGrp ? fmtInt(r.grpSum) : '';
+          o['wds-' + id] = r.hasDec ? fmtInt(r.decSum) : '';
+        });
+        const gT = I.sum(w.grpTot);
+        w.grpTot.forEach((n, j) => { o['wgt-' + j] = w.gr.length ? fmtInt(n) : ''; o['wgp-' + j] = gT > 0 ? fmt((n / gT) * 100, 1) : ''; });
+        o.wgtt = w.gr.length ? fmtInt(gT) : '';
+        w.decTot.forEach((x, d) => { o['wdp-' + d] = Number.isFinite(x) ? fmt(x, 1) : ''; });
+        o.wtc = w.TC ? fmtInt(w.TC) : ''; o.wtw = w.TC ? fmtInt(w.TW) : ''; o.wts = pc(w.candShare);
+        o.wto = w.nQ ? (w.overSum > 0 ? '+' : '') + fmtInt(w.overSum) : '';
+        o.wtm = fmtInt(w.ts); o.wte = Number.isFinite(w.tw) ? fmtInt(w.tw) : ''; o.wtes = pc(w.wom); o.wtend = Number.isFinite(w.twEnd) ? fmtInt(w.twEnd) : '';
+        o.wcand = Number.isFinite(w.candShare) ? fmt(w.candShare, 1) + '%' : '–';
+        o.wcandh = Number.isFinite(w.candShare) ? t('{a} od {b} kandidata', { a: fmtInt(w.TW), b: fmtInt(w.TC) }) : t('upiši broj kandidata i žena na listama');
+        o.wom = Number.isFinite(w.wom) ? fmt(w.wom, 1) + '%' : '–';
+        o.womh = Number.isFinite(w.wom) ? t('{a} od {b} mandata', { a: fmtInt(w.tw), b: fmtInt(w.ts) }) : t('upiši izabrane žene u tabelu');
+        o.wgap = Number.isFinite(w.gap) ? (w.gap > 0 ? '+' : '') + fmt(w.gap, 1) : '–';
+        o.wend = Number.isFinite(w.wEnd) ? fmt(w.wEnd, 1) + '%' : '–';
+        o.wendh = Number.isFinite(w.wEnd) ? t('{a} od {b} mandata', { a: fmtInt(w.twEnd), b: fmtInt(w.ts) }) + (Number.isFinite(w.endChg) ? ` · ${w.endChg > 0 ? '+' : ''}${fmt(w.endChg, 1)} p.p.` : '') : t('nakon ostavki i zamjena');
+        o.wsucc = Number.isFinite(w.succW) ? `${fmt(w.succW, 1)}% / ${fmt(w.succM, 1)}%` : '–';
+        o.wsucch = t('izabrani od kandidata istog pola');
+        o.wratio = Number.isFinite(w.ratio) ? fmt(w.ratio, 2) : '–';
+        o.wmin = w.nQ ? t('{a} od {b}', { a: fmtInt(w.nMin), b: fmtInt(w.nQ) }) : '–';
+        o.wminh = w.nQ ? t('iznad kvote: {n}', { n: (w.overSum > 0 ? '+' : '') + fmtInt(w.overSum) }) + (w.nBelow ? ' · ' + t('{n} ispod', { n: w.nBelow }) : '') : Number.isFinite(w.pct) ? t('upiši kandidate i žene na listama') : t('upiši kvotu');
+        o.wlead = w.nPos ? t('{a} od {b}', { a: fmtInt(w.nLead), b: fmtInt(w.nPos) }) : '–';
+        o.wleadh = w.nPos ? '' : t('upiši mjesto prve žene na listama');
+        const ww = womenWarnings(e, w);
+        o.wwarn = ww.length ? `<div class="warn">${ww.map(esc).join('<br>')}</div>` : '';
+        o.womchart = womenChart(e, w, WOM_CHARTS.some(([k]) => k === chartPref('wom', 'bars-h')) ? chartPref('wom', 'bars-h') : 'bars-h');
+        return o;
+      },
+      table(e) {
+        const w = calcWomen(e), v = (x) => (Number.isFinite(x) ? x : '');
+        const tb = {
+          header: [t('Lista'), t('Kandidata'), t('Žena na listi'), t('% žena'), t('Minimum'), t('Iznad minimuma'), t('Mandati'), t('Izabrane žene'), t('% izabranih'), t('Žene na kraju saziva'), t('Prva žena (mjesto)')],
+          rows: w.rows.map((r) => [r.l.name, v(r.cand), v(r.wc), v(r.share), v(r.min), v(r.over), r.seats, v(r.wel), v(r.elShare), v(r.wend), v(r.first)]),
+          summary: [[t('Kvota (%)'), v(w.pct)], [t('Pravilo rasporeda'), w.K > 0 && w.N > 0 ? t('{k} na {n}', { k: w.K, n: w.N }) : ''],
+            [t('Udio žena među kandidatima (%)'), v(w.candShare)], [t('Udio žena u parlamentu (%)'), v(w.wom)], [t('Udio žena na kraju saziva (%)'), v(w.wEnd)],
+            [t('Razlika: izabrane žene minus kandidatkinje (p.p.)'), v(w.gap)], [t('Stopa uspjeha žena (%)'), v(w.succW)], [t('Stopa uspjeha muškaraca (%)'), v(w.succM)],
+            [t('Odnos uspjeha žena i muškaraca'), v(w.ratio)], [t('Liste na zakonskom minimumu'), w.nQ ? w.nMin : ''], [t('Žene iznad kvote'), w.nQ ? w.overSum : ''], [t('Liste koje predvodi žena'), w.nPos ? w.nLead : '']],
+        };
+        if (w.gr.length) {
+          tb.summary.push([], [t('Raspored žena po mjestu u grupi od {n} mjesta', { n: w.G })], [t('Lista'), ...Array.from({ length: w.G }, (_, j) => t('{i}. od {n}', { i: j + 1, n: w.G }))]);
+          w.gr.forEach((r) => tb.summary.push([r.l.name, ...r.grp.map(v)]));
+          tb.summary.push([t('Ukupno'), ...w.grpTot]);
+        }
+        if (w.dr.length) {
+          const hd = Array.from({ length: w.D }, (_, d) => decLabel(e, d));
+          tb.summary.push([], [t('Žene po desetkama mjesta na listi')], [t('Lista'), ...hd]);
+          w.dr.forEach((r) => tb.summary.push([r.l.name, ...r.dec.map(v)]));
+          tb.summary.push([], [t('Udio žena po desetkama mjesta na listi (%)')], [t('Lista'), ...hd]);
+          w.dr.forEach((r) => tb.summary.push([r.l.name, ...r.decPct.map(v)]));
+          tb.summary.push([t('Ukupno'), ...w.decTot.map(v)]);
+        }
+        return tb;
       },
     },
 
@@ -1018,6 +1251,7 @@
     const o = mod.paint(S.current()) || {};
     main.querySelectorAll('[data-out]').forEach((el) => { const k = el.dataset.out; if (k in o) el.textContent = o[k]; });
     main.querySelectorAll('[data-out-html]').forEach((el) => { const k = el.dataset.outHtml; if (k in o) el.innerHTML = o[k]; });
+    main.querySelectorAll('[data-out-ph]').forEach((el) => { const k = el.dataset.outPh; if (k in o) el.placeholder = o[k]; });
   }
 
   // nazivi pravila u padajućim listama osvježavaju se bez ponovnog crtanja (da se ne izgubi fokus)
@@ -1038,6 +1272,11 @@
     } else if (el.dataset.f && e) {
       const l = e.lists.find((x) => x.id === el.closest('tr').dataset.id);
       if (l) l[el.dataset.f] = el.dataset.f === 'name' ? el.value : el.value.trim();
+    } else if ((el.dataset.wg !== undefined || el.dataset.wd !== undefined) && e) {
+      const l = e.lists.find((x) => x.id === el.closest('tr').dataset.id);
+      if (l) { const k = el.dataset.wg !== undefined ? 'wgrp' : 'wdec'; (l[k] = l[k] || {})[el.dataset.wg ?? el.dataset.wd] = el.value.trim(); }
+    } else if (el.dataset.q && e) {
+      (e.quota = e.quota || {})[el.dataset.q] = el.value.trim();
     } else if (el.dataset.sp && e && e.special) {
       (e.special.votes = e.special.votes || {})[el.dataset.sp] = el.value.trim();
     } else if (el.dataset.ruleF && e) {
@@ -1062,6 +1301,10 @@
     else if (el.dataset.chart) { (S.state.charts = S.state.charts || {})[el.dataset.chart] = el.value; S.save(); render(); }
     else if (el.dataset.sercolor) { const st = cmpState(); (st.colors = st.colors || {})[el.dataset.sercolor] = el.value; S.save(); render(); }
     else if (el.dataset.f === 'color') { S.save(); render(); }
+    else if (S.state.module === 'women' && (el.dataset.q === 'n' || el.dataset.bind === 'wgroup' || el.dataset.f === 'cand')) {
+      const e = S.current();
+      if (e && (String(groupSize(e)) !== main.dataset.wg || String(decCount(e)) !== main.dataset.wd)) { S.save(); render(); }
+    }
     else if (el.dataset.f === 'rule') { S.save(); render(); }
     else if (el.tagName === 'SELECT' && el.dataset.bind) { S.save(); paint(); }
   });
@@ -1392,6 +1635,7 @@
       addSheet(t('Rezultati'), MODULES.results.table(e), t('{name} — rezultati', { name: elTitle(e) }));
       addSheet(t('Indeksi'), MODULES.indices.table(e), t('{name} — indeksi', { name: elTitle(e) }));
       addSheet(t('Raspodjela'), MODULES.alloc.table(e), t('{name} — raspodjela mandata', { name: elTitle(e) }));
+      if (e.lists.some((l) => filled(l.cand) || filled(l.wcand) || filled(l.women) || filled(l.womenEnd) || filled(l.wfirst))) addSheet(t('Žene'), MODULES.women.table(e), t('{name} — zastupljenost žena', { name: elTitle(e) }));
       if (e.units.length >= 2) addSheet(t('Nacionalizacija'), MODULES.nat.table(e), t('{name} — nacionalizacija stranaka (Bochsler 2010)', { name: elTitle(e) }));
     }
     const vt = S.state.elections.length >= 2 ? MODULES.vol.table() : null;
@@ -1400,7 +1644,7 @@
     if (tt) addSheet(t('Poređenje'), tt, t('Poređenje'));
     const src = wb.addWorksheet(t('Izvori'));
     src.addRow([t('Izvori formula')]).font = { bold: true, size: 13, color: { argb: blue } };
-    ['indices', 'alloc', 'nat', 'vol', 'compare'].forEach((k) => src.addRow([CITE_TEXT(k)]));
+    ['indices', 'women', 'alloc', 'nat', 'vol', 'compare'].forEach((k) => src.addRow([CITE_TEXT(k)]));
     src.getColumn(1).width = 140;
     src.getColumn(1).alignment = { wrapText: true, vertical: 'top' };
     return new Uint8Array(await wb.xlsx.writeBuffer());

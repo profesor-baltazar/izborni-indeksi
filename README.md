@@ -8,11 +8,12 @@ Pokreni instalacioni `.exe` fajl i prati korake. Ako Windows prikaže upozorenje
 
 ## Moduli
 
-- **Rezultati:** unos lista, glasova, mandata i broja žena (nije obavezno), boje lista, provjera unosa i grafikoni sastava (polukrug skupštine sa kružićem za svaki mandat, pita udjela glasova ili mandata).
-- **Indeksi:** disproporcionalnost (Gallagher LSq, Loosemore–Hanby, Sainte-Laguë), efektivni broj stranaka (ENEP, ENPP, Golosov), frakcionalizacija (Rae F), izgubljeni glasovi, broj lista sa mandatima, najveća stranka i bonus pobjednika, efektivni prag, izlaznost i nevažeći listići, udio žena u parlamentu i tabela po listama sa udjelom glasova, udjelom mandata i odnosom prednosti, uz grafikon glasova i mandata.
+- **Rezultati:** unos lista, glasova i mandata, boje lista, provjera unosa i grafikoni sastava (polukrug skupštine sa kružićem za svaki mandat, pita udjela glasova ili mandata).
+- **Indeksi:** disproporcionalnost (Gallagher LSq, Loosemore–Hanby, Sainte-Laguë), efektivni broj stranaka (ENEP, ENPP, Golosov), frakcionalizacija (Rae F), izgubljeni glasovi, broj lista sa mandatima, najveća stranka i bonus pobjednika, efektivni prag, izlaznost i nevažeći listići i tabela po listama sa udjelom glasova, udjelom mandata i odnosom prednosti, uz grafikon glasova i mandata.
 - **Raspodjela mandata:** D'Hondt, Sainte-Laguë ili Hare–Niemeyer. Za svake izbore zadaješ pravila cenzusa (npr. poseban cenzus za koalicije, izuzeće ili zbirnu listu za manjine, garantovani mandat, uvećane količnike), a za svaku listu biraš koje pravilo važi. Može se dodati i posebna izborna jedinica sa svojim brojem mandata. Tabela „Poređenje metoda“ pokazuje raspodjelu po sve tri metode, sa LSq za svaku.
 - **Nacionalizacija stranaka:** koliko je podrška stranke ravnomjerno raspoređena po opštinama (Bochsler).
 - **Volatilnost:** koliki se dio glasova pomjerio između stranaka od jednih do drugih izbora.
+- **Zastupljenost žena:** za svaku listu broj kandidata, broj žena na listi, izabrane žene i žene na kraju saziva (nakon ostavki i zamjena). Za svake izbore zadaješ kvotu za manje zastupljeni pol (najmanji procenat na listi i pravilo „najmanje K na svakih N mjesta“). Aplikacija računa udio žena među kandidatima, među izabranima i na kraju saziva, minimum po kvoti i višak iznad njega, liste na minimumu, stopu uspjeha žena i muškaraca i njihov odnos. Za raspored žena na listama upisuješ brojeve prebrojane sa liste kandidata: mjesto prve žene, koliko je žena na 1, 2, … N-tom mjestu u grupi i koliko je žena u svakoj desetki mjesta. Iz toga aplikacija računa liste koje predvodi žena, zbirove i udio žena po desetkama, i upozorava kada se zbirovi ne slažu sa brojem žena na listi.
 - **Poređenje:** biraš države, izbore i indekse. Dobijaš grafikon kroz vrijeme i tabelu po godinama, sa prosjekom; klikom na zaglavlje kolone tabela se sortira. Dugme „Posljednji izbori svake države“ pravi tabelu sa po jednim redom za svaku državu. Kad pređeš mišem preko skraćenice (LSq, ENEP…), vidiš puno ime indeksa.
 
 Uz svaki modul je naveden izvor formule, a dugme **?** pored indeksa objašnjava šta indeks mjeri i kako se čita.
@@ -57,4 +58,4 @@ Gore desno biraš jezik (EN – engleski, ME – crnogorski; aplikacija se prvi 
 
 ## Ažuriranje
 
-Kada izađe nova verzija, aplikacija pri pokretanju prikaže traku **Dostupna je nova verzija**. Klikni **Ažuriraj i ponovo pokreni**; podaci ostaju sačuvani.
+Kada izađe nova verzija, aplikacija pri pokretanju prikaže traku **Dostupna je nova verzija**. Klikni **Ažuriraj i ponovo pokreni**; podaci ostaju sačuvani. Dugme **Provjeri ažuriranja** na dnu lijevog menija provjerava odmah i, ako provjera ne uspije, prikazuje razlog.

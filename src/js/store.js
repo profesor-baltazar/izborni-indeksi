@@ -69,6 +69,8 @@
       // 2006: "Demokratska stranka Crne Gore – dio koji nedostaje" ima 1.286 glasova (u odluci RIK-a greškom 1.284)
       if (seed && e.id === 'cg2006') { const l = e.lists.find((x) => x.id === 'y2006l5'); if (l && Number(l.votes) === 1284) l.votes = 1286; }
       if (seed && e.validTotal === undefined) e.validTotal = seed.validTotal;
+      // kvota za manje zastupljeni pol (1.6.0)
+      if (seed && seed.quota && e.quota === undefined) e.quota = JSON.parse(JSON.stringify(seed.quota));
       if (seed && seed.registered && e.registered === undefined) { e.registered = seed.registered; e.voted = seed.voted; }
       if (seed && seed.invalid !== undefined && e.invalid === undefined && String(e.voted) === String(seed.voted)) e.invalid = seed.invalid;
       // opštinski rezultati za nacionalizaciju (dodati u 1.5.0 za 2006–2016), samo ako izbori nemaju jedinice
