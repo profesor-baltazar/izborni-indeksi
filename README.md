@@ -1,61 +1,41 @@
-# Electoral & Party System Indices (Indeksi izbornih i stranačkih sistema)
+# Electoral & Party System Indices
 
-Aplikacija za računanje izbornih indeksa. Radi bez interneta. Svi podaci ostaju na tvom računaru. Internet koristi samo za provjeru da li postoji nova verzija.
+Crnogorski: [README.ME.md](README.ME.md)
 
-## Instalacija
+The application calculates electoral indices and the participation of women in elections.
+It works offline. All data stay locally, on your computer. The internet is used only to check whether a new version of the application is available.
 
-Pokreni instalacioni `.exe` fajl i prati korake. Ako Windows prikaže upozorenje „Windows protected your PC“, klikni **More info → Run anyway**.
+## Installation
 
-## Moduli
+Run the installation `.exe` file and follow the steps. If Windows shows the warning “Windows protected your PC”, click **More info → Run anyway**.
 
-- **Rezultati:** unos lista, glasova i mandata, boje lista, provjera unosa i grafikoni sastava (polukrug skupštine sa kružićem za svaki mandat, pita udjela glasova ili mandata).
-- **Indeksi:** disproporcionalnost (Gallagher LSq, Loosemore–Hanby, Sainte-Laguë), efektivni broj stranaka (ENEP, ENPP, Golosov), frakcionalizacija (Rae F), izgubljeni glasovi, broj lista sa mandatima, najveća stranka i bonus pobjednika, efektivni prag, izlaznost i nevažeći listići i tabela po listama sa udjelom glasova, udjelom mandata i odnosom prednosti, uz grafikon glasova i mandata.
-- **Raspodjela mandata:** D'Hondt, Sainte-Laguë ili Hare–Niemeyer. Za svake izbore zadaješ pravila cenzusa (npr. poseban cenzus za koalicije, izuzeće ili zbirnu listu za manjine, garantovani mandat, uvećane količnike), a za svaku listu biraš koje pravilo važi. Može se dodati i posebna izborna jedinica sa svojim brojem mandata. Tabela „Poređenje metoda“ pokazuje raspodjelu po sve tri metode, sa LSq za svaku.
-- **Nacionalizacija stranaka:** koliko je podrška stranke ravnomjerno raspoređena po opštinama (Bochsler).
-- **Volatilnost:** koliki se dio glasova pomjerio između stranaka od jednih do drugih izbora.
-- **Zastupljenost žena:** za svaku listu broj kandidata, broj žena na listi, izabrane žene i žene na kraju saziva (nakon ostavki i zamjena). Za svake izbore zadaješ kvotu za manje zastupljeni pol (najmanji procenat na listi i pravilo „najmanje K na svakih N mjesta“). Aplikacija računa udio žena među kandidatima, među izabranima i na kraju saziva, minimum po kvoti i višak iznad njega, liste na minimumu, stopu uspjeha žena i muškaraca i njihov odnos. Za raspored žena na listama upisuješ brojeve prebrojane sa liste kandidata: mjesto prve žene, koliko je žena na 1, 2, … N-tom mjestu u grupi i koliko je žena u svakoj desetki mjesta. Iz toga aplikacija računa liste koje predvodi žena, zbirove i udio žena po desetkama, i upozorava kada se zbirovi ne slažu sa brojem žena na listi.
-- **Poređenje:** biraš države, izbore i indekse. Dobijaš grafikon kroz vrijeme i tabelu po godinama, sa prosjekom; klikom na zaglavlje kolone tabela se sortira. Dugme „Posljednji izbori svake države“ pravi tabelu sa po jednim redom za svaku državu. Kad pređeš mišem preko skraćenice (LSq, ENEP…), vidiš puno ime indeksa.
+## Modules
 
-Uz svaki modul je naveden izvor formule, a dugme **?** pored indeksa objašnjava šta indeks mjeri i kako se čita.
+| Module | Function |
+|---|---|
+| **Results** | Entry of electoral lists, votes and seats, choice of list colours and input checks. Charts: a parliament hemicycle with a dot for each seat and a pie chart of vote or seat shares. |
+| **Indices** | Disproportionality (Gallagher LSq, Loosemore–Hanby, Sainte-Laguë), effective number of parties (ENEP, ENPP, Golosov), fractionalisation (Rae F), wasted votes, number of lists with seats, largest party and winner’s bonus, effective threshold, turnout and invalid ballots. A table by list with vote share, seat share and advantage ratio, with a chart of votes and seats. |
+| **Seat allocation** | D'Hondt, Sainte-Laguë or Hare–Niemeyer. For each election you can set threshold rules (a separate threshold for coalitions, an exemption or a joint list for minorities, a guaranteed seat, increased quotients), and for each list choose which rule applies. A special electoral unit can also be added. The “Comparison of methods” table shows the allocation by all three methods, with LSq for each. |
+| **Party nationalisation** | How evenly a party’s support is spread across municipalities (Bochsler, sPNS and PNSw). |
+| **Volatility** | What share of votes moved between parties from one election to the next (Pedersen; types A and B after Powell and Tucker). |
+| **Representation of women** | By list: number of candidates, women on the list, elected women and women at the end of the term. By election: quota for the under-represented sex (minimum percentage and the rule “at least K in every N places”). Calculates the share of women among candidates, among the elected and at the end of the term, the quota minimum and the excess above it, lists at the minimum, the success rates of women and men and their ratio. The placement of women on the lists is entered as numbers counted from the list (done manually): the position of the first woman, women by position within the group and in every ten places on the list. |
+| **Comparison** | Choose countries, elections and indices and get a chart (lines, columns or bars) and a table by election, with the average. Clicking a column header sorts the table; “Latest election in each country” gives one row per country. |
 
-## Unos podataka
+The **?** button next to an index explains what the index measures and how to read it.
 
-- Izbori su grupisani po državama. **+ Nova država** dodaje državu, a **+ Novi izbori** ispod države dodaje izbore u nju (naziv i godina).
+## Features
 
-- Naziv izbora mijenjaš klikom na naslov, a imena lista i opština direktno u tabeli.
-- Podatke možeš kopirati iz Excela: označi ćelije, Ctrl+C, pa u aplikaciji **Zalijepi iz Excela** i Ctrl+V. Može i uvoz `.xls`, `.xlsx` ili `.csv` fajla.
-- Bochslerov originalni Excel alat za nacionalizaciju (`.xls`) uvoziš direktno u modulu **Nacionalizacija stranaka**; aplikacija ga sama prepoznaje.
-- Ako upišeš zvanični broj važećih glasova, aplikacija upozorava kada se zbir glasova lista ne poklapa s njim, kao i kada zbir mandata nije jednak broju mandata.
-- Za volatilnost unesi bar dvoje izbora. Liste istog imena povezuju se same. Koalicije i stranke koje su promijenile ime povežeš klikom na ime prethodnika. Veze se pamte i koriste i u pregledu kroz vrijeme.
-
-## Grafikoni i boje
-
-- Boju liste biraš klikom na kvadratić na početku reda u tabeli; boja važi i za istu stranku u drugim izborima (isti naziv ili veza iz modula Volatilnost).
-- Redosljed stranaka u polukrugu mijenjaš strelicama pored grafikona; „Označi žene“ prikazuje mandate žena kao prstenove.
-- U Poređenju biraš linije, vertikalne stubiće ili horizontalne trake, a boju svake serije kvadratićem ispod grafikona.
-- **Sačuvaj kao PNG / SVG** čuva grafikon kao sliku sa bijelom pozadinom.
-
-## Izvoz
-
-Dugmad na dnu ekrana:
-
-- **CSV:** tabela trenutnog modula.
-- **Excel:** svi moduli u jednom fajlu.
-- **PDF / štampa:** u prozoru za štampu izaberi „Microsoft Print to PDF“.
-
-## Razmjena podataka
-
-- **Izvezi** (u zaglavlju izbora) ili ⤓ pored države čuva jedne izbore ili cijelu državu u fajl koji možeš poslati drugima; **Uvezi državu ili izbore** ih dodaje postojećim podacima, bez brisanja.
-- **Uvezi iz ParlGov baze:** preuzmi `view_election.csv` sa parlgov.org (Data → Elections), izaberi države i aplikacija pravi izbore. Glasovi su u procentima; zakonski cenzus upiši sam.
-
-## Rezervna kopija
-
-**Rezervna kopija (JSON)** u lijevom meniju čuva sve izbore u jedan fajl. **Vrati iz kopije** ih vraća, na primjer na drugom računaru.
-
-## Izgled i jezik
-
-Gore desno biraš jezik (EN – engleski, ME – crnogorski; aplikacija se prvi put otvara na engleskom) i temu (svijetla, tamna ili kao sistem). Akcentna boja prati boju izabranu u Windowsu.
-
-## Ažuriranje
-
-Kada izađe nova verzija, aplikacija pri pokretanju prikaže traku **Dostupna je nova verzija**. Klikni **Ažuriraj i ponovo pokreni**; podaci ostaju sačuvani. Dugme **Provjeri ažuriranja** na dnu lijevog menija provjerava odmah i, ako provjera ne uspije, prikazuje razlog.
+| Feature | Description |
+|---|---|
+| **Countries and elections** | Elections are grouped by country. **+ New country** adds a country, and **+ New election** below a country adds an election to it (name and year). The election name is changed by clicking the title, and list and municipality names directly in the table. |
+| **Entry from Excel** | Select cells in Excel, Ctrl+C, then in the application **Paste from Excel** and Ctrl+V. Importing an `.xls`, `.xlsx` or `.csv` file is also possible. Bochsler’s original Excel tool for nationalisation (`.xls`) is imported directly in the Party nationalisation module. |
+| **Input checks** | If the official number of valid votes is entered, the application warns when the sum of list votes does not match it, and when the sum of seats does not equal the number of seats. |
+| **Links between lists** | Lists with the same name in different elections are linked automatically. Coalitions and parties that changed their name are linked in the Volatility module by clicking the name of the predecessor. Links are used for volatility, colours and Comparison. |
+| **List colours** | The colour is chosen by clicking the square at the start of the row in the table. It also applies to the same party in other elections (same name or link). |
+| **Charts** | The order of parties in the hemicycle is changed with the arrows next to the chart; **Mark women** shows women’s seats as rings. In Comparison you can choose lines, columns or bars and the colour of each series. **Save as PNG / SVG** saves the chart as an image with a white background. |
+| **Export** | Buttons at the bottom of the screen: **CSV** (table of the current module), **Excel** (all modules in one file) and **PDF / print** (in the print dialog choose “Microsoft Print to PDF”). |
+| **Data exchange** | **Export** in the election header or ⤓ next to a country saves one election or the whole country to a file that can be sent to others. **Import country or election** adds them to the existing data, without deleting anything. |
+| **Import from ParlGov** | The file `view_election.csv` is downloaded from parlgov.org (Data → Elections) and imported with the **Import from ParlGov** button. When you choose countries, the application creates the elections. Votes are in percentages; the legal threshold is entered manually. |
+| **Backup** | **Backup (JSON)** in the left menu saves all elections to one file, and **Restore from backup** brings them back (for example on another computer). |
+| **Language and theme** | In the top right corner you can choose the language of the application (EN – English, ME – Montenegrin; the application opens in English the first time) and the theme (light, dark or system). The accent colour follows the colour chosen in Windows. |
+| **Updates** | When a new version is released, the application shows the bar **A new version … is available** at startup; click **Update and restart**, and your data are kept. The **Check for updates** button at the bottom of the left menu checks immediately. |

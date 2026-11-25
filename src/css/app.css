@@ -162,7 +162,7 @@ table.grid.rules input.sm { width: 64px; }
 .ch-val { fill: var(--text); font-size: 11px; font-weight: 600; }
 .ch-line { fill: none; stroke: var(--accent); stroke-width: 2.5; }
 .ch-dot { fill: var(--surface); stroke: var(--accent); stroke-width: 2.5; }
-/* izbor izbora i indeksa u pregledu */
+/* izbor izbora i indeksa u poređenju */
 .trend-pick { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 18px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; margin-bottom: 14px; }
 .trend-pick .side-label { margin: 0 0 6px; padding: 0; }
 .trend-pick .chip { max-width: 360px; }

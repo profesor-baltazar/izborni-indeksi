@@ -58,7 +58,7 @@
       wlead: ['Liste koje predvodi žena', 'Broj lista na čijem je prvom mjestu žena, od lista za koje je upisano mjesto prve žene.', ''],
       wend: ['Žene na kraju saziva', 'Broj žena u skupštini na kraju saziva (ili sada, dok saziv traje), nakon ostavki i zamjena, podijeljen brojem mandata.', 'Razlika prema udjelu pri konstituisanju pokazuje kako su ostavke i zamjene promijenile zastupljenost žena.'],
       wpos: ['Raspored žena na listama', 'Sa liste kandidata prebroj i upiši: mjesto prve žene; koliko je žena na 1, 2, … N-tom mjestu u grupama od po N mjesta (prvih N, sljedećih N… do kraja liste); i koliko je žena u svakoj desetki mjesta (1–10, 11–20…).', 'Raspored u grupi pokazuje da li stranke žene stavljaju samo na posljednje mjesto koje zakon dozvoljava; desetke pokazuju koliko su žene visoko na listi. Zbir u svakoj tabeli treba da bude jednak broju žena na listi.'],
-      wom: ['Udio žena u parlamentu', 'Broj žena koje su na izborima osvojile mandat (sastav pri konstituisanju), podijeljen ukupnim brojem mandata.', 'Prosjek u svijetu je oko 27% (Interparlamentarna unija); 40–60% se smatra rodno uravnoteženim.'],
+      wom: ['Udio žena u parlamentu', 'Broj žena koje su na izborima osvojile mandat (sastav pri konstituisanju), podijeljen ukupnim brojem mandata.', 'Prosjek u svijetu je 27,5% (Interparlamentarna unija, „Women in parliament 2025“, stanje 1. januara 2026); 40–60% se smatra rodno uravnoteženim.'],
       wasted: ['Izgubljeni glasovi', 'Procenat glasova datih listama koje nisu osvojile nijedan mandat.', 'Što je veći, to je više birača ostalo bez predstavnika; raste sa visinom cenzusa i brojem malih lista.'],
       nseat: ['Broj lista sa mandatima', 'Koliko je lista osvojilo bar jedan mandat.', 'Jednostavna mjera rascjepkanosti parlamenta; za finiju sliku vidi ENPP.'],
       big: ['Najveća stranka', 'Udio glasova i udio mandata liste sa najviše glasova.', 'Pokazuje dominaciju jedne stranke; preko 50% mandata znači samostalnu većinu.'],
@@ -83,7 +83,7 @@
       wlead: ['Lists headed by a woman', 'The number of lists with a woman in first place, out of the lists for which the position of the first woman is entered.', ''],
       wend: ['Women at the end of the term', 'The number of women in parliament at the end of the term (or now, while the term lasts), after resignations and replacements, divided by the number of seats.', 'The difference from the share at the constitution shows how resignations and replacements changed the representation of women.'],
       wpos: ['Placement of women on the lists', 'Count from the candidate list and enter: the position of the first woman; how many women are in the 1st, 2nd, … Nth place of each group of N places (first N, next N… to the end of the list); and how many women are in each ten places (1–10, 11–20…).', 'The placement within groups shows whether parties put women only in the last place the law allows; the tens show how high women are on the list. The sum in each table should equal the number of women on the list.'],
-      wom: ['Share of women in parliament', 'The number of women who won a seat in the election (composition at the constitution of parliament), divided by the total number of seats.', 'The world average is about 27% (Inter-Parliamentary Union); 40–60% is considered gender balanced.'],
+      wom: ['Share of women in parliament', 'The number of women who won a seat in the election (composition at the constitution of parliament), divided by the total number of seats.', 'The world average is 27.5% (Inter-Parliamentary Union, “Women in parliament 2025”, as of 1 January 2026); 40–60% is considered gender balanced.'],
       wasted: ['Wasted votes', 'The percentage of votes cast for lists that won no seat.', 'The higher it is, the more voters are left without a representative; it grows with the threshold and the number of small lists.'],
       nseat: ['Number of lists with seats', 'How many lists won at least one seat.', 'A simple measure of parliamentary fragmentation; see ENPP for a finer picture.'],
       big: ['Largest party', 'Vote share and seat share of the list with the most votes.', 'Shows the dominance of one party; more than 50% of seats means a single-party majority.'],
@@ -231,7 +231,7 @@
         Golosovljev efektivni broj stranaka: Golosov, G. V. (2010). The effective number of parties: a new approach. <i>Party Politics</i> 16(2): 171–192.
         Odnos prednosti (advantage ratio, udio mandata / udio glasova): Taagepera, R. i Shugart, M. S. (1989). <i>Seats and Votes</i>. New Haven: Yale University Press.
         Efektivni prag: Taagepera, R. (2002). Nationwide threshold of representation. <i>Electoral Studies</i> 21(3): 383–401; Lijphart, A. (1994). <i>Electoral Systems and Party Systems</i>. Oxford: Oxford University Press.`,
-      women: `<b>Zastupljenost žena.</b> Udio žena u parlamentu je broj žena koje su na izborima osvojile mandat (sastav skupštine pri konstituisanju, prije eventualnih zamjena), podijeljen ukupnim brojem mandata, kako se prati u međunarodnim poređenjima (npr. Interparlamentarna unija); broj na kraju saziva upisuje se posebno.
+      women: `<b>Zastupljenost žena.</b> Udio žena u parlamentu je broj žena koje su na izborima osvojile mandat (sastav skupštine pri konstituisanju, prije eventualnih zamjena), podijeljen ukupnim brojem mandata, kako se prati u međunarodnim poređenjima; broj na kraju saziva upisuje se posebno. Svjetski prosjek: Inter-Parliamentary Union (2026). <i>Women in parliament 2025</i>. Ženeva: IPU.
         Minimum po kvoti je veći od dva broja: zadatog procenta od broja kandidata na listi (zaokruženo naviše) i broja koji traži pravilo rasporeda (K žena u svakoj punoj grupi od N mjesta). Stopa uspjeha je broj izabranih podijeljen brojem kandidata istog pola, a odnos uspjeha stopa žena podijeljena stopom muškaraca.
         Raspored po desetkama mjesta, raspored po mjestu u grupi i pozicija prve kandidatkinje upisuju se prebrojavanjem sa liste kandidata, po uzoru na izvještaje o građanskom nadgledanju izbora.`,
       alloc: `<b>Metode.</b> D'Hondt (djelioci 1, 2, 3…), Sainte-Laguë (djelioci 1, 3, 5…) i Hare–Niemeyer (prosta kvota i najveći ostatak).
@@ -247,7 +247,7 @@
         Ova aplikacija je nezavisna implementacija Bochslerove formule; na podacima za Crnu Goru 2020. i 2023. daje iste vrijednosti kao njegov originalni Excel alat.`,
       vol: `<b>Izvori formula.</b> Ukupna volatilnost: Pedersen, M. N. (1979). The dynamics of European party systems: changing patterns of electoral volatility. <i>European Journal of Political Research</i> 7(1): 1–26.
         Podjela na tip A i tip B: Powell, E. N. i Tucker, J. A. (2014). Revisiting electoral volatility in post-communist countries: new data, new results and new approaches. <i>British Journal of Political Science</i> 44(1): 123–147.`,
-      compare: `<b>Poređenje.</b> Isti indeksi kao u modulima „Rezultati i indeksi“ (LSq, Loosemore–Hanby, Sainte-Laguë, ENEP, ENPP, Golosov, Rae F), „Nacionalizacija stranaka“ (sPNS i PNSw sistema, samo za izbore sa bar dvije teritorijalne jedinice), „Volatilnost“ (Pedersen; tip A i B po Powellu i Tuckeru) i „Zastupljenost žena“.
+      compare: `<b>Poređenje.</b> Isti indeksi kao u modulima „Indeksi“, „Nacionalizacija stranaka“ (samo za izbore sa bar dvije teritorijalne jedinice), „Volatilnost“ i „Zastupljenost žena“.
         Volatilnost se računa prema prethodnim izabranim izborima iste države (hronološki, po godini), na osnovu glasova i veza između lista sačuvanih u modulu „Volatilnost“. Izvori formula navedeni su u tim modulima.`,
       explain: `<b>Kako se računa.</b> Volatilnost pokazuje koliki se dio biračkog tijela „preselio“ između stranaka od jednih do drugih izbora.
         Za svaku stranku uzmeš udio glasova u procentima na prvim i na drugim izborima, izračunaš razliku, sabereš apsolutne vrijednosti svih razlika i podijeliš sa 2:
@@ -267,7 +267,7 @@
         Golosov's effective number of parties: Golosov, G. V. (2010). The effective number of parties: a new approach. <i>Party Politics</i> 16(2): 171–192.
         Advantage ratio (seat share / vote share): Taagepera, R. and Shugart, M. S. (1989). <i>Seats and Votes</i>. New Haven: Yale University Press.
         Effective threshold: Taagepera, R. (2002). Nationwide threshold of representation. <i>Electoral Studies</i> 21(3): 383–401; Lijphart, A. (1994). <i>Electoral Systems and Party Systems</i>. Oxford: Oxford University Press.`,
-      women: `<b>Representation of women.</b> The share of women in parliament is the number of women who won a seat in the election (composition of parliament at its constitution, before any replacements), divided by the total number of seats, as followed in international comparisons (e.g. the Inter-Parliamentary Union); the number at the end of the term is entered separately.
+      women: `<b>Representation of women.</b> The share of women in parliament is the number of women who won a seat in the election (composition of parliament at its constitution, before any replacements), divided by the total number of seats, as followed in international comparisons; the number at the end of the term is entered separately. World average: Inter-Parliamentary Union (2026). <i>Women in parliament 2025</i>. Geneva: IPU.
         The quota minimum is the larger of two numbers: the given percentage of the number of candidates on the list (rounded up) and the number required by the placement rule (K women in every full group of N places). The success rate is the number of elected divided by the number of candidates of the same sex, and the success ratio is the women's rate divided by the men's rate.
         The placement by tens of places, the placement by position within the group and the position of the first woman are entered by counting from the candidate list, following the approach of citizen election observation reports.`,
       alloc: `<b>Methods.</b> D'Hondt (divisors 1, 2, 3…), Sainte-Laguë (divisors 1, 3, 5…) and Hare–Niemeyer (simple quota and largest remainder).
@@ -283,7 +283,7 @@
         This application is an independent implementation of Bochsler's formula; on the data for Montenegro 2020 and 2023 it gives the same values as his original Excel tool.`,
       vol: `<b>Formula sources.</b> Total volatility: Pedersen, M. N. (1979). The dynamics of European party systems: changing patterns of electoral volatility. <i>European Journal of Political Research</i> 7(1): 1–26.
         Split into type A and type B: Powell, E. N. and Tucker, J. A. (2014). Revisiting electoral volatility in post-communist countries: new data, new results and new approaches. <i>British Journal of Political Science</i> 44(1): 123–147.`,
-      compare: `<b>Comparison.</b> The same indices as in the modules “Results and indices” (LSq, Loosemore–Hanby, Sainte-Laguë, ENEP, ENPP, Golosov, Rae F), “Party nationalisation” (system sPNS and PNSw, only for elections with at least two territorial units), “Volatility” (Pedersen; types A and B after Powell and Tucker) and “Representation of women”.
+      compare: `<b>Comparison.</b> The same indices as in the modules “Indices”, “Party nationalisation” (only for elections with at least two territorial units), “Volatility” and “Representation of women”.
         Volatility is calculated against the previous selected election of the same country (chronologically, by year), from votes and the links between lists saved in the “Volatility” module. Formula sources are given in those modules.`,
       explain: `<b>How it is calculated.</b> Volatility shows what share of the electorate “moved” between parties from one election to the next.
         For each party, take its vote share in percent at the first and at the second election, compute the difference, add up the absolute values of all differences and divide by 2:
@@ -450,7 +450,7 @@
     const val = (l) => parseNum(basis === 'seats' ? l.seats : l.votes);
     return I.volatility(A.lists.map((l) => ({ id: l.id, name: l.name, value: val(l) })), B.lists.map((l) => ({ id: l.id, name: l.name, value: val(l) })), links);
   }
-  // Pregled kroz vrijeme: korisnik bira izbore (redosljed kao u listi izbora) i indekse za grafikon
+  // Poređenje: korisnik bira države, izbore i indekse za grafikon i tabelu
   // [ključ, oznaka, decimale, puno ime, boja linije]
   const TREND_COLS = [
     ['lsq', 'LSq', 2, 'Gallagherov indeks najmanjih kvadrata (disproporcionalnost)', 'var(--accent)'],
@@ -525,7 +525,7 @@
   // Poređenje: države -> izbori -> indeksi; ništa od izbora nije unaprijed izabrano
   function cmpState() {
     const st = S.state.cmp || (S.state.cmp = { countries: [], sel: [], idx: ['enep'] });
-    // do 1.2: "Pregled kroz vrijeme" (state.trend) prelazi u poređenje
+    // stari podaci (do 1.2, state.trend) prelaze u poređenje
     if (S.state.trend) {
       const old = S.state.trend;
       (old.sel || []).forEach((id) => { const e = S.byId(id); if (e && !st.sel.includes(id)) st.sel.push(id); if (e && !st.countries.includes(e.country)) st.countries.push(e.country); });
@@ -754,7 +754,7 @@
           ${chartTools('res-chart', 'res', RES_CHARTS, type)}
           <div class="chart-wrap">
             <div class="card chart-card" id="res-chart" data-out-html="reschart"></div>
-            ${type === 'arc' ? `<div class="arc-order no-print"><label class="check" style="padding:0 0 8px"><input type="checkbox" data-chart-flag="arcWomen" ${chartPref('arcWomen', false) ? 'checked' : ''}> ${t('Označi žene')}</label><div class="side-label">${t('Redosljed u polukrugu (slijeva nadesno)')}</div><div data-out-html="arcorder"></div></div>` : ''}
+            ${type === 'arc' ? `<div class="arc-order no-print"><label class="check" style="padding:0 0 8px"><input type="checkbox" data-chart-flag="arcWomen" ${chartPref('arcWomen', false) ? 'checked' : ''}> ${t('Označi žene')}${e.lists.some((l) => parseNum(l.women) > 0) ? '' : ` <span class="muted small">(${t('upiši izabrane žene u modulu „Zastupljenost žena“')})</span>`}</label><div class="side-label">${t('Redosljed u polukrugu (slijeva nadesno)')}</div><div data-out-html="arcorder"></div></div>` : ''}
           </div>
           <div class="cite">${cite('results')}</div>`;
       },
@@ -1181,7 +1181,7 @@
         const explain = `<div class="explain">${cite('explain')}</div>`;
         if (els.length < 2) {
           return `<div class="head"><h1>${t('Volatilnost')}</h1></div>${explain}
-            <div class="card empty" style="margin-top:14px">${t('Za volatilnost su potrebni bar dvoje izbora. Dodaj i druge izbore u modulu „Rezultati i indeksi“.')}<br><br>
+            <div class="card empty" style="margin-top:14px">${t('Za volatilnost su potrebni bar dvoje izbora. Dodaj i druge izbore (+ Novi izbori u lijevom meniju).')}<br><br>
             <button class="btn primary" data-act="new-election">${t('+ Novi izbori')}</button></div><div class="cite">${cite('vol')}</div>`;
         }
         const A = S.byId(v.a), B = S.byId(v.b);
